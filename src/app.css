@@ -410,6 +410,19 @@ body {
   box-shadow: 0 0 18px rgba(34, 211, 238, 0.16);
 }
 
+.nebula-svg-preview {
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  background: rgba(2, 6, 23, 0.45);
+}
+
+.nebula-svg-preview svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .badge-row {
   border: 1px solid rgba(148, 163, 184, 0.25);
   background: rgba(15, 23, 42, 0.78);
@@ -436,6 +449,10 @@ body {
   line-height: 1.45;
   padding: 0.72rem;
   overflow: auto;
+}
+
+.badge-code-tall {
+  max-height: 190px;
 }
 
 @media (min-width: 980px) {

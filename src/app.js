@@ -15,6 +15,7 @@ import {
 } from "./config.js";
 import { setCharacterConfig, buildCharacterSvg } from "./ui/character.js";
 import {
+  buildNebulaProfileBadgeSvg,
   buildProfileUrl,
   buildReadmeEmbedSnippet,
   buildShieldsBadgeUrl,
@@ -368,6 +369,15 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
     impactScore: summary.impactScore,
     style: "flat-square",
   });
+  const nebulaBadgeSvg = buildNebulaProfileBadgeSvg({
+    username: profile.username,
+    typeName: scoring.typeName,
+    aliasName: scoring.aliasName,
+    description: scoring.flavorText,
+    rarityTier: scoring.rarityTier,
+    confidence,
+    impactScore: summary.impactScore,
+  });
 
   return {
     username: profile.username,
@@ -376,6 +386,7 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
     typeName: scoring.typeName,
     aliasName: scoring.aliasName,
     flavorText: scoring.flavorText,
+    rarityTier: scoring.rarityTier || "Common",
     confidence,
     traits: scoring.drivers,
     counterTraits: scoring.suppressors,
@@ -395,6 +406,7 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
     profileUrl,
     badgeImageUrl,
     badgeCompactUrl,
+    nebulaBadgeSvg,
     badgeMarkdown: buildReadmeEmbedSnippet(baseUrl, profile.username, {
       typeName: scoring.typeName,
       confidence,
@@ -422,6 +434,15 @@ function scoreFromDemoPayload(demoPayload) {
     impactScore,
     style: "flat-square",
   });
+  const nebulaBadgeSvg = buildNebulaProfileBadgeSvg({
+    username: demoPayload.username,
+    typeName: demoPayload.type_name,
+    aliasName: demoPayload.alias_name,
+    description: demoPayload.flavor_text,
+    rarityTier: demoPayload.rarity_tier || "Common",
+    confidence: demoPayload.confidence,
+    impactScore,
+  });
 
   return {
     username: demoPayload.username,
@@ -430,6 +451,7 @@ function scoreFromDemoPayload(demoPayload) {
     typeName: demoPayload.type_name,
     aliasName: demoPayload.alias_name,
     flavorText: demoPayload.flavor_text,
+    rarityTier: demoPayload.rarity_tier || "Common",
     confidence: demoPayload.confidence,
     traits: demoPayload.traits || [],
     counterTraits: demoPayload.counter_traits || [],
@@ -452,6 +474,7 @@ function scoreFromDemoPayload(demoPayload) {
     profileUrl,
     badgeImageUrl,
     badgeCompactUrl,
+    nebulaBadgeSvg,
     badgeMarkdown: buildReadmeEmbedSnippet(baseUrl, demoPayload.username, {
       typeName: demoPayload.type_name,
       confidence: demoPayload.confidence,
@@ -1280,6 +1303,30 @@ function App() {
     }
   };
 
+  const copySvgCode = async () => {
+    if (!effectiveNebulaSvg) {
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(effectiveNebulaSvg);
+      setStatus({ kind: "success", text: "SVG code copied." });
+    } catch {
+      setStatus({ kind: "warning", text: "Clipboard blocked. Copy manually." });
+    }
+  };
+
+  const copyHtmlEmbed = async () => {
+    if (!effectiveSvgEmbed) {
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(effectiveSvgEmbed);
+      setStatus({ kind: "success", text: "HTML embed copied." });
+    } catch {
+      setStatus({ kind: "warning", text: "Clipboard blocked. Copy manually." });
+    }
+  };
+
   const statusClass =
     status?.kind === "error"
       ? "border-rose-400/40 bg-rose-500/10 text-rose-100"
@@ -1326,6 +1373,19 @@ function App() {
       impactScore: result?.achievementImpactScore || 0,
       style: "for-the-badge",
     });
+  const effectiveNebulaSvg =
+    result?.nebulaBadgeSvg ||
+    buildNebulaProfileBadgeSvg({
+      username: result?.username || "developer",
+      typeName: result?.typeName || "Developer DNA",
+      aliasName: result?.aliasName || "GitDNA Profile",
+      description: result?.flavorText || "",
+      rarityTier: result?.rarityTier || "Common",
+      confidence: result?.confidence || 0,
+      impactScore: result?.achievementImpactScore || 0,
+    });
+  const effectiveSvgEmbed =
+    `<a href="${effectiveProfileUrl}" target="_blank" rel="noopener noreferrer">\n${effectiveNebulaSvg}\n</a>`;
   const cardMarkdown = result
     ? `[![GitDNA Card](${getBaseUrl()}/data/cards/${result.username}.svg)](${effectiveProfileUrl})`
     : "";
@@ -1710,7 +1770,7 @@ function App() {
                       <div>
                         <h3 className="font-display text-2xl font-bold">Your GitHub DNA Badge</h3>
                         <p className="text-slate-300 mt-1">
-                          Profile-ready badge that looks good in README and links to your DNA reveal.
+                          Copy-paste snippets for README, plus Nebula SVG code with profile details.
                         </p>
                       </div>
                       <span className="badge-chip-live">Share-Ready</span>
@@ -1718,30 +1778,20 @@ function App() {
 
                     <div className="badge-studio-grid">
                       <div className="badge-preview-wrap rounded-2xl p-4 md:p-5 space-y-4">
-                        <div className="badge-preview-hero rounded-xl p-4">
-                          <p className="text-xs uppercase tracking-[0.12em] text-cyan-200">
-                            GitDNA Signature Badge
-                          </p>
-                          <p className="font-display text-2xl font-bold text-white mt-2">
-                            ${result.typeName}
-                          </p>
-                          <p className="text-cyan-100 text-sm">${result.aliasName}</p>
-                          <div className="mt-4 inline-flex rounded-lg border border-cyan-300/35 bg-slate-950/70 px-3 py-2">
-                            <img
-                              src=${effectiveBadgeUrl}
-                              alt="GitDNA badge preview"
-                              className="h-7 md:h-8 w-auto"
-                            />
-                          </div>
+                        <div className="badge-preview-hero rounded-xl p-3">
+                          <div
+                            className="nebula-svg-preview"
+                            dangerouslySetInnerHTML=${{ __html: effectiveNebulaSvg }}
+                          ></div>
                         </div>
 
                         <div className="space-y-2">
                           <div className="badge-row rounded-lg p-2.5">
-                            <span className="badge-row-label">README Badge</span>
+                            <span className="badge-row-label">GitHub-safe badge</span>
                             <img src=${effectiveBadgeUrl} alt="README badge style" className="h-6 w-auto" />
                           </div>
                           <div className="badge-row rounded-lg p-2.5">
-                            <span className="badge-row-label">Compact Variant</span>
+                            <span className="badge-row-label">Compact variant</span>
                             <img
                               src=${effectiveCompactBadgeUrl}
                               alt="Compact badge style"
@@ -1753,13 +1803,23 @@ function App() {
 
                       <div className="space-y-3">
                         <div className="space-y-1.5">
-                          <p className="text-sm font-semibold text-slate-200">Markdown (Recommended)</p>
+                          <p className="text-sm font-semibold text-slate-200">Markdown (GitHub README)</p>
                           <pre className="badge-code">${effectiveBadgeMarkdown}</pre>
                         </div>
 
                         <div className="space-y-1.5">
                           <p className="text-sm font-semibold text-slate-200">Direct Badge URL</p>
                           <pre className="badge-code">${effectiveBadgeUrl}</pre>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <p className="text-sm font-semibold text-slate-200">Nebula SVG Code (name + rank + impact)</p>
+                          <pre className="badge-code badge-code-tall">${effectiveNebulaSvg}</pre>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <p className="text-sm font-semibold text-slate-200">HTML Embed (SVG + profile link)</p>
+                          <pre className="badge-code badge-code-tall">${effectiveSvgEmbed}</pre>
                         </div>
 
                         <div className="space-y-1.5">
@@ -1779,6 +1839,18 @@ function App() {
                             className="rounded-xl px-4 py-2.5 text-sm font-semibold border border-cyan-400/45 bg-cyan-500/10 text-cyan-100"
                           >
                             Copy Badge URL
+                          </button>
+                          <button
+                            onClick=${copySvgCode}
+                            className="rounded-xl px-4 py-2.5 text-sm font-semibold border border-violet-400/45 bg-violet-500/10 text-violet-100"
+                          >
+                            Copy SVG Code
+                          </button>
+                          <button
+                            onClick=${copyHtmlEmbed}
+                            className="rounded-xl px-4 py-2.5 text-sm font-semibold border border-indigo-400/45 bg-indigo-500/10 text-indigo-100"
+                          >
+                            Copy HTML Embed
                           </button>
                           <a
                             href=${effectiveBadgeUrl}
@@ -1804,6 +1876,9 @@ function App() {
                           </summary>
                           <pre className="badge-code mt-3">${cardMarkdown}</pre>
                         </details>
+                        <p className="text-xs text-slate-500">
+                          GitHub README supports markdown/image embeds reliably. Inline SVG hover effects work best in personal sites and docs portals.
+                        </p>
                       </div>
                     </div>
                   </article>
