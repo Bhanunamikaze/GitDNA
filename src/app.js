@@ -86,6 +86,32 @@ const SIGNAL_CONFIG = [
   },
 ];
 
+const BADGE_VISIBLE_DEFAULTS = {
+  username: true,
+  description: true,
+  rank: true,
+  clarity: true,
+  impact: true,
+  commits: true,
+  loc: true,
+  repos: true,
+  social: true,
+  languages: true,
+};
+
+const BADGE_TOGGLE_OPTIONS = [
+  { id: "username", label: "Username" },
+  { id: "description", label: "Description" },
+  { id: "rank", label: "Rank" },
+  { id: "clarity", label: "Signal Clarity" },
+  { id: "impact", label: "Impact Score" },
+  { id: "commits", label: "Commits" },
+  { id: "loc", label: "Estimated LOC" },
+  { id: "repos", label: "Repos" },
+  { id: "social", label: "Stars/Forks/Followers" },
+  { id: "languages", label: "Language Chips" },
+];
+
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
@@ -118,53 +144,33 @@ function NebulaDnaBackground() {
     const createDnaSeeds = (count, groupId) =>
       Array.from({ length: count }, (_, index) => ({
         id: `${groupId}-${index}`,
-        offset: Math.random() * 900 + index * 23,
+        offset: Math.random() * 920 + index * 21,
         phase: Math.random() * Math.PI * 2,
-        speed: 28 + Math.random() * 36,
-        jitter: 4 + Math.random() * 6,
-        lane: -0.5 + Math.random(),
+        speed: 26 + Math.random() * 32,
+        jitter: 3 + Math.random() * 5,
+        lane: -0.45 + Math.random() * 0.9,
         phase2: Math.random() * Math.PI * 2,
       }));
 
     const createDnaGroups = () => {
-      const baseSpan = Math.min(width * 0.16, 150);
-      const layout =
-        width < 720
-          ? [
-              { x: 0.22, y: 0.26, angle: 0.95 },
-              { x: 0.5, y: 0.56, angle: -0.75 },
-              { x: 0.78, y: 0.34, angle: 0.42 },
-            ]
-          : [
-              { x: 0.18, y: 0.24, angle: 0.86 },
-              { x: 0.5, y: 0.5, angle: -0.62 },
-              { x: 0.82, y: 0.74, angle: 0.58 },
-            ];
+      const layout = [{ x: 0.2, tilt: 0.032 }, { x: 0.5, tilt: -0.028 }, { x: 0.8, tilt: 0.03 }];
+      const columnGap = width / (layout.length + 1);
+      const spanBase = clamp(columnGap * 0.22, 30, width < 720 ? 54 : 76);
+      const seedsPerGroup = clamp(Math.floor(height / (width < 720 ? 30 : 24)), 10, 24);
 
-      const seedsPerGroup = clamp(
-        Math.floor(Math.min(width, height) / (width < 700 ? 30 : 24)),
-        10,
-        26
-      );
-
-      return layout.map((item, index) => {
-        const directionX = Math.cos(item.angle);
-        const directionY = Math.sin(item.angle);
-        return {
-          id: index,
-          anchorXRatio: item.x,
-          anchorYRatio: item.y,
-          directionX,
-          directionY,
-          travelLength: Math.max(width, height) * (width < 700 ? 0.68 : 0.82),
-          span: baseSpan * (0.82 + index * 0.08),
-          orbitX: 24 + index * 10,
-          orbitY: 20 + index * 12,
-          orbitSpeedX: 0.2 + index * 0.07,
-          orbitSpeedY: 0.26 + index * 0.05,
-          seeds: createDnaSeeds(seedsPerGroup - (width < 900 && index !== 1 ? 2 : 0), index),
-        };
-      });
+      return layout.map((item, index) => ({
+        id: index,
+        anchorXRatio: item.x,
+        anchorYRatio: 0.5,
+        tilt: item.tilt,
+        travelLength: height + 340,
+        span: spanBase * (0.9 + index * 0.04),
+        orbitX: clamp(columnGap * 0.06, 4, 14),
+        orbitY: clamp(height * 0.03, 8, 20),
+        orbitSpeedX: 0.18 + index * 0.06,
+        orbitSpeedY: 0.24 + index * 0.04,
+        seeds: createDnaSeeds(seedsPerGroup - (width < 760 && index !== 1 ? 1 : 0), index),
+      }));
     };
 
     const createStarSeeds = (count) =>
@@ -220,6 +226,28 @@ function NebulaDnaBackground() {
       const time = timestamp * 0.001;
       context.clearRect(0, 0, width, height);
 
+      const drawBackbone = (points, strokeStyle, lineWidth) => {
+        if (points.length < 2) {
+          return;
+        }
+        context.strokeStyle = strokeStyle;
+        context.lineWidth = lineWidth;
+        context.lineCap = "round";
+        context.lineJoin = "round";
+        context.beginPath();
+        context.moveTo(points[0].x, points[0].y);
+        for (let index = 1; index < points.length - 1; index += 1) {
+          const current = points[index];
+          const next = points[index + 1];
+          const midX = (current.x + next.x) / 2;
+          const midY = (current.y + next.y) / 2;
+          context.quadraticCurveTo(current.x, current.y, midX, midY);
+        }
+        const last = points[points.length - 1];
+        context.lineTo(last.x, last.y);
+        context.stroke();
+      };
+
       const nebulaA = context.createRadialGradient(
         width * 0.2 + Math.sin(time * 0.24) * 40,
         height * 0.2 + Math.cos(time * 0.18) * 24,
@@ -262,43 +290,113 @@ function NebulaDnaBackground() {
         context.fill();
       }
 
-      for (const group of dnaGroups) {
-        const anchorX =
-          width * group.anchorXRatio +
-          Math.sin(time * group.orbitSpeedX + group.id) * group.orbitX;
-        const anchorY =
-          height * group.anchorYRatio +
-          Math.cos(time * group.orbitSpeedY + group.id * 1.7) * group.orbitY;
-        const perpX = -group.directionY;
-        const perpY = group.directionX;
+      const anchors = dnaGroups
+        .map((group) => ({
+          group,
+          x:
+            width * group.anchorXRatio +
+            Math.sin(time * group.orbitSpeedX + group.id * 0.8) * group.orbitX,
+          y:
+            height * group.anchorYRatio +
+            Math.cos(time * group.orbitSpeedY + group.id * 1.6) * group.orbitY,
+        }))
+        .sort((left, right) => left.x - right.x);
+
+      const outerPadding = clamp(width * 0.08, 34, 96);
+      const maxSpan = anchors.reduce((largest, entry) => Math.max(largest, entry.group.span), 0);
+      const maxFeasibleGap = (width - (outerPadding + maxSpan) * 2) / Math.max(1, anchors.length - 1);
+      const requiredGap = Math.max(54, Math.min(clamp(width * 0.24, 108, 196), maxFeasibleGap));
+      for (let pass = 0; pass < 3; pass += 1) {
+        for (let index = 1; index < anchors.length; index += 1) {
+          const previous = anchors[index - 1];
+          const current = anchors[index];
+          const distance = current.x - previous.x;
+          if (distance < requiredGap) {
+            const adjust = (requiredGap - distance) / 2;
+            previous.x -= adjust;
+            current.x += adjust;
+          }
+        }
+      }
+
+      for (const anchor of anchors) {
+        const limit = anchor.group.span + outerPadding;
+        anchor.x = clamp(anchor.x, limit, width - limit);
+      }
+      for (let index = 1; index < anchors.length; index += 1) {
+        const previous = anchors[index - 1];
+        const current = anchors[index];
+        if (current.x - previous.x < requiredGap) {
+          current.x = previous.x + requiredGap;
+        }
+      }
+      for (let index = anchors.length - 2; index >= 0; index -= 1) {
+        const next = anchors[index + 1];
+        const current = anchors[index];
+        if (next.x - current.x < requiredGap) {
+          current.x = next.x - requiredGap;
+        }
+      }
+      for (const anchor of anchors) {
+        const limit = anchor.group.span + outerPadding;
+        anchor.x = clamp(anchor.x, limit, width - limit);
+      }
+
+      const lanePadding = clamp(width * 0.014, 6, 18);
+      for (let index = 0; index < anchors.length; index += 1) {
+        const current = anchors[index];
+        const leftNeighbor = anchors[index - 1];
+        const rightNeighbor = anchors[index + 1];
+        current.laneLeft = leftNeighbor ? (leftNeighbor.x + current.x) / 2 + lanePadding : outerPadding;
+        current.laneRight = rightNeighbor
+          ? (current.x + rightNeighbor.x) / 2 - lanePadding
+          : width - outerPadding;
+      }
+
+      for (const entry of anchors) {
+        const group = entry.group;
+        const axisX = entry.x;
+        const axisY = entry.y;
+        const laneMin = entry.laneLeft + 4;
+        const laneMax = entry.laneRight - 4;
+        const laneWidth = Math.max(14, laneMax - laneMin);
+        const minPairGap = Math.min(10, Math.max(5, laneWidth * 0.28));
+        const laneHalf = Math.max(5, laneWidth / 2 - minPairGap / 2);
+        const leftBackbone = [];
+        const rightBackbone = [];
 
         for (const seed of group.seeds) {
-          const flow =
-            ((time * seed.speed + seed.offset) % group.travelLength) - group.travelLength * 0.5;
-          const wave = time * 1.7 + seed.phase + flow * 0.014;
+          const progress = ((time * seed.speed + seed.offset) % group.travelLength) - 150;
+          const yBase = height - progress;
+          const wave = time * 1.78 + seed.phase + yBase * 0.018;
+          const laneDrift = seed.lane * 14;
           const centerX =
-            anchorX +
-            group.directionX * flow +
-            perpX * seed.lane * 36 +
-            Math.cos(time * 0.9 + seed.phase2) * seed.jitter;
-          const centerY =
-            anchorY +
-            group.directionY * flow +
-            perpY * seed.lane * 36 +
-            Math.sin(time * 0.82 + seed.phase2) * seed.jitter;
-          const ribbon = group.span * (0.52 + Math.sin(wave) * 0.31);
+            axisX +
+            progress * group.tilt +
+            Math.sin(time * 0.7 + seed.phase2) * (2.5 + seed.jitter * 0.28) +
+            laneDrift;
+          const centerY = yBase + axisY * 0.02 + Math.cos(time * 0.86 + seed.phase2) * 1.7;
+          const ribbon = Math.min(group.span * (0.56 + Math.sin(wave) * 0.33), laneHalf);
 
-          let leftX = centerX - perpX * ribbon;
-          let leftY = centerY - perpY * ribbon;
-          let rightX = centerX + perpX * ribbon;
-          let rightY = centerY + perpY * ribbon;
+          let leftX = centerX - ribbon;
+          let rightX = centerX + ribbon;
+          let leftY = centerY + Math.cos(wave * 1.14) * seed.jitter;
+          let rightY = centerY - Math.cos(wave * 1.14) * seed.jitter;
 
           const displacedLeft = repel(leftX, leftY, 175, 55);
           const displacedRight = repel(rightX, rightY, 175, 55);
-          leftX = displacedLeft.x;
+          leftX = clamp(displacedLeft.x, laneMin, laneMax - minPairGap);
           leftY = displacedLeft.y;
-          rightX = displacedRight.x;
+          rightX = clamp(displacedRight.x, laneMin + minPairGap, laneMax);
           rightY = displacedRight.y;
+          if (rightX - leftX < minPairGap) {
+            const midX = (leftX + rightX) / 2;
+            leftX = clamp(midX - minPairGap / 2, laneMin, laneMax - minPairGap);
+            rightX = clamp(midX + minPairGap / 2, laneMin + minPairGap, laneMax);
+          }
+
+          leftBackbone.push({ x: leftX, y: leftY });
+          rightBackbone.push({ x: rightX, y: rightY });
 
           const rungAlpha = 0.06 + (Math.sin(wave + 0.8) + 1) * 0.1;
           context.strokeStyle = `rgba(125,211,252,${rungAlpha})`;
@@ -319,6 +417,11 @@ function NebulaDnaBackground() {
           context.arc(rightX, rightY, dotRadius * 0.9, 0, Math.PI * 2);
           context.fill();
         }
+
+        leftBackbone.sort((a, b) => a.y - b.y);
+        rightBackbone.sort((a, b) => a.y - b.y);
+        drawBackbone(leftBackbone, "rgba(103,232,249,0.46)", 1.7);
+        drawBackbone(rightBackbone, "rgba(196,181,253,0.44)", 1.65);
       }
       context.globalCompositeOperation = "source-over";
 
@@ -1255,6 +1358,7 @@ function App() {
   const [result, setResult] = useState(null);
   const [status, setStatus] = useState(null);
   const [modelReady, setModelReady] = useState(false);
+  const [badgeVisibleItems, setBadgeVisibleItems] = useState(BADGE_VISIBLE_DEFAULTS);
 
   const dataRef = useRef({
     centroids: null,
@@ -1480,6 +1584,32 @@ function App() {
     }
   };
 
+  const toggleBadgeItem = (id) => {
+    setBadgeVisibleItems((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const setBadgePreset = (mode) => {
+    if (mode === "minimal") {
+      setBadgeVisibleItems({
+        username: true,
+        description: false,
+        rank: true,
+        clarity: true,
+        impact: true,
+        commits: false,
+        loc: false,
+        repos: true,
+        social: false,
+        languages: true,
+      });
+      return;
+    }
+    setBadgeVisibleItems(BADGE_VISIBLE_DEFAULTS);
+  };
+
   const statusClass =
     status?.kind === "error"
       ? "border-rose-400/40 bg-rose-500/10 text-rose-100"
@@ -1518,18 +1648,17 @@ function App() {
       impactScore: result?.achievementImpactScore || 0,
       style: "for-the-badge",
     });
-  const effectiveNebulaSvg =
-    result?.nebulaBadgeSvg ||
-    buildNebulaProfileBadgeSvg({
-      username: result?.username || "developer",
-      typeName: result?.typeName || "Developer DNA",
-      aliasName: result?.aliasName || "GitDNA Profile",
-      description: result?.flavorText || "",
-      rarityTier: result?.rarityTier || "Common",
-      confidence: result?.confidence || 0,
-      impactScore: result?.achievementImpactScore || 0,
-      profileStats: result?.profileStats || null,
-    });
+  const effectiveNebulaSvg = buildNebulaProfileBadgeSvg({
+    username: result?.username || "developer",
+    typeName: result?.typeName || "Developer DNA",
+    aliasName: result?.aliasName || "GitDNA Profile",
+    description: result?.flavorText || "",
+    rarityTier: result?.rarityTier || "Common",
+    confidence: result?.confidence || 0,
+    impactScore: result?.achievementImpactScore || 0,
+    profileStats: result?.profileStats || null,
+    visibleItems: badgeVisibleItems,
+  });
   const effectiveSvgEmbed =
     `<a href="${effectiveProfileUrl}" target="_blank" rel="noopener noreferrer">\n${effectiveNebulaSvg}\n</a>`;
   const cardMarkdown = result
@@ -1930,6 +2059,49 @@ function App() {
                         ></div>
                       </div>
                     </div>
+
+                    <details className="badge-code-panel rounded-xl border border-slate-700/70 bg-slate-900/65 p-3">
+                      <summary className="cursor-pointer text-sm font-semibold text-slate-200">
+                        Customize Badge Items
+                      </summary>
+                      <div className="mt-3 space-y-3">
+                        <div className="badge-toggle-grid">
+                          ${BADGE_TOGGLE_OPTIONS.map((item) => {
+                            const enabled = Boolean(badgeVisibleItems[item.id]);
+                            return html`
+                              <label
+                                key=${item.id}
+                                className=${`badge-toggle-item ${enabled ? "is-on" : ""}`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked=${enabled}
+                                  onChange=${() => toggleBadgeItem(item.id)}
+                                />
+                                <span>${item.label}</span>
+                              </label>
+                            `;
+                          })}
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick=${() => setBadgePreset("all")}
+                            className="rounded-lg px-3 py-1.5 text-xs font-semibold border border-cyan-400/45 bg-cyan-500/10 text-cyan-100"
+                          >
+                            Show All
+                          </button>
+                          <button
+                            onClick=${() => setBadgePreset("minimal")}
+                            className="rounded-lg px-3 py-1.5 text-xs font-semibold border border-slate-500/60 bg-slate-900/70 text-slate-200"
+                          >
+                            Minimal
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-500">
+                          Toggle any field and the badge preview/code updates instantly.
+                        </p>
+                      </div>
+                    </details>
 
                     <details className="badge-code-panel rounded-xl border border-slate-700/70 bg-slate-900/65 p-3">
                       <summary className="cursor-pointer text-sm font-semibold text-slate-200">
