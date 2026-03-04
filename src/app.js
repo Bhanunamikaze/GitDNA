@@ -1357,14 +1357,6 @@ function App() {
       impactScore: result?.achievementImpactScore || 0,
       style: "for-the-badge",
     });
-  const effectiveCompactBadgeUrl =
-    result?.badgeCompactUrl ||
-    buildShieldsBadgeUrl({
-      typeName: result?.typeName || "Developer DNA",
-      confidence: result?.confidence || 0,
-      impactScore: result?.achievementImpactScore || 0,
-      style: "flat-square",
-    });
   const effectiveBadgeMarkdown =
     result?.badgeMarkdown ||
     buildReadmeEmbedSnippet(getBaseUrl(), result?.username || "", {
@@ -1776,32 +1768,21 @@ function App() {
                       <span className="badge-chip-live">Share-Ready</span>
                     </div>
 
-                    <div className="badge-studio-grid">
-                      <div className="badge-preview-wrap rounded-2xl p-4 md:p-5 space-y-4">
-                        <div className="badge-preview-hero rounded-xl p-3">
-                          <div
-                            className="nebula-svg-preview"
-                            dangerouslySetInnerHTML=${{ __html: effectiveNebulaSvg }}
-                          ></div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="badge-row rounded-lg p-2.5">
-                            <span className="badge-row-label">GitHub-safe badge</span>
-                            <img src=${effectiveBadgeUrl} alt="README badge style" className="h-6 w-auto" />
-                          </div>
-                          <div className="badge-row rounded-lg p-2.5">
-                            <span className="badge-row-label">Compact variant</span>
-                            <img
-                              src=${effectiveCompactBadgeUrl}
-                              alt="Compact badge style"
-                              className="h-5 w-auto"
-                            />
-                          </div>
-                        </div>
+                    <div className="badge-preview-wrap rounded-2xl p-4 md:p-5">
+                      <div className="badge-preview-hero rounded-xl p-3">
+                        <div
+                          className="nebula-svg-preview nebula-svg-preview-large"
+                          dangerouslySetInnerHTML=${{ __html: effectiveNebulaSvg }}
+                        ></div>
                       </div>
+                    </div>
 
-                      <div className="space-y-3">
+                    <details className="badge-code-panel rounded-xl border border-slate-700/70 bg-slate-900/65 p-3">
+                      <summary className="cursor-pointer text-sm font-semibold text-slate-200">
+                        Show Embed Code And Copy Options
+                      </summary>
+
+                      <div className="space-y-3 mt-3">
                         <div className="space-y-1.5">
                           <p className="text-sm font-semibold text-slate-200">Markdown (GitHub README)</p>
                           <pre className="badge-code">${effectiveBadgeMarkdown}</pre>
@@ -1880,7 +1861,7 @@ function App() {
                           GitHub README supports markdown/image embeds reliably. Inline SVG hover effects work best in personal sites and docs portals.
                         </p>
                       </div>
-                    </div>
+                    </details>
                   </article>
                 </${motion.section}>
               `
