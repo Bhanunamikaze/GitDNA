@@ -3,250 +3,62 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GitDNA - Discover Your Developer DNA</title>
+    <title>GitDNA | Developer Identity Scanner</title>
     <meta
       name="description"
-      content="Discover your GitHub Developer DNA from public activity with deterministic, explainable scoring."
+      content="Scan your GitHub and reveal your developer DNA with an interactive constellation experience."
     />
-    <meta property="og:title" content="GitDNA - Discover Your Developer DNA" />
+    <meta property="og:title" content="GitDNA | Developer Identity Scanner" />
     <meta
       property="og:description"
-      content="Analyze public GitHub activity, unlock achievements, and share your Developer DNA card."
+      content="Your GitHub commit history has a personality. Scan and reveal your developer DNA."
     />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="./assets/og-default.svg" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="GitDNA - Discover Your Developer DNA" />
+    <meta name="twitter:title" content="GitDNA | Developer Identity Scanner" />
     <meta
       name="twitter:description"
-      content="Deterministic GitHub personality scoring with 100 collectible DNA types."
+      content="Interactive GitHub DNA scanner with constellation visualization and shareable personality badge."
     />
     <meta name="twitter:image" content="./assets/og-default.svg" />
-    <link rel="stylesheet" href="./styles.css" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              cosmic: {
+                950: "#050B16",
+                900: "#0B1626",
+                800: "#12243B",
+                700: "#1D3654"
+              },
+              neon: {
+                cyan: "#22D3EE",
+                teal: "#14B8A6",
+                violet: "#8B5CF6",
+                amber: "#F59E0B"
+              }
+            },
+            boxShadow: {
+              glow: "0 0 24px rgba(34,211,238,0.28)",
+              soft: "0 10px 34px rgba(15,23,42,0.18)"
+            },
+            fontFamily: {
+              display: ["Space Grotesk", "ui-sans-serif", "system-ui"],
+              body: ["IBM Plex Sans", "ui-sans-serif", "system-ui"],
+              mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular"]
+            }
+          }
+        }
+      };
+    </script>
+    <link rel="stylesheet" href="./src/app.css" />
   </head>
-  <body class="page-home">
-    <a class="skip-link" href="#analyze-form">Skip to analysis form</a>
-    <div class="background-grid" aria-hidden="true"></div>
-
-    <header class="hero-shell">
-      <nav class="top-nav">
-        <a class="brand" href="./index.html">GitDNA</a>
-        <div class="nav-actions">
-          <a class="button-link button-ghost" href="./codex.html">Explore DNA Codex</a>
-          <a
-            class="button-link"
-            href="https://github.com"
-            target="_blank"
-            rel="noreferrer noopener"
-            >Star Repo</a
-          >
-        </div>
-      </nav>
-
-      <div class="hero-grid">
-        <div>
-          <p class="eyebrow">Open source | 100% free | GitHub-native</p>
-          <h1>Your commit history has a personality. Reveal it.</h1>
-          <p class="subhead">
-            GitDNA turns public GitHub activity into an explainable identity profile with
-            100 collectible DNA types, achievements, and share cards.
-          </p>
-          <div class="hero-chips" aria-hidden="true">
-            <span>100 DNA Types</span>
-            <span>Deterministic Scoring</span>
-            <span>Shareable Cards</span>
-          </div>
-        </div>
-
-        <div class="hero-orb" aria-hidden="true">
-          <div class="orb-ring ring-a"></div>
-          <div class="orb-ring ring-b"></div>
-          <div class="orb-core">DNA</div>
-        </div>
-      </div>
-    </header>
-
-    <main class="layout">
-      <section class="panel controls">
-        <h2>Discover Your GitHub DNA</h2>
-        <form id="analyze-form" novalidate>
-          <label for="username-input">GitHub Username</label>
-          <input
-            id="username-input"
-            name="username"
-            type="text"
-            placeholder="torvalds"
-            autocomplete="off"
-            required
-          />
-
-          <div class="button-row">
-            <button type="submit" id="analyze-button">Scan My GitHub</button>
-            <button type="button" id="demo-button" class="button-secondary">
-              Try Demo Profile
-            </button>
-            <a class="button-link button-ghost" href="./codex.html">Open DNA Codex</a>
-          </div>
-
-          <details class="token-help">
-            <summary>Use token for instant results</summary>
-            <label for="pat-input">Optional GitHub Token (PAT)</label>
-            <input
-              id="pat-input"
-              name="pat"
-              type="password"
-              placeholder="github_pat_..."
-              autocomplete="off"
-            />
-            <p>
-              GitHub unauthenticated API is limited. Paste a PAT for reliable live analysis.
-              Stored only for this tab session.
-              <a
-                href="https://github.com/settings/tokens/new"
-                target="_blank"
-                rel="noreferrer noopener"
-                >Create token</a
-              >.
-            </p>
-          </details>
-        </form>
-      </section>
-
-      <section class="panel status-panel">
-        <div id="status-banner" class="status hidden" role="status"></div>
-        <div id="loading-panel" class="loading hidden" aria-live="polite">
-          <p class="loading-title">Scanning profile...</p>
-          <div class="helix-wrap" aria-hidden="true">
-            <div class="helix helix-a"></div>
-            <div class="helix helix-b"></div>
-          </div>
-          <p id="loading-stage">Preparing analysis engine</p>
-          <div class="skeleton-row"></div>
-          <div class="skeleton-row"></div>
-          <div class="skeleton-row short"></div>
-        </div>
-      </section>
-
-      <section id="error-panel" class="panel error hidden" role="alert">
-        <h2 id="error-title">Unable to analyze profile</h2>
-        <p id="error-message"></p>
-      </section>
-
-      <section id="result-panel" class="panel result hidden">
-        <div class="result-header">
-          <p id="result-mode" class="pill">Live Analysis</p>
-          <a
-            class="star-link"
-            href="https://github.com"
-            target="_blank"
-            rel="noreferrer noopener"
-            >Star on GitHub</a
-          >
-        </div>
-
-        <div class="identity-row">
-          <div class="identity-crest">
-            <div id="character-preview" class="character-preview" aria-hidden="true"></div>
-            <p class="crest-label">DNA Crest</p>
-          </div>
-          <div>
-            <h2 id="result-username">@username</h2>
-            <p class="type-name" id="result-type-name">Type Name</p>
-            <p class="type-alias" id="result-alias-name">Alias Name</p>
-            <p id="result-flavor" class="flavor"></p>
-          </div>
-        </div>
-
-        <div class="confidence-row">
-          <label for="confidence-meter">Confidence</label>
-          <progress id="confidence-meter" max="100" value="0"></progress>
-          <span id="confidence-label">0%</span>
-        </div>
-
-        <article class="constellation-panel">
-          <h3>GitHub Signal Constellation</h3>
-          <p class="hint">Click glowing nodes to inspect how each signal shaped your DNA.</p>
-          <div id="constellation-map" class="constellation-map"></div>
-          <p id="constellation-detail" class="constellation-detail hint">
-            Select any signal node to inspect details.
-          </p>
-        </article>
-
-        <section class="result-highlight">
-          <article class="highlight-card">
-            <h3>Impact Score</h3>
-            <p id="impact-score-label" class="impact-score">0</p>
-            <div class="impact-track" aria-hidden="true">
-              <div id="impact-score-fill" class="impact-fill"></div>
-            </div>
-            <p class="hint">Derived from unlocked badges and combo achievements.</p>
-          </article>
-          <article class="highlight-card">
-            <h3>Collection</h3>
-            <p id="badge-count-label" class="impact-score">0 badges</p>
-            <p class="hint">
-              Build your profile over time and unlock stronger identity tiers.
-            </p>
-          </article>
-        </section>
-
-        <div class="columns">
-          <article>
-            <h3>Top Traits</h3>
-            <ul id="traits-list"></ul>
-          </article>
-          <article>
-            <h3>Counter Traits</h3>
-            <ul id="counter-traits-list"></ul>
-          </article>
-          <article>
-            <h3>Top Alternatives</h3>
-            <ul id="alternatives-list"></ul>
-          </article>
-        </div>
-
-        <article class="metrics">
-          <h3>Metric Breakdown</h3>
-          <p class="hint">
-            Visual chart layers will be added next. Table fallback is included for accessibility
-            and transparency.
-          </p>
-          <table id="metrics-table">
-            <thead>
-              <tr>
-                <th scope="col">Metric</th>
-                <th scope="col">Value</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </article>
-
-        <article class="a11y-summary">
-          <h3>Accessibility Summary</h3>
-          <p id="a11y-summary-text" class="hint"></p>
-        </article>
-
-        <article>
-          <h3>Achievement Badges</h3>
-          <div id="achievement-badge-grid" class="badge-grid"></div>
-          <h3>Progress To Next Tier</h3>
-          <div id="achievement-progress-grid" class="progress-grid"></div>
-
-          <div class="button-row share-row">
-            <button id="share-card-button" type="button">Download Share Card</button>
-            <button id="copy-embed-button" type="button" class="button-secondary">
-              Copy README Embed
-            </button>
-            <a id="codex-link-button" class="button-link button-ghost" href="./codex.html"
-              >See This Type in Codex</a
-            >
-          </div>
-          <p id="embed-snippet" class="hint code-hint"></p>
-        </article>
-      </section>
-    </main>
-
-    <script type="module" src="./src/main.js"></script>
+  <body class="font-body bg-slate-950 text-slate-100 min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="./src/app.js"></script>
   </body>
 </html>

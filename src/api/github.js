@@ -207,6 +207,7 @@ export async function fetchLiveProfile(
       user: {
         login: userResult.data.login,
         name: userResult.data.name || userResult.data.login,
+        avatarUrl: userResult.data.avatar_url || "",
         followers: userResult.data.followers || 0,
         publicRepos: userResult.data.public_repos || 0,
       },
