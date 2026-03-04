@@ -54,7 +54,12 @@ export function createRenderer() {
     counterTraits: document.querySelector("#counter-traits-list"),
     alternatives: document.querySelector("#alternatives-list"),
     achievements: document.querySelector("#achievement-list"),
+    achievementProgress: document.querySelector("#achievement-progress-list"),
     metricsTableBody: document.querySelector("#metrics-table tbody"),
+    codexSearch: document.querySelector("#codex-search"),
+    codexRarity: document.querySelector("#codex-rarity"),
+    codexCount: document.querySelector("#codex-count"),
+    codexGrid: document.querySelector("#codex-grid"),
   };
 
   function setStatus(text, kind = "info") {
@@ -115,6 +120,17 @@ export function createRenderer() {
       payload.top3?.map((entry) => entry.replace(/_/g, " ")) || []
     );
     renderList(elements.achievements, payload.achievements || []);
+    renderList(
+      elements.achievementProgress,
+      (payload.achievement_progress || []).map((item) => {
+        if (item.nextTier === "Maxed") {
+          return `${item.label}: Maxed`;
+        }
+        const current = Math.round(item.value * 100);
+        const target = Math.round(item.nextThreshold * 100);
+        return `${item.label}: ${current}% -> ${item.nextTier} at ${target}%`;
+      })
+    );
     renderMetricsTable(elements.metricsTableBody, payload.metrics || {});
 
     setHidden(elements.resultPanel, false);
@@ -128,5 +144,6 @@ export function createRenderer() {
     showError,
     hideError,
     showResult,
+    elements,
   };
 }

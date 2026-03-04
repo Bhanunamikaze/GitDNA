@@ -34,8 +34,8 @@ Status legend:
 
 ## Phase 3: Engagement Layer
 - [x] Implement achievements engine (24 base tiers + combo badges).
-- [-] Render achievements with progress-to-next thresholds.
-- [ ] Add DNA Codex page for all 100 types (search/filter).
+- [x] Render achievements with progress-to-next thresholds.
+- [x] Add DNA Codex page for all 100 types (search/filter).
 - [ ] Add character placeholder system (type-based mapping).
 - [ ] Add share card export v1 (PNG or SVG-based).
 

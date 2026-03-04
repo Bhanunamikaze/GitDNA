@@ -151,7 +151,34 @@
         <article>
           <h3>Achievements</h3>
           <ul id="achievement-list"></ul>
+          <h3>Progress To Next</h3>
+          <ul id="achievement-progress-list"></ul>
         </article>
+      </section>
+
+      <section id="codex-panel" class="panel codex">
+        <h2>DNA Codex (100 Types)</h2>
+        <p class="hint">
+          Search and explore all generated types. This powers collectible-style
+          progression.
+        </p>
+        <div class="codex-controls">
+          <input
+            id="codex-search"
+            type="search"
+            placeholder="Search by type, alias, archetype, or modifier"
+            autocomplete="off"
+          />
+          <select id="codex-rarity">
+            <option value="all">All Rarities</option>
+            <option value="Common">Common</option>
+            <option value="Rare">Rare</option>
+            <option value="Legendary">Legendary</option>
+            <option value="Mythic">Mythic</option>
+          </select>
+        </div>
+        <p id="codex-count" class="hint"></p>
+        <div id="codex-grid" class="codex-grid"></div>
       </section>
     </main>
 

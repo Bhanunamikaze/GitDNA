@@ -274,6 +274,69 @@ th {
   display: none;
 }
 
+.codex-controls {
+  display: grid;
+  grid-template-columns: 1fr minmax(160px, 220px);
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.codex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.7rem;
+}
+
+.codex-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.7rem;
+  background: #fff;
+}
+
+.codex-card h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.codex-card .alias {
+  margin: 0;
+  color: #1d4ed8;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.codex-card .meta {
+  margin: 0.25rem 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.codex-card .rarity {
+  display: inline-block;
+  margin-top: 0.2rem;
+  padding: 0.22rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.rarity-common {
+  background: #e2e8f0;
+}
+
+.rarity-rare {
+  background: #dbeafe;
+}
+
+.rarity-legendary {
+  background: #fef3c7;
+}
+
+.rarity-mythic {
+  background: #fee2e2;
+}
+
 @media (max-width: 720px) {
   .app-header {
     margin-top: 1.5rem;
@@ -281,5 +344,9 @@ th {
 
   .panel {
     padding: 0.9rem;
+  }
+
+  .codex-controls {
+    grid-template-columns: 1fr;
   }
 }

@@ -4,12 +4,14 @@ import { resolveType } from "./analysis/scoring.js";
 import { fetchLiveProfile, hasInsufficientData } from "./api/github.js";
 import { ANALYSIS_VERSION, DEMO_PROFILES } from "./config.js";
 import { getCachedAnalysis, setCachedAnalysis } from "./state/cache.js";
+import { createCodexController } from "./ui/codex.js";
 import { createRenderer } from "./ui/render.js";
 import { prettifyKey } from "./utils/format.js";
 
 const state = {
   centroids: null,
   types: null,
+  codex: null,
 };
 
 const ui = createRenderer();
@@ -40,6 +42,7 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
     traits: scoring.drivers.map((key) => `${key} Alignment`),
     counter_traits: scoring.suppressors.map((key) => `${key} Gap`),
     achievements: achievementLabels,
+    achievement_progress: achievementData.progress,
     metrics: metricsResult.metrics,
     partial_data: options.partialData || false,
     is_demo: options.isDemo || false,
@@ -140,11 +143,15 @@ async function init() {
 
   state.centroids = centroids;
   state.types = types;
+  state.codex = createCodexController(ui.elements, types);
+  state.codex.render();
 
   const form = document.querySelector("#analyze-form");
   const usernameInput = document.querySelector("#username-input");
   const patInput = document.querySelector("#pat-input");
   const demoButton = document.querySelector("#demo-button");
+  const codexSearch = ui.elements.codexSearch;
+  const codexRarity = ui.elements.codexRarity;
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -163,6 +170,14 @@ async function init() {
   demoButton.addEventListener("click", async () => {
     ui.hideError();
     await loadDemoProfile(getSelectedDemoProfile());
+  });
+
+  codexSearch.addEventListener("input", () => {
+    state.codex.render(codexSearch.value.trim(), codexRarity.value);
+  });
+
+  codexRarity.addEventListener("change", () => {
+    state.codex.render(codexSearch.value.trim(), codexRarity.value);
   });
 
   ui.setLoading(false);
