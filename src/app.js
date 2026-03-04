@@ -14,7 +14,11 @@ import {
   UNAUTH_FETCH_LIMITS,
 } from "./config.js";
 import { setCharacterConfig, buildCharacterSvg } from "./ui/character.js";
-import { buildReadmeEmbedSnippet } from "./ui/shareCard.js";
+import {
+  buildProfileUrl,
+  buildReadmeEmbedSnippet,
+  buildShieldsBadgeUrl,
+} from "./ui/shareCard.js";
 
 const html = htm.bind(React.createElement);
 
@@ -351,6 +355,19 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
   const confidence = options.lowConfidence
     ? Math.min(scoring.confidence, 0.35)
     : scoring.confidence;
+  const profileUrl = buildProfileUrl(baseUrl, profile.username);
+  const badgeImageUrl = buildShieldsBadgeUrl({
+    typeName: scoring.typeName,
+    confidence,
+    impactScore: summary.impactScore,
+    style: "for-the-badge",
+  });
+  const badgeCompactUrl = buildShieldsBadgeUrl({
+    typeName: scoring.typeName,
+    confidence,
+    impactScore: summary.impactScore,
+    style: "flat-square",
+  });
 
   return {
     username: profile.username,
@@ -370,11 +387,37 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
     achievementLabels: summary.labels,
     isDemo: options.isDemo || false,
     partialData: options.partialData || false,
-    badgeMarkdown: buildReadmeEmbedSnippet(baseUrl, profile.username),
+    profileUrl,
+    badgeImageUrl,
+    badgeCompactUrl,
+    badgeMarkdown: buildReadmeEmbedSnippet(baseUrl, profile.username, {
+      typeName: scoring.typeName,
+      confidence,
+      impactScore: summary.impactScore,
+      style: "for-the-badge",
+    }),
   };
 }
 
 function scoreFromDemoPayload(demoPayload) {
+  const baseUrl = getBaseUrl();
+  const impactScore =
+    demoPayload.achievement_impact_score ||
+    (demoPayload.achievements || []).length * 10;
+  const profileUrl = buildProfileUrl(baseUrl, demoPayload.username);
+  const badgeImageUrl = buildShieldsBadgeUrl({
+    typeName: demoPayload.type_name,
+    confidence: demoPayload.confidence,
+    impactScore,
+    style: "for-the-badge",
+  });
+  const badgeCompactUrl = buildShieldsBadgeUrl({
+    typeName: demoPayload.type_name,
+    confidence: demoPayload.confidence,
+    impactScore,
+    style: "flat-square",
+  });
+
   return {
     username: demoPayload.username,
     avatarUrl: `https://github.com/${demoPayload.username}.png?size=160`,
@@ -396,13 +439,19 @@ function scoreFromDemoPayload(demoPayload) {
           type: "fallback",
         })),
     achievementProgress: demoPayload.achievement_progress || [],
-    achievementImpactScore:
-      demoPayload.achievement_impact_score ||
-      (demoPayload.achievements || []).length * 10,
+    achievementImpactScore: impactScore,
     achievementLabels: demoPayload.achievements || [],
     isDemo: true,
     partialData: false,
-    badgeMarkdown: buildReadmeEmbedSnippet(getBaseUrl(), demoPayload.username),
+    profileUrl,
+    badgeImageUrl,
+    badgeCompactUrl,
+    badgeMarkdown: buildReadmeEmbedSnippet(baseUrl, demoPayload.username, {
+      typeName: demoPayload.type_name,
+      confidence: demoPayload.confidence,
+      impactScore,
+      style: "for-the-badge",
+    }),
   };
 }
 
@@ -1176,12 +1225,24 @@ function App() {
   };
 
   const copyBadgeMarkdown = async () => {
-    if (!result?.badgeMarkdown) {
+    if (!effectiveBadgeMarkdown) {
       return;
     }
     try {
-      await navigator.clipboard.writeText(result.badgeMarkdown);
+      await navigator.clipboard.writeText(effectiveBadgeMarkdown);
       setStatus({ kind: "success", text: "Markdown badge copied." });
+    } catch {
+      setStatus({ kind: "warning", text: "Clipboard blocked. Copy manually." });
+    }
+  };
+
+  const copyBadgeUrl = async () => {
+    if (!effectiveBadgeUrl) {
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(effectiveBadgeUrl);
+      setStatus({ kind: "success", text: "Badge URL copied." });
     } catch {
       setStatus({ kind: "warning", text: "Clipboard blocked. Copy manually." });
     }
@@ -1207,6 +1268,34 @@ function App() {
     .replace(/_/g, "-")
     .toUpperCase();
   const achievementPreview = (result?.achievementBadges || []).slice(0, 3);
+  const effectiveProfileUrl = result?.profileUrl || buildProfileUrl(getBaseUrl(), result?.username || "");
+  const effectiveBadgeUrl =
+    result?.badgeImageUrl ||
+    buildShieldsBadgeUrl({
+      typeName: result?.typeName || "Developer DNA",
+      confidence: result?.confidence || 0,
+      impactScore: result?.achievementImpactScore || 0,
+      style: "for-the-badge",
+    });
+  const effectiveCompactBadgeUrl =
+    result?.badgeCompactUrl ||
+    buildShieldsBadgeUrl({
+      typeName: result?.typeName || "Developer DNA",
+      confidence: result?.confidence || 0,
+      impactScore: result?.achievementImpactScore || 0,
+      style: "flat-square",
+    });
+  const effectiveBadgeMarkdown =
+    result?.badgeMarkdown ||
+    buildReadmeEmbedSnippet(getBaseUrl(), result?.username || "", {
+      typeName: result?.typeName || "Developer DNA",
+      confidence: result?.confidence || 0,
+      impactScore: result?.achievementImpactScore || 0,
+      style: "for-the-badge",
+    });
+  const cardMarkdown = result
+    ? `[![GitDNA Card](${getBaseUrl()}/data/cards/${result.username}.svg)](${effectiveProfileUrl})`
+    : "";
 
   return html`
     <div className="relative min-h-screen overflow-x-clip">
@@ -1579,37 +1668,107 @@ function App() {
                     </div>
                   </article>
 
-                  <article className="glass-panel rounded-3xl p-6 md:p-8 space-y-5">
-                    <div>
-                      <h3 className="font-display text-2xl font-bold">Your GitHub DNA Badge</h3>
-                      <p className="text-slate-300 mt-1">
-                        Add this badge to your profile README and link back to GitDNA.
-                      </p>
-                    </div>
-
-                    <div className="badge-card rounded-2xl p-4 md:p-5 flex flex-wrap items-center justify-between gap-4">
+                  <article className="glass-panel badge-shell rounded-3xl p-6 md:p-8 space-y-5">
+                    <div className="flex flex-wrap items-end justify-between gap-3">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.14em] text-cyan-300">GitDNA Profile</p>
-                        <p className="font-display text-2xl font-bold text-white">${result.typeName}</p>
-                        <p className="text-cyan-200">${result.aliasName}</p>
+                        <h3 className="font-display text-2xl font-bold">Your GitHub DNA Badge</h3>
+                        <p className="text-slate-300 mt-1">
+                          Profile-ready badge that looks good in README and links to your DNA reveal.
+                        </p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm text-slate-300">Impact Score</p>
-                        <p className="font-mono text-2xl text-amber-300">${result.achievementImpactScore}</p>
-                      </div>
+                      <span className="badge-chip-live">Share-Ready</span>
                     </div>
 
-                    <div className="space-y-2">
-                      <p className="text-sm font-semibold text-slate-200">Markdown</p>
-                      <pre className="rounded-xl border border-slate-700 bg-slate-900/75 p-3 text-xs md:text-sm overflow-auto text-cyan-100">${result.badgeMarkdown}</pre>
-                    </div>
+                    <div className="badge-studio-grid">
+                      <div className="badge-preview-wrap rounded-2xl p-4 md:p-5 space-y-4">
+                        <div className="badge-preview-hero rounded-xl p-4">
+                          <p className="text-xs uppercase tracking-[0.12em] text-cyan-200">
+                            GitDNA Signature Badge
+                          </p>
+                          <p className="font-display text-2xl font-bold text-white mt-2">
+                            ${result.typeName}
+                          </p>
+                          <p className="text-cyan-100 text-sm">${result.aliasName}</p>
+                          <div className="mt-4 inline-flex rounded-lg border border-cyan-300/35 bg-slate-950/70 px-3 py-2">
+                            <img
+                              src=${effectiveBadgeUrl}
+                              alt="GitDNA badge preview"
+                              className="h-7 md:h-8 w-auto"
+                            />
+                          </div>
+                        </div>
 
-                    <button
-                      onClick=${copyBadgeMarkdown}
-                      className="rounded-xl px-4 py-3 font-semibold bg-gradient-to-r from-violet-500 to-cyan-500 text-slate-950"
-                    >
-                      Copy Markdown Badge
-                    </button>
+                        <div className="space-y-2">
+                          <div className="badge-row rounded-lg p-2.5">
+                            <span className="badge-row-label">README Badge</span>
+                            <img src=${effectiveBadgeUrl} alt="README badge style" className="h-6 w-auto" />
+                          </div>
+                          <div className="badge-row rounded-lg p-2.5">
+                            <span className="badge-row-label">Compact Variant</span>
+                            <img
+                              src=${effectiveCompactBadgeUrl}
+                              alt="Compact badge style"
+                              className="h-5 w-auto"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="space-y-1.5">
+                          <p className="text-sm font-semibold text-slate-200">Markdown (Recommended)</p>
+                          <pre className="badge-code">${effectiveBadgeMarkdown}</pre>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <p className="text-sm font-semibold text-slate-200">Direct Badge URL</p>
+                          <pre className="badge-code">${effectiveBadgeUrl}</pre>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <p className="text-sm font-semibold text-slate-200">Profile Link</p>
+                          <pre className="badge-code">${effectiveProfileUrl}</pre>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2.5">
+                          <button
+                            onClick=${copyBadgeMarkdown}
+                            className="rounded-xl px-4 py-2.5 text-sm font-semibold bg-gradient-to-r from-violet-500 to-cyan-500 text-slate-950"
+                          >
+                            Copy Markdown
+                          </button>
+                          <button
+                            onClick=${copyBadgeUrl}
+                            className="rounded-xl px-4 py-2.5 text-sm font-semibold border border-cyan-400/45 bg-cyan-500/10 text-cyan-100"
+                          >
+                            Copy Badge URL
+                          </button>
+                          <a
+                            href=${effectiveBadgeUrl}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            className="rounded-xl px-4 py-2.5 text-sm font-semibold border border-slate-500/60 bg-slate-900/70 text-slate-100"
+                          >
+                            Open Badge
+                          </a>
+                          <a
+                            href=${effectiveProfileUrl}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            className="rounded-xl px-4 py-2.5 text-sm font-semibold border border-emerald-400/45 bg-emerald-500/10 text-emerald-100"
+                          >
+                            Open DNA Profile
+                          </a>
+                        </div>
+
+                        <details className="rounded-xl border border-slate-700/70 bg-slate-900/65 p-3">
+                          <summary className="cursor-pointer text-sm font-semibold text-slate-200">
+                            Optional static card markdown
+                          </summary>
+                          <pre className="badge-code mt-3">${cardMarkdown}</pre>
+                        </details>
+                      </div>
+                    </div>
                   </article>
                 </${motion.section}>
               `

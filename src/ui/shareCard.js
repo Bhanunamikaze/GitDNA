@@ -67,7 +67,63 @@ export function downloadSvg(filename, svgString) {
   URL.revokeObjectURL(url);
 }
 
-export function buildReadmeEmbedSnippet(baseUrl, username) {
-  const clean = (username || "").trim();
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function sanitizeBadgeChunk(value) {
+  return encodeURIComponent(String(value || "").trim().replace(/\s+/g, " "));
+}
+
+function pickBadgeColor({ confidence = 0, impactScore = 0 } = {}) {
+  const conf = clamp(Number(confidence || 0), 0, 1);
+  const impact = Math.max(0, Number(impactScore || 0));
+  if (conf >= 0.84 || impact >= 180) {
+    return "06b6d4";
+  }
+  if (conf >= 0.68 || impact >= 120) {
+    return "14b8a6";
+  }
+  if (conf >= 0.45 || impact >= 70) {
+    return "f59e0b";
+  }
+  return "64748b";
+}
+
+export function buildShieldsBadgeUrl({
+  typeName = "Developer DNA",
+  confidence = 0,
+  impactScore = 0,
+  style = "for-the-badge",
+} = {}) {
+  const label = sanitizeBadgeChunk("GitDNA");
+  const message = sanitizeBadgeChunk(typeName || "Developer DNA");
+  const color = pickBadgeColor({ confidence, impactScore });
+  const badgeStyle = sanitizeBadgeChunk(style || "for-the-badge");
+  return `https://img.shields.io/badge/${label}-${message}-${color}?style=${badgeStyle}&logo=github&logoColor=white&labelColor=0b1220`;
+}
+
+export function buildProfileUrl(baseUrl, username) {
+  const clean = (username || "").trim().replace(/^@/, "");
+  if (!clean) {
+    return baseUrl;
+  }
+  return `${baseUrl}/?user=${encodeURIComponent(clean)}`;
+}
+
+export function buildReadmeEmbedSnippet(baseUrl, username, options = {}) {
+  const clean = (username || "").trim().replace(/^@/, "");
+  const profileUrl = buildProfileUrl(baseUrl, clean);
+
+  if (options?.typeName) {
+    const badgeUrl = buildShieldsBadgeUrl({
+      typeName: options.typeName,
+      confidence: options.confidence,
+      impactScore: options.impactScore,
+      style: options.style || "for-the-badge",
+    });
+    return `[![GitDNA · ${options.typeName}](${badgeUrl})](${profileUrl})`;
+  }
+
   return `![My GitDNA](${baseUrl}/data/cards/${clean}.svg)`;
 }
