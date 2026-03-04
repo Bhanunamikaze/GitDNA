@@ -952,6 +952,56 @@ function metricPercent(value) {
   return Math.round(clamp(Number(value || 0), 0, 1) * 100);
 }
 
+function topSignals(metrics, limit = 3) {
+  return [...SIGNAL_CONFIG]
+    .map((signal) => ({
+      key: signal.key,
+      label: signal.label,
+      description: signal.description,
+      detail: signal.detail,
+      value: clamp(Number(metrics?.[signal.key] || 0), 0, 1),
+    }))
+    .sort((left, right) => right.value - left.value)
+    .slice(0, limit);
+}
+
+function confidenceMeta(confidence) {
+  if (confidence >= 0.84) {
+    return {
+      label: "High Certainty",
+      hint: "Signal alignment is very strong across multiple behavioral traits.",
+    };
+  }
+  if (confidence >= 0.66) {
+    return {
+      label: "Stable Match",
+      hint: "Most core signals align with this DNA profile and archetype style.",
+    };
+  }
+  return {
+    label: "Emerging Match",
+    hint: "Your public signal set is still forming. More activity will sharpen this profile.",
+  };
+}
+
+function buildRevealNarrative(profileResult, strongestSignals) {
+  if (!profileResult) {
+    return {
+      primary: "",
+      secondary: "",
+    };
+  }
+
+  const first = strongestSignals[0]?.label || "Core Signal";
+  const second = strongestSignals[1]?.label || "Identity Signal";
+  const modeText = profileResult.isDemo ? "demo simulation" : "live GitHub activity";
+  return {
+    primary: `${profileResult.aliasName} emerged from ${modeText}, led by ${first} and reinforced by ${second}.`,
+    secondary:
+      "This profile card summarizes your coding rhythm, signal intensity, and likely long-run collaboration style.",
+  };
+}
+
 function App() {
   const [username, setUsername] = useState("");
   const [phase, setPhase] = useState("landing");
@@ -1146,6 +1196,18 @@ function App() {
           ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-100"
           : "border-cyan-400/40 bg-cyan-500/10 text-cyan-100";
 
+  const revealSignals = useMemo(
+    () => (result ? topSignals(result.metrics, 3) : []),
+    [result]
+  );
+  const confidencePct = Math.round((result?.confidence || 0) * 100);
+  const confidenceInfo = confidenceMeta(result?.confidence || 0);
+  const revealNarrative = buildRevealNarrative(result, revealSignals);
+  const dnaSignature = String(result?.typeId || "unknown_type")
+    .replace(/_/g, "-")
+    .toUpperCase();
+  const achievementPreview = (result?.achievementBadges || []).slice(0, 3);
+
   return html`
     <div className="relative min-h-screen overflow-x-clip">
       <${NebulaDnaBackground} />
@@ -1272,64 +1334,144 @@ function App() {
                   exit=${{ opacity: 0, y: 12 }}
                   className="space-y-6"
                 >
-                  <article className="glass-panel rounded-3xl p-6 md:p-8 space-y-6">
+                  <article className="glass-panel dna-reveal-shell rounded-3xl p-6 md:p-8 space-y-6">
                     <div className="flex flex-wrap items-center justify-between gap-3">
-                      <p className="text-xs uppercase tracking-[0.14em] text-cyan-300/85">
-                        DNA Reveal
-                      </p>
-                      <a
-                        href="https://github.com"
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className="text-sm font-semibold text-cyan-300"
-                      >
-                        Star on GitHub
-                      </a>
-                    </div>
-
-                    <div className="grid gap-6 md:grid-cols-[130px_1fr] items-center">
-                      <div className="relative">
-                        <div
-                          className="h-28 w-28 rounded-[2rem] overflow-hidden border border-cyan-300/45 shadow-glow"
-                          dangerouslySetInnerHTML=${{
-                            __html: buildCharacterSvg(result.typeId, result.typeName),
-                          }}
-                        ></div>
-                        <img
-                          src=${result.avatarUrl}
-                          alt=${`${result.username} avatar`}
-                          className="absolute -bottom-2 -right-2 h-10 w-10 rounded-full border border-cyan-300/50"
-                        />
-                      </div>
-
                       <div>
-                        <p className="text-slate-300 text-sm">@${result.username}</p>
-                        <h2 className="font-display text-3xl md:text-4xl font-bold text-white">
-                          ${result.typeName}
-                        </h2>
-                        <p className="text-cyan-300 text-lg font-semibold">${result.aliasName}</p>
-                        <p className="text-slate-300 mt-2 max-w-3xl">${result.flavorText}</p>
+                        <p className="text-xs uppercase tracking-[0.14em] text-cyan-300/85">
+                          DNA Reveal
+                        </p>
+                        <p className="text-xs text-slate-400 mt-1">
+                          Developer identity profile generated from GitHub behavior.
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className=${`reveal-chip ${result.isDemo ? "is-demo" : "is-live"}`}>
+                          ${result.isDemo ? "Demo Analysis" : "Live Analysis"}
+                        </span>
+                        ${result.partialData
+                          ? html`<span className="reveal-chip is-partial">Partial Data</span>`
+                          : null}
+                        <a
+                          href="https://github.com"
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="text-sm font-semibold text-cyan-300"
+                        >
+                          Star on GitHub
+                        </a>
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-slate-300">Confidence</span>
-                        <span className="font-mono text-cyan-200">${Math.round(result.confidence * 100)}%</span>
-                      </div>
-                      <div className="h-3 rounded-full bg-slate-700/70 overflow-hidden">
-                        <${motion.div}
-                          initial=${{ width: 0 }}
-                          animate=${{ width: `${Math.round(result.confidence * 100)}%` }}
-                          transition=${{ duration: 1.2, ease: "easeOut" }}
-                          className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-teal-400 to-amber-300"
-                        />
-                      </div>
-                    </div>
+                    <div className="dna-reveal-grid">
+                      <div className="dna-id-card rounded-2xl p-4 md:p-5 space-y-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-[11px] uppercase tracking-[0.11em] text-slate-300">
+                            Developer Identity Card
+                          </p>
+                          <p className="text-[11px] font-mono text-cyan-200">ID ${dnaSignature}</p>
+                        </div>
 
-                    <div className="reveal-orbit" aria-hidden="true">
-                      <span className="ring"></span>
-                      <span className="ring ring-2"></span>
+                        <div className="relative mx-auto h-44 w-44 dna-avatar-shell">
+                          <div
+                            className="h-full w-full rounded-[2rem] overflow-hidden border border-cyan-300/45 shadow-glow"
+                            dangerouslySetInnerHTML=${{
+                              __html: buildCharacterSvg(result.typeId, result.typeName),
+                            }}
+                          ></div>
+                          <img
+                            src=${result.avatarUrl}
+                            alt=${`${result.username} avatar`}
+                            className="absolute -bottom-3 -right-3 h-14 w-14 rounded-full border-2 border-cyan-300/60 shadow-[0_0_18px_rgba(34,211,238,0.35)]"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <p className="text-sm text-slate-300">@${result.username}</p>
+                          <h2 className="font-display text-2xl md:text-3xl font-bold text-white">
+                            ${result.typeName}
+                          </h2>
+                          <p className="text-cyan-300 font-semibold">${result.aliasName}</p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="dna-mini-stat rounded-lg p-2">
+                            <p className="text-[11px] uppercase tracking-[0.09em] text-slate-400">
+                              Confidence
+                            </p>
+                            <p className="font-mono text-lg text-cyan-200">${confidencePct}%</p>
+                          </div>
+                          <div className="dna-mini-stat rounded-lg p-2">
+                            <p className="text-[11px] uppercase tracking-[0.09em] text-slate-400">
+                              Impact
+                            </p>
+                            <p className="font-mono text-lg text-amber-300">
+                              ${result.achievementImpactScore}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-[11px] uppercase tracking-[0.12em] text-violet-200">
+                            Profile Interpretation
+                          </p>
+                          <p className="text-slate-200 mt-2 leading-relaxed">${revealNarrative.primary}</p>
+                          <p className="text-slate-300 mt-2 leading-relaxed">${result.flavorText}</p>
+                          <p className="text-slate-400 mt-2 leading-relaxed">${revealNarrative.secondary}</p>
+                        </div>
+
+                        <div className="rounded-xl border border-slate-700/70 bg-slate-900/72 p-4">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-300">Match Confidence</span>
+                            <span className="font-mono text-cyan-200">${confidenceInfo.label}</span>
+                          </div>
+                          <div className="mt-2 h-3 rounded-full bg-slate-700/70 overflow-hidden">
+                            <${motion.div}
+                              initial=${{ width: 0 }}
+                              animate=${{ width: `${confidencePct}%` }}
+                              transition=${{ duration: 1.2, ease: "easeOut" }}
+                              className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-teal-400 to-amber-300"
+                            />
+                          </div>
+                          <p className="mt-2 text-xs text-slate-400">${confidenceInfo.hint}</p>
+                        </div>
+
+                        <div className="grid gap-3 sm:grid-cols-3">
+                          ${revealSignals.map(
+                            (signal) => html`
+                              <div key=${signal.key} className="dna-signal-tile rounded-xl p-3">
+                                <p className="text-[11px] uppercase tracking-[0.09em] text-slate-400">
+                                  ${signal.label}
+                                </p>
+                                <p className="mt-1 font-mono text-2xl text-cyan-200">
+                                  ${metricPercent(signal.value)}%
+                                </p>
+                                <p className="mt-1 text-xs text-slate-400">${signal.description}</p>
+                              </div>
+                            `
+                          )}
+                        </div>
+
+                        ${achievementPreview.length > 0
+                          ? html`
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-xs uppercase tracking-[0.11em] text-slate-400">
+                                  Recent Unlocks
+                                </span>
+                                ${achievementPreview.map(
+                                  (badge) =>
+                                    html`<span
+                                      key=${badge.id || badge.label}
+                                      className="reveal-achievement-chip"
+                                      >${badge.label}</span
+                                    >`
+                                )}
+                              </div>
+                            `
+                          : null}
+                      </div>
                     </div>
                   </article>
 
