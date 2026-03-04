@@ -31,7 +31,7 @@ const SIGNAL_CONFIG = [
     description: "Measures late-hour contribution tendency.",
     detail: "Higher values indicate strong late-night coding windows.",
     angle: -80,
-    orbit: 112,
+    orbit: 132,
     speed: 0.33,
   },
   {
@@ -40,7 +40,7 @@ const SIGNAL_CONFIG = [
     description: "Tracks clustered shipping spikes across repositories.",
     detail: "Captures burst-style output waves instead of uniform pacing.",
     angle: -25,
-    orbit: 146,
+    orbit: 170,
     speed: 0.27,
   },
   {
@@ -49,7 +49,7 @@ const SIGNAL_CONFIG = [
     description: "Represents language diversity across coding activity.",
     detail: "Lower values suggest specialization, higher values imply polyglot behavior.",
     angle: 25,
-    orbit: 178,
+    orbit: 210,
     speed: 0.21,
   },
   {
@@ -58,7 +58,7 @@ const SIGNAL_CONFIG = [
     description: "Derived from contribution influence and repository signal.",
     detail: "Signals shipping weight across repositories, stars, and contribution breadth.",
     angle: 85,
-    orbit: 118,
+    orbit: 140,
     speed: 0.31,
   },
   {
@@ -67,7 +67,7 @@ const SIGNAL_CONFIG = [
     description: "Indicates contribution consistency over time.",
     detail: "Shows how steady your contribution rhythm remains week to week.",
     angle: 145,
-    orbit: 152,
+    orbit: 180,
     speed: 0.24,
   },
   {
@@ -76,7 +76,7 @@ const SIGNAL_CONFIG = [
     description: "Reflects sustained commit cadence and rhythm.",
     detail: "Represents long-run maintainership cadence and release discipline.",
     angle: -145,
-    orbit: 186,
+    orbit: 226,
     speed: 0.19,
   },
 ];
@@ -212,19 +212,19 @@ function scoreFromDemoPayload(demoPayload) {
 
 function useConstellation(metrics) {
   const [graph, setGraph] = useState({
-    width: 900,
-    height: 420,
-    rings: [96, 132, 168, 204],
+    width: 980,
+    height: 520,
+    rings: [116, 164, 212, 260],
     nodes: [],
     links: [],
   });
 
   useEffect(() => {
-    const width = 900;
-    const height = 420;
+    const width = 980;
+    const height = 520;
     const centerX = width / 2;
     const centerY = height / 2;
-    const rings = [96, 132, 168, 204];
+    const rings = [116, 164, 212, 260];
 
     const seededSignals = SIGNAL_CONFIG.map((signal, index) => ({
       ...signal,
@@ -269,7 +269,7 @@ function useConstellation(metrics) {
         },
         ...seededSignals.map((signal) => {
           const value = clamp(Number(metrics?.[signal.key] || 0), 0, 1);
-          const orbit = signal.orbit + Math.sin(seconds * 0.7 + signal.phase) * 6;
+          const orbit = signal.orbit + Math.sin(seconds * 0.7 + signal.phase) * 7;
           const angle =
             signal.baseAngle +
             seconds * signal.speed +
@@ -344,7 +344,7 @@ function ConstellationGraph({ metrics }) {
 
         <svg
           viewBox=${`0 0 ${graph.width} ${graph.height}`}
-          className="relative z-[1] w-full h-[360px] md:h-[420px]"
+          className="relative z-[1] w-full h-[420px] md:h-[520px]"
         >
           <defs>
             <radialGradient id="coreGlow" cx="50%" cy="45%" r="58%">
@@ -390,16 +390,16 @@ function ConstellationGraph({ metrics }) {
           ${graph.nodes.map((node) => {
             if (node.core) {
               return html`<g key="core">
-                <circle cx=${node.x} cy=${node.y} r="58" className="core-aura" />
-                <circle cx=${node.x} cy=${node.y} r="46" className="core-aura core-aura-2" />
-                <circle cx=${node.x} cy=${node.y} r="40" fill="url(#coreGlow)" />
+                <circle cx=${node.x} cy=${node.y} r="74" className="core-aura" />
+                <circle cx=${node.x} cy=${node.y} r="58" className="core-aura core-aura-2" />
+                <circle cx=${node.x} cy=${node.y} r="50" fill="url(#coreGlow)" />
                 <text
                   x=${node.x}
                   y=${node.y + 6}
                   text-anchor="middle"
                   fill="#ecfeff"
                   font-family="JetBrains Mono"
-                  font-size="13"
+                  font-size="15"
                   font-weight="700"
                 >
                   DNA Core
@@ -409,7 +409,7 @@ function ConstellationGraph({ metrics }) {
 
             const pct = Math.round((node.value || 0) * 100);
             const isActive = activeId === node.id;
-            const radius = 15 + Math.round((node.value || 0) * 8);
+            const radius = 24 + Math.round((node.value || 0) * 10);
             return html`<g
               key=${node.id}
               style=${{ cursor: "pointer" }}
@@ -420,7 +420,7 @@ function ConstellationGraph({ metrics }) {
               <circle
                 cx=${node.x}
                 cy=${node.y}
-                r=${radius + (isActive ? 9 : 7)}
+                r=${radius + (isActive ? 12 : 10)}
                 className="signal-pulse"
                 style=${{
                   "--pulse-delay": `${(node.index || 0) * 0.16}s`,
@@ -439,33 +439,38 @@ function ConstellationGraph({ metrics }) {
                 r=${radius}
                 fill=${isActive ? "rgba(15,23,42,0.95)" : "rgba(15,23,42,0.84)"}
                 stroke=${isActive ? "rgba(253,224,71,0.9)" : "rgba(34,211,238,0.72)"}
-                strokeWidth=${isActive ? 2.1 : 1.5}
+                strokeWidth=${isActive ? 2.4 : 1.7}
               />
-              <circle cx=${node.x} cy=${node.y} r="3.2" fill=${isActive ? "#fde68a" : "#22d3ee"} />
+              <circle cx=${node.x} cy=${node.y} r="4.6" fill=${isActive ? "#fde68a" : "#22d3ee"} />
               <text
                 x=${node.x}
-                y=${node.y + 4}
+                y=${node.y + 5}
                 text-anchor="middle"
                 fill=${isActive ? "#fef3c7" : "#a5f3fc"}
-                font-size="11"
+                font-size="14"
                 font-family="JetBrains Mono"
                 font-weight="700"
+                stroke="rgba(2,6,23,0.88)"
+                stroke-width="1.5"
+                paint-order="stroke"
               >
-                ${pct}
+                ${pct}%
               </text>
-              ${isActive
-                ? html`<text
-                    x=${node.x}
-                    y=${node.y - radius - 14}
-                    text-anchor="middle"
-                    fill="#dbeafe"
-                    font-size="11"
-                    font-family="IBM Plex Sans"
-                    font-weight="600"
-                  >
-                    ${node.label}
-                  </text>`
-                : null}
+              <text
+                x=${node.x}
+                y=${node.y - radius - 16}
+                text-anchor="middle"
+                fill=${isActive ? "#fef3c7" : "#dbeafe"}
+                font-size="12.5"
+                font-family="IBM Plex Sans"
+                font-weight=${isActive ? "700" : "600"}
+                opacity=${isActive ? 1 : 0.9}
+                stroke="rgba(2,6,23,0.82)"
+                stroke-width="2"
+                paint-order="stroke"
+              >
+                ${node.label}
+              </text>
             </g>`;
           })}
         </svg>

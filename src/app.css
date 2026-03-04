@@ -134,13 +134,13 @@ body {
 .orbit-track {
   fill: none;
   stroke: rgba(125, 211, 252, 0.2);
-  stroke-width: 1;
-  stroke-dasharray: 2 8;
+  stroke-width: 1.25;
+  stroke-dasharray: 3 9;
 }
 
 .link-glow {
   stroke: rgba(56, 189, 248, 0.6);
-  stroke-width: 1.2;
+  stroke-width: 1.5;
   fill: none;
   stroke-dasharray: 5 7;
   animation: dash 3.2s linear infinite;
@@ -148,7 +148,7 @@ body {
 
 .link-mesh {
   stroke: rgba(186, 230, 253, 0.36);
-  stroke-width: 0.9;
+  stroke-width: 1.1;
   fill: none;
   stroke-dasharray: 2 8;
   animation: dash 4.2s linear infinite reverse;
