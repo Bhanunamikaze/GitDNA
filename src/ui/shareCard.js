@@ -79,6 +79,23 @@ function truncate(text, length = 120) {
   return `${value.slice(0, Math.max(0, length - 1)).trim()}…`;
 }
 
+function estimateTextWidth(text, fontSize = 16) {
+  return String(text || "").length * fontSize * 0.56;
+}
+
+function fitTextForSvg(text, { maxWidth, fontSize, maxChars = null } = {}) {
+  const raw = String(text || "").trim();
+  const clipped = maxChars ? truncate(raw, maxChars) : raw;
+  const fitAttrs =
+    maxWidth && estimateTextWidth(clipped, fontSize || 16) > maxWidth
+      ? `textLength="${Math.round(maxWidth)}" lengthAdjust="spacingAndGlyphs"`
+      : "";
+  return {
+    text: escapeText(clipped),
+    attrs: fitAttrs,
+  };
+}
+
 function sanitizeBadgeChunk(value) {
   return encodeURIComponent(String(value || "").trim().replace(/\s+/g, " "));
 }
@@ -198,14 +215,14 @@ export function buildNebulaProfileBadgeSvg({
   profileStats = null,
   visibleItems = null,
 } = {}) {
-  const safeUser = escapeText(String(username || "").replace(/^@/, ""));
-  const safeType = escapeText(typeName || "Developer DNA");
-  const safeAlias = escapeText(aliasName || "GitDNA Profile");
-  const safeDesc = escapeText(
-    truncate(description || "Deterministic profile generated from GitHub activity.", 132)
-  );
-  const safeRarity = escapeText(rarityTier || "Common");
-  const safeClarity = escapeText(clarityLabel(confidence));
+  const rawUser = String(username || "").replace(/^@/, "").trim() || "developer";
+  const rawType = String(typeName || "Developer DNA").trim() || "Developer DNA";
+  const rawAlias = String(aliasName || "GitDNA Profile").trim() || "GitDNA Profile";
+  const rawDesc =
+    String(description || "").trim() || "Deterministic profile generated from GitHub activity.";
+  const safeUser = escapeText(rawUser);
+  const rarityLabel = String(rarityTier || "Common").trim() || "Common";
+  const clarityText = clarityLabel(confidence);
   const confidencePct = Math.round(clamp(Number(confidence || 0), 0, 1) * 100);
   const safeImpact = Math.max(0, Math.round(Number(impactScore || 0)));
   const stats = profileStats || {};
@@ -237,8 +254,27 @@ export function buildNebulaProfileBadgeSvg({
   const contentRight = 614;
   const contentGap = 10;
   const contentWidth = contentRight - contentLeft;
+  const displayUser = fitTextForSvg(`@${rawUser}`, {
+    maxWidth: contentWidth,
+    fontSize: 24,
+    maxChars: 42,
+  });
+  const displayType = fitTextForSvg(rawType, {
+    maxWidth: contentWidth,
+    fontSize: 34,
+    maxChars: 38,
+  });
+  const displayAlias = fitTextForSvg(rawAlias, {
+    maxWidth: contentWidth,
+    fontSize: 18,
+    maxChars: 54,
+  });
+  const displayDesc = fitTextForSvg(truncate(rawDesc, 104), {
+    maxWidth: contentWidth,
+    fontSize: 14,
+  });
 
-  const rand = seededRandom(hashSeed(`${safeUser}:${safeType}:${safeImpact}`));
+  const rand = seededRandom(hashSeed(`${rawUser}:${rawType}:${safeImpact}`));
   const stars = Array.from({ length: 30 }, (_, index) => {
     const x = Math.round(20 + rand() * 860);
     const y = Math.round(16 + rand() * 306);
@@ -260,32 +296,59 @@ export function buildNebulaProfileBadgeSvg({
       return { svg: "", nextY: startY };
     }
 
-    let cursorX = contentLeft;
-    let cursorY = startY;
-    const parts = [];
-    for (const card of cards) {
-      const width = clamp(card.width || 120, 96, contentWidth);
-      if (cursorX + width > contentRight) {
-        cursorX = contentLeft;
-        cursorY += cardHeight + 8;
+    const requestedWidths = cards.map((card) => clamp(card.width || 120, 72, contentWidth));
+    const totalGap = contentGap * Math.max(0, cards.length - 1);
+    const maxRowWidth = Math.max(120, contentWidth - totalGap);
+    const requestedTotal = requestedWidths.reduce((sum, width) => sum + width, 0);
+    const scale = requestedTotal > maxRowWidth ? maxRowWidth / requestedTotal : 1;
+    const widths = requestedWidths.map((width) => Math.max(72, Math.floor(width * scale)));
+
+    let widthTotal = widths.reduce((sum, width) => sum + width, 0);
+    if (widthTotal > maxRowWidth) {
+      let overflow = widthTotal - maxRowWidth;
+      let pointer = widths.length - 1;
+      while (overflow > 0 && pointer >= 0) {
+        const shrink = Math.min(overflow, Math.max(0, widths[pointer] - 72));
+        widths[pointer] -= shrink;
+        overflow -= shrink;
+        pointer -= 1;
       }
-      const valueText = escapeText(card.value);
-      const fitValue = String(card.value || "").length >= 13;
-      const valueFitAttrs = fitValue
-        ? `textLength="${Math.max(44, width - 22)}" lengthAdjust="spacingAndGlyphs"`
-        : "";
+      widthTotal = widths.reduce((sum, width) => sum + width, 0);
+    }
+    if (widthTotal < maxRowWidth && widths.length) {
+      widths[widths.length - 1] += maxRowWidth - widthTotal;
+    }
+
+    let cursorX = contentLeft;
+    const parts = [];
+    for (let index = 0; index < cards.length; index += 1) {
+      const card = cards[index];
+      const width = widths[index];
+      const valueRaw = String(card.value || "").trim();
+      const labelRaw = String(card.label || "").trim();
+      const valueText = escapeText(valueRaw);
+      const labelText = escapeText(labelRaw);
+      const maxTextWidth = Math.max(44, width - 22);
+      const valueFitAttrs =
+        estimateTextWidth(valueRaw, card.valueSize) > maxTextWidth
+          ? `textLength="${maxTextWidth}" lengthAdjust="spacingAndGlyphs"`
+          : "";
+      const labelFitAttrs =
+        estimateTextWidth(labelRaw, labelSize) > maxTextWidth
+          ? `textLength="${maxTextWidth}" lengthAdjust="spacingAndGlyphs"`
+          : "";
 
       parts.push(`
-        <rect x="${cursorX}" y="${cursorY}" width="${width}" height="${cardHeight}" rx="10" fill="#0b1e35" stroke="#233a59"/>
-        <text x="${cursorX + 12}" y="${cursorY + labelOffsetY}" fill="#94a3b8" font-size="${labelSize}" letter-spacing="${labelTracking}">${card.label}</text>
-        <text x="${cursorX + 12}" y="${cursorY + valueOffsetY}" fill="${card.valueColor}" font-size="${card.valueSize}" font-weight="700" ${valueFitAttrs}>${valueText}</text>
+        <rect x="${cursorX}" y="${startY}" width="${width}" height="${cardHeight}" rx="10" fill="#0b1e35" stroke="#233a59"/>
+        <text x="${cursorX + 12}" y="${startY + labelOffsetY}" fill="#94a3b8" font-size="${labelSize}" letter-spacing="${labelTracking}" ${labelFitAttrs}>${labelText}</text>
+        <text x="${cursorX + 12}" y="${startY + valueOffsetY}" fill="${card.valueColor}" font-size="${card.valueSize}" font-weight="700" ${valueFitAttrs}>${valueText}</text>
       `.trim());
       cursorX += width + contentGap;
     }
 
     return {
       svg: parts.join(""),
-      nextY: cursorY + cardHeight,
+      nextY: startY + cardHeight,
     };
   };
 
@@ -331,7 +394,7 @@ export function buildNebulaProfileBadgeSvg({
   if (show.rank) {
     topCards.push({
       label: "RANK",
-      value: safeRarity,
+      value: rarityLabel,
       width: 152,
       valueColor: "#fef3c7",
       valueSize: 19,
@@ -340,7 +403,7 @@ export function buildNebulaProfileBadgeSvg({
   if (show.clarity) {
     topCards.push({
       label: "SIGNAL CLARITY",
-      value: `${safeClarity} · ${confidencePct}%`,
+      value: `${clarityText} · ${confidencePct}%`,
       width: 184,
       valueColor: "#99f6e4",
       valueSize: 18,
@@ -443,10 +506,18 @@ export function buildNebulaProfileBadgeSvg({
   <g class="root">
     <rect x="14" y="14" width="872" height="312" rx="16" fill="#061425" opacity="0.72" stroke="#1e3a5f" />
     <text x="34" y="46" fill="#67e8f9" font-size="12" letter-spacing="1.8" font-weight="700">GITDNA PROFILE CARD</text>
-    ${show.username ? `<text x="34" y="74" fill="#e2e8f0" font-size="24" font-weight="700">@${safeUser}</text>` : ""}
-    <text x="34" y="108" fill="#f8fafc" font-size="34" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">${safeType}</text>
-    <text x="34" y="134" fill="#a5f3fc" font-size="18" font-weight="600">${safeAlias}</text>
-    ${show.description ? `<text x="34" y="163" fill="#cbd5e1" font-size="14">${safeDesc}</text>` : ""}
+    ${
+      show.username
+        ? `<text x="34" y="74" fill="#e2e8f0" font-size="24" font-weight="700" ${displayUser.attrs}>${displayUser.text}</text>`
+        : ""
+    }
+    <text x="34" y="108" fill="#f8fafc" font-size="34" font-family="Space Grotesk, Arial, sans-serif" font-weight="700" ${displayType.attrs}>${displayType.text}</text>
+    <text x="34" y="134" fill="#a5f3fc" font-size="18" font-weight="600" ${displayAlias.attrs}>${displayAlias.text}</text>
+    ${
+      show.description
+        ? `<text x="34" y="163" fill="#cbd5e1" font-size="14" ${displayDesc.attrs}>${displayDesc.text}</text>`
+        : ""
+    }
     ${topCardsLayout.svg}
     ${lowerCardsLayout.svg}
     ${languageLayout.svg}
