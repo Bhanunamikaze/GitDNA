@@ -1,3 +1,6 @@
+> Superseded: this brainstorm was the initial concept draft.
+> Source of truth is now the `docs/` plan set (`PRD.md`, `ARCHITECTURE.md`, `DNA_SYSTEM.md`, and related files).
+
 You can build this as a **single-page static app** that runs entirely in the browser and deploy it to **GitHub Pages**.
 
 Break the project into clear stages. Each stage produces something usable.

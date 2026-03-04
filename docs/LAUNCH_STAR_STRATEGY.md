@@ -11,6 +11,7 @@ Core angle:
 1. Explainable personality scoring (not random quiz output).
 2. 100 collectible DNA types.
 3. Fully free and open-source implementation.
+4. Embeddable README card for organic GitHub distribution.
 
 ## Pre-Launch Checklist
 1. README with:
@@ -18,6 +19,7 @@ Core angle:
    - sample DNA cards
    - "how it works" technical section
    - architecture diagram
+   - copy/paste README embed snippet
 2. `CONTRIBUTING.md` with first issues and local setup.
 3. Labels for onboarding:
    - `good-first-issue`
@@ -36,6 +38,7 @@ Core angle:
 1. Publish release + GitHub Pages link.
 2. Post launch thread with 3 strong visuals.
 3. Share "What DNA type are you?" CTA.
+4. Share README badge embed instructions.
 
 ### Day 2-3
 1. Highlight compare mode examples.
@@ -58,6 +61,7 @@ Core angle:
 2. "Open-source and free" trust badge.
 3. "Suggest a type tweak" issue link on result page.
 4. "Submit your card to Hall of Fame" link after share export.
+5. "Embed this in your GitHub profile README" CTA after result reveal.
 
 ## Metrics to Track Weekly
 1. `unique analyses`

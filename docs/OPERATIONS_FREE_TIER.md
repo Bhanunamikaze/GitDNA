@@ -15,6 +15,7 @@ Run and maintain GitDNA at zero infrastructure cost.
 3. Keep generated JSON compact and versioned.
 4. Bound API fetch windows in client.
 5. Prefer scheduled jobs at low frequency (daily/weekly).
+6. Precompute demo profiles to reduce live API dependence.
 
 ## Workflow Set
 
@@ -32,9 +33,19 @@ Triggers:
 Purpose:
 - regenerate `types_100.json`
 - regenerate optional curated profile snapshots
+- regenerate `card_svg_manifest.json`
 
 Triggers:
 - weekly schedule
+- manual dispatch
+
+### `generate-readme-cards.yml`
+Purpose:
+- build static SVG cards for README embed links
+- write cards to `data/cards/`
+
+Triggers:
+- daily schedule
 - manual dispatch
 
 ### `update-hall-of-fame.yml`
@@ -56,6 +67,12 @@ Triggers:
    - open issue automatically with error summary
 3. Invalid submission payload:
    - reject with comment template
+
+## PAT Handling Policy
+1. PAT is optional but first-class in UX.
+2. PAT is held in memory only for active session.
+3. PAT is never committed, logged, or persisted.
+4. UI links users to token creation instructions.
 
 ## Maintenance Checklist (Monthly)
 1. Verify Pages deployment health.

@@ -59,6 +59,26 @@ For locked achievements, show:
 1. Keep all characters as lightweight SVG layers.
 2. Use one consistent skeleton for easy compositing.
 3. Use color tokens so theme can update globally.
+4. Keep a deterministic renderer so same type always resolves same character output.
+
+## Art Direction (MVP)
+1. Style: flat vector "developer guild" look with clean outlines.
+2. Shape language: geometric, readable at small card sizes.
+3. Complexity budget: under 20KB per composed SVG card.
+4. Avoid external raster assets in MVP.
+
+## Art Production Pipeline
+1. Define base skeleton + pose rules in `./DESIGN_SYSTEM.md`.
+2. Build 10 archetype base SVG files.
+3. Build 10 modifier overlay packs (palette/effect/prop).
+4. Composite in browser for live UI and in Action for static card exports.
+5. Validate on light and dark backgrounds.
+
+## Tooling and Licensing
+1. Authoring tools: Figma or Inkscape for source vectors.
+2. Build tooling: SVGO optimization in CI.
+3. License target: all shipped character assets must be original or permissively licensed for commercial reuse.
+4. Record provenance for each asset in `assets/characters/ATTRIBUTION.md`.
 
 ## Share Card Content
 1. Username
