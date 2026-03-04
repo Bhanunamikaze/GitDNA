@@ -1,0 +1,43 @@
+{
+  "username": "torvalds",
+  "type_id": "architect_disciplined",
+  "type_name": "Disciplined Architect",
+  "alias_name": "The Iron System Mason",
+  "flavor_text": "Designs high-impact structures and long-lived foundations. This profile executes with structure and repeatable rigor.",
+  "rarity_tier": "Rare",
+  "confidence": 0.88,
+  "top3": [
+    "architect_disciplined",
+    "architect_marathon",
+    "toolsmith_disciplined"
+  ],
+  "traits": [
+    "Impact Estimate Alignment",
+    "Repo Focus Alignment",
+    "Longevity Signal Alignment"
+  ],
+  "counter_traits": [
+    "Night Activity Gap",
+    "Language Diversity Gap"
+  ],
+  "achievements": [
+    "Impact Gold",
+    "Consistency Silver",
+    "Longevity Gold",
+    "Release Monk"
+  ],
+  "metrics": {
+    "cadence": 0.35,
+    "consistency": 0.62,
+    "burstiness": 0.28,
+    "night_ratio": 0.14,
+    "weekend_ratio": 0.22,
+    "impact_estimate": 0.91,
+    "language_entropy": 0.39,
+    "repo_focus": 0.84,
+    "collaboration_signal": 0.58,
+    "longevity_signal": 0.94
+  },
+  "partial_data": false,
+  "is_demo": true
+}

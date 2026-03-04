@@ -1,0 +1,907 @@
+{
+  "version": "0.1.0",
+  "generated_at": "2026-03-04T15:28:44.070Z",
+  "count": 100,
+  "types": [
+    {
+      "id": "architect_night",
+      "name": "Night Architect",
+      "alias_name": "The Midnight System Mason",
+      "archetype": "Architect",
+      "modifier": "Night",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Designs high-impact structures and long-lived foundations. This profile thrives in late-hour focus windows."
+    },
+    {
+      "id": "architect_dawn",
+      "name": "Dawn Architect",
+      "alias_name": "The Sunrise System Mason",
+      "archetype": "Architect",
+      "modifier": "Dawn",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Designs high-impact structures and long-lived foundations. This profile wins mornings with deliberate execution."
+    },
+    {
+      "id": "architect_weekend",
+      "name": "Weekend Architect",
+      "alias_name": "The Weekend System Mason",
+      "archetype": "Architect",
+      "modifier": "Weekend",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Designs high-impact structures and long-lived foundations. This profile uses off-cycle time to build leverage."
+    },
+    {
+      "id": "architect_steady",
+      "name": "Steady Architect",
+      "alias_name": "The Pulse System Mason",
+      "archetype": "Architect",
+      "modifier": "Steady",
+      "rarity_tier": "Rare",
+      "flavor_text": "Designs high-impact structures and long-lived foundations. This profile keeps an even and reliable shipping rhythm."
+    },
+    {
+      "id": "architect_burst",
+      "name": "Burst Architect",
+      "alias_name": "The Storm System Mason",
+      "archetype": "Architect",
+      "modifier": "Burst",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Designs high-impact structures and long-lived foundations. This profile compounds output through concentrated surges."
+    },
+    {
+      "id": "architect_marathon",
+      "name": "Marathon Architect",
+      "alias_name": "The Endurance System Mason",
+      "archetype": "Architect",
+      "modifier": "Marathon",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Designs high-impact structures and long-lived foundations. This profile maintains velocity over long build arcs."
+    },
+    {
+      "id": "architect_minimal",
+      "name": "Minimal Architect",
+      "alias_name": "The Needle System Mason",
+      "archetype": "Architect",
+      "modifier": "Minimal",
+      "rarity_tier": "Rare",
+      "flavor_text": "Designs high-impact structures and long-lived foundations. This profile prefers precise and minimal intervention."
+    },
+    {
+      "id": "architect_maximal",
+      "name": "Maximal Architect",
+      "alias_name": "The Overdrive System Mason",
+      "archetype": "Architect",
+      "modifier": "Maximal",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Designs high-impact structures and long-lived foundations. This profile operates across broad and ambitious surfaces."
+    },
+    {
+      "id": "architect_experimental",
+      "name": "Experimental Architect",
+      "alias_name": "The Frontier System Mason",
+      "archetype": "Architect",
+      "modifier": "Experimental",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Designs high-impact structures and long-lived foundations. This profile tests boundaries and iterates on new patterns."
+    },
+    {
+      "id": "architect_disciplined",
+      "name": "Disciplined Architect",
+      "alias_name": "The Iron System Mason",
+      "archetype": "Architect",
+      "modifier": "Disciplined",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Designs high-impact structures and long-lived foundations. This profile executes with structure and repeatable rigor."
+    },
+    {
+      "id": "maintainer_night",
+      "name": "Night Maintainer",
+      "alias_name": "The Midnight Caretaker",
+      "archetype": "Maintainer",
+      "modifier": "Night",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Keeps projects healthy through steady, frequent improvements. This profile thrives in late-hour focus windows."
+    },
+    {
+      "id": "maintainer_dawn",
+      "name": "Dawn Maintainer",
+      "alias_name": "The Sunrise Caretaker",
+      "archetype": "Maintainer",
+      "modifier": "Dawn",
+      "rarity_tier": "Rare",
+      "flavor_text": "Keeps projects healthy through steady, frequent improvements. This profile wins mornings with deliberate execution."
+    },
+    {
+      "id": "maintainer_weekend",
+      "name": "Weekend Maintainer",
+      "alias_name": "The Weekend Caretaker",
+      "archetype": "Maintainer",
+      "modifier": "Weekend",
+      "rarity_tier": "Rare",
+      "flavor_text": "Keeps projects healthy through steady, frequent improvements. This profile uses off-cycle time to build leverage."
+    },
+    {
+      "id": "maintainer_steady",
+      "name": "Steady Maintainer",
+      "alias_name": "The Pulse Caretaker",
+      "archetype": "Maintainer",
+      "modifier": "Steady",
+      "rarity_tier": "Rare",
+      "flavor_text": "Keeps projects healthy through steady, frequent improvements. This profile keeps an even and reliable shipping rhythm."
+    },
+    {
+      "id": "maintainer_burst",
+      "name": "Burst Maintainer",
+      "alias_name": "The Storm Caretaker",
+      "archetype": "Maintainer",
+      "modifier": "Burst",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Keeps projects healthy through steady, frequent improvements. This profile compounds output through concentrated surges."
+    },
+    {
+      "id": "maintainer_marathon",
+      "name": "Marathon Maintainer",
+      "alias_name": "The Endurance Caretaker",
+      "archetype": "Maintainer",
+      "modifier": "Marathon",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Keeps projects healthy through steady, frequent improvements. This profile maintains velocity over long build arcs."
+    },
+    {
+      "id": "maintainer_minimal",
+      "name": "Minimal Maintainer",
+      "alias_name": "The Needle Caretaker",
+      "archetype": "Maintainer",
+      "modifier": "Minimal",
+      "rarity_tier": "Rare",
+      "flavor_text": "Keeps projects healthy through steady, frequent improvements. This profile prefers precise and minimal intervention."
+    },
+    {
+      "id": "maintainer_maximal",
+      "name": "Maximal Maintainer",
+      "alias_name": "The Overdrive Caretaker",
+      "archetype": "Maintainer",
+      "modifier": "Maximal",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Keeps projects healthy through steady, frequent improvements. This profile operates across broad and ambitious surfaces."
+    },
+    {
+      "id": "maintainer_experimental",
+      "name": "Experimental Maintainer",
+      "alias_name": "The Frontier Caretaker",
+      "archetype": "Maintainer",
+      "modifier": "Experimental",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Keeps projects healthy through steady, frequent improvements. This profile tests boundaries and iterates on new patterns."
+    },
+    {
+      "id": "maintainer_disciplined",
+      "name": "Disciplined Maintainer",
+      "alias_name": "The Iron Caretaker",
+      "archetype": "Maintainer",
+      "modifier": "Disciplined",
+      "rarity_tier": "Rare",
+      "flavor_text": "Keeps projects healthy through steady, frequent improvements. This profile executes with structure and repeatable rigor."
+    },
+    {
+      "id": "sprinter_night",
+      "name": "Night Sprinter",
+      "alias_name": "The Midnight Burst Runner",
+      "archetype": "Sprinter",
+      "modifier": "Night",
+      "rarity_tier": "Rare",
+      "flavor_text": "Ships in intense intervals with high momentum bursts. This profile thrives in late-hour focus windows."
+    },
+    {
+      "id": "sprinter_dawn",
+      "name": "Dawn Sprinter",
+      "alias_name": "The Sunrise Burst Runner",
+      "archetype": "Sprinter",
+      "modifier": "Dawn",
+      "rarity_tier": "Rare",
+      "flavor_text": "Ships in intense intervals with high momentum bursts. This profile wins mornings with deliberate execution."
+    },
+    {
+      "id": "sprinter_weekend",
+      "name": "Weekend Sprinter",
+      "alias_name": "The Weekend Burst Runner",
+      "archetype": "Sprinter",
+      "modifier": "Weekend",
+      "rarity_tier": "Rare",
+      "flavor_text": "Ships in intense intervals with high momentum bursts. This profile uses off-cycle time to build leverage."
+    },
+    {
+      "id": "sprinter_steady",
+      "name": "Steady Sprinter",
+      "alias_name": "The Pulse Burst Runner",
+      "archetype": "Sprinter",
+      "modifier": "Steady",
+      "rarity_tier": "Common",
+      "flavor_text": "Ships in intense intervals with high momentum bursts. This profile keeps an even and reliable shipping rhythm."
+    },
+    {
+      "id": "sprinter_burst",
+      "name": "Burst Sprinter",
+      "alias_name": "The Storm Burst Runner",
+      "archetype": "Sprinter",
+      "modifier": "Burst",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Ships in intense intervals with high momentum bursts. This profile compounds output through concentrated surges."
+    },
+    {
+      "id": "sprinter_marathon",
+      "name": "Marathon Sprinter",
+      "alias_name": "The Endurance Burst Runner",
+      "archetype": "Sprinter",
+      "modifier": "Marathon",
+      "rarity_tier": "Rare",
+      "flavor_text": "Ships in intense intervals with high momentum bursts. This profile maintains velocity over long build arcs."
+    },
+    {
+      "id": "sprinter_minimal",
+      "name": "Minimal Sprinter",
+      "alias_name": "The Needle Burst Runner",
+      "archetype": "Sprinter",
+      "modifier": "Minimal",
+      "rarity_tier": "Common",
+      "flavor_text": "Ships in intense intervals with high momentum bursts. This profile prefers precise and minimal intervention."
+    },
+    {
+      "id": "sprinter_maximal",
+      "name": "Maximal Sprinter",
+      "alias_name": "The Overdrive Burst Runner",
+      "archetype": "Sprinter",
+      "modifier": "Maximal",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Ships in intense intervals with high momentum bursts. This profile operates across broad and ambitious surfaces."
+    },
+    {
+      "id": "sprinter_experimental",
+      "name": "Experimental Sprinter",
+      "alias_name": "The Frontier Burst Runner",
+      "archetype": "Sprinter",
+      "modifier": "Experimental",
+      "rarity_tier": "Rare",
+      "flavor_text": "Ships in intense intervals with high momentum bursts. This profile tests boundaries and iterates on new patterns."
+    },
+    {
+      "id": "sprinter_disciplined",
+      "name": "Disciplined Sprinter",
+      "alias_name": "The Iron Burst Runner",
+      "archetype": "Sprinter",
+      "modifier": "Disciplined",
+      "rarity_tier": "Rare",
+      "flavor_text": "Ships in intense intervals with high momentum bursts. This profile executes with structure and repeatable rigor."
+    },
+    {
+      "id": "stabilizer_night",
+      "name": "Night Stabilizer",
+      "alias_name": "The Midnight Anchor Keeper",
+      "archetype": "Stabilizer",
+      "modifier": "Night",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Prioritizes reliability, consistency, and low-volatility delivery. This profile thrives in late-hour focus windows."
+    },
+    {
+      "id": "stabilizer_dawn",
+      "name": "Dawn Stabilizer",
+      "alias_name": "The Sunrise Anchor Keeper",
+      "archetype": "Stabilizer",
+      "modifier": "Dawn",
+      "rarity_tier": "Rare",
+      "flavor_text": "Prioritizes reliability, consistency, and low-volatility delivery. This profile wins mornings with deliberate execution."
+    },
+    {
+      "id": "stabilizer_weekend",
+      "name": "Weekend Stabilizer",
+      "alias_name": "The Weekend Anchor Keeper",
+      "archetype": "Stabilizer",
+      "modifier": "Weekend",
+      "rarity_tier": "Rare",
+      "flavor_text": "Prioritizes reliability, consistency, and low-volatility delivery. This profile uses off-cycle time to build leverage."
+    },
+    {
+      "id": "stabilizer_steady",
+      "name": "Steady Stabilizer",
+      "alias_name": "The Pulse Anchor Keeper",
+      "archetype": "Stabilizer",
+      "modifier": "Steady",
+      "rarity_tier": "Rare",
+      "flavor_text": "Prioritizes reliability, consistency, and low-volatility delivery. This profile keeps an even and reliable shipping rhythm."
+    },
+    {
+      "id": "stabilizer_burst",
+      "name": "Burst Stabilizer",
+      "alias_name": "The Storm Anchor Keeper",
+      "archetype": "Stabilizer",
+      "modifier": "Burst",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Prioritizes reliability, consistency, and low-volatility delivery. This profile compounds output through concentrated surges."
+    },
+    {
+      "id": "stabilizer_marathon",
+      "name": "Marathon Stabilizer",
+      "alias_name": "The Endurance Anchor Keeper",
+      "archetype": "Stabilizer",
+      "modifier": "Marathon",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Prioritizes reliability, consistency, and low-volatility delivery. This profile maintains velocity over long build arcs."
+    },
+    {
+      "id": "stabilizer_minimal",
+      "name": "Minimal Stabilizer",
+      "alias_name": "The Needle Anchor Keeper",
+      "archetype": "Stabilizer",
+      "modifier": "Minimal",
+      "rarity_tier": "Rare",
+      "flavor_text": "Prioritizes reliability, consistency, and low-volatility delivery. This profile prefers precise and minimal intervention."
+    },
+    {
+      "id": "stabilizer_maximal",
+      "name": "Maximal Stabilizer",
+      "alias_name": "The Overdrive Anchor Keeper",
+      "archetype": "Stabilizer",
+      "modifier": "Maximal",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Prioritizes reliability, consistency, and low-volatility delivery. This profile operates across broad and ambitious surfaces."
+    },
+    {
+      "id": "stabilizer_experimental",
+      "name": "Experimental Stabilizer",
+      "alias_name": "The Frontier Anchor Keeper",
+      "archetype": "Stabilizer",
+      "modifier": "Experimental",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Prioritizes reliability, consistency, and low-volatility delivery. This profile tests boundaries and iterates on new patterns."
+    },
+    {
+      "id": "stabilizer_disciplined",
+      "name": "Disciplined Stabilizer",
+      "alias_name": "The Iron Anchor Keeper",
+      "archetype": "Stabilizer",
+      "modifier": "Disciplined",
+      "rarity_tier": "Rare",
+      "flavor_text": "Prioritizes reliability, consistency, and low-volatility delivery. This profile executes with structure and repeatable rigor."
+    },
+    {
+      "id": "polyglot_night",
+      "name": "Night Polyglot",
+      "alias_name": "The Midnight Language Alchemist",
+      "archetype": "Polyglot",
+      "modifier": "Night",
+      "rarity_tier": "Rare",
+      "flavor_text": "Moves fluidly across ecosystems and language paradigms. This profile thrives in late-hour focus windows."
+    },
+    {
+      "id": "polyglot_dawn",
+      "name": "Dawn Polyglot",
+      "alias_name": "The Sunrise Language Alchemist",
+      "archetype": "Polyglot",
+      "modifier": "Dawn",
+      "rarity_tier": "Rare",
+      "flavor_text": "Moves fluidly across ecosystems and language paradigms. This profile wins mornings with deliberate execution."
+    },
+    {
+      "id": "polyglot_weekend",
+      "name": "Weekend Polyglot",
+      "alias_name": "The Weekend Language Alchemist",
+      "archetype": "Polyglot",
+      "modifier": "Weekend",
+      "rarity_tier": "Rare",
+      "flavor_text": "Moves fluidly across ecosystems and language paradigms. This profile uses off-cycle time to build leverage."
+    },
+    {
+      "id": "polyglot_steady",
+      "name": "Steady Polyglot",
+      "alias_name": "The Pulse Language Alchemist",
+      "archetype": "Polyglot",
+      "modifier": "Steady",
+      "rarity_tier": "Common",
+      "flavor_text": "Moves fluidly across ecosystems and language paradigms. This profile keeps an even and reliable shipping rhythm."
+    },
+    {
+      "id": "polyglot_burst",
+      "name": "Burst Polyglot",
+      "alias_name": "The Storm Language Alchemist",
+      "archetype": "Polyglot",
+      "modifier": "Burst",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Moves fluidly across ecosystems and language paradigms. This profile compounds output through concentrated surges."
+    },
+    {
+      "id": "polyglot_marathon",
+      "name": "Marathon Polyglot",
+      "alias_name": "The Endurance Language Alchemist",
+      "archetype": "Polyglot",
+      "modifier": "Marathon",
+      "rarity_tier": "Rare",
+      "flavor_text": "Moves fluidly across ecosystems and language paradigms. This profile maintains velocity over long build arcs."
+    },
+    {
+      "id": "polyglot_minimal",
+      "name": "Minimal Polyglot",
+      "alias_name": "The Needle Language Alchemist",
+      "archetype": "Polyglot",
+      "modifier": "Minimal",
+      "rarity_tier": "Common",
+      "flavor_text": "Moves fluidly across ecosystems and language paradigms. This profile prefers precise and minimal intervention."
+    },
+    {
+      "id": "polyglot_maximal",
+      "name": "Maximal Polyglot",
+      "alias_name": "The Overdrive Language Alchemist",
+      "archetype": "Polyglot",
+      "modifier": "Maximal",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Moves fluidly across ecosystems and language paradigms. This profile operates across broad and ambitious surfaces."
+    },
+    {
+      "id": "polyglot_experimental",
+      "name": "Experimental Polyglot",
+      "alias_name": "The Frontier Language Alchemist",
+      "archetype": "Polyglot",
+      "modifier": "Experimental",
+      "rarity_tier": "Rare",
+      "flavor_text": "Moves fluidly across ecosystems and language paradigms. This profile tests boundaries and iterates on new patterns."
+    },
+    {
+      "id": "polyglot_disciplined",
+      "name": "Disciplined Polyglot",
+      "alias_name": "The Iron Language Alchemist",
+      "archetype": "Polyglot",
+      "modifier": "Disciplined",
+      "rarity_tier": "Rare",
+      "flavor_text": "Moves fluidly across ecosystems and language paradigms. This profile executes with structure and repeatable rigor."
+    },
+    {
+      "id": "refactorer_night",
+      "name": "Night Refactorer",
+      "alias_name": "The Midnight Code Sculptor",
+      "archetype": "Refactorer",
+      "modifier": "Night",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Improves structure and clarity while preserving behavior. This profile thrives in late-hour focus windows."
+    },
+    {
+      "id": "refactorer_dawn",
+      "name": "Dawn Refactorer",
+      "alias_name": "The Sunrise Code Sculptor",
+      "archetype": "Refactorer",
+      "modifier": "Dawn",
+      "rarity_tier": "Rare",
+      "flavor_text": "Improves structure and clarity while preserving behavior. This profile wins mornings with deliberate execution."
+    },
+    {
+      "id": "refactorer_weekend",
+      "name": "Weekend Refactorer",
+      "alias_name": "The Weekend Code Sculptor",
+      "archetype": "Refactorer",
+      "modifier": "Weekend",
+      "rarity_tier": "Rare",
+      "flavor_text": "Improves structure and clarity while preserving behavior. This profile uses off-cycle time to build leverage."
+    },
+    {
+      "id": "refactorer_steady",
+      "name": "Steady Refactorer",
+      "alias_name": "The Pulse Code Sculptor",
+      "archetype": "Refactorer",
+      "modifier": "Steady",
+      "rarity_tier": "Rare",
+      "flavor_text": "Improves structure and clarity while preserving behavior. This profile keeps an even and reliable shipping rhythm."
+    },
+    {
+      "id": "refactorer_burst",
+      "name": "Burst Refactorer",
+      "alias_name": "The Storm Code Sculptor",
+      "archetype": "Refactorer",
+      "modifier": "Burst",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Improves structure and clarity while preserving behavior. This profile compounds output through concentrated surges."
+    },
+    {
+      "id": "refactorer_marathon",
+      "name": "Marathon Refactorer",
+      "alias_name": "The Endurance Code Sculptor",
+      "archetype": "Refactorer",
+      "modifier": "Marathon",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Improves structure and clarity while preserving behavior. This profile maintains velocity over long build arcs."
+    },
+    {
+      "id": "refactorer_minimal",
+      "name": "Minimal Refactorer",
+      "alias_name": "The Needle Code Sculptor",
+      "archetype": "Refactorer",
+      "modifier": "Minimal",
+      "rarity_tier": "Rare",
+      "flavor_text": "Improves structure and clarity while preserving behavior. This profile prefers precise and minimal intervention."
+    },
+    {
+      "id": "refactorer_maximal",
+      "name": "Maximal Refactorer",
+      "alias_name": "The Overdrive Code Sculptor",
+      "archetype": "Refactorer",
+      "modifier": "Maximal",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Improves structure and clarity while preserving behavior. This profile operates across broad and ambitious surfaces."
+    },
+    {
+      "id": "refactorer_experimental",
+      "name": "Experimental Refactorer",
+      "alias_name": "The Frontier Code Sculptor",
+      "archetype": "Refactorer",
+      "modifier": "Experimental",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Improves structure and clarity while preserving behavior. This profile tests boundaries and iterates on new patterns."
+    },
+    {
+      "id": "refactorer_disciplined",
+      "name": "Disciplined Refactorer",
+      "alias_name": "The Iron Code Sculptor",
+      "archetype": "Refactorer",
+      "modifier": "Disciplined",
+      "rarity_tier": "Rare",
+      "flavor_text": "Improves structure and clarity while preserving behavior. This profile executes with structure and repeatable rigor."
+    },
+    {
+      "id": "explorer_night",
+      "name": "Night Explorer",
+      "alias_name": "The Midnight Pathfinder",
+      "archetype": "Explorer",
+      "modifier": "Night",
+      "rarity_tier": "Rare",
+      "flavor_text": "Experiments, prototypes, and maps new technical territory. This profile thrives in late-hour focus windows."
+    },
+    {
+      "id": "explorer_dawn",
+      "name": "Dawn Explorer",
+      "alias_name": "The Sunrise Pathfinder",
+      "archetype": "Explorer",
+      "modifier": "Dawn",
+      "rarity_tier": "Rare",
+      "flavor_text": "Experiments, prototypes, and maps new technical territory. This profile wins mornings with deliberate execution."
+    },
+    {
+      "id": "explorer_weekend",
+      "name": "Weekend Explorer",
+      "alias_name": "The Weekend Pathfinder",
+      "archetype": "Explorer",
+      "modifier": "Weekend",
+      "rarity_tier": "Rare",
+      "flavor_text": "Experiments, prototypes, and maps new technical territory. This profile uses off-cycle time to build leverage."
+    },
+    {
+      "id": "explorer_steady",
+      "name": "Steady Explorer",
+      "alias_name": "The Pulse Pathfinder",
+      "archetype": "Explorer",
+      "modifier": "Steady",
+      "rarity_tier": "Common",
+      "flavor_text": "Experiments, prototypes, and maps new technical territory. This profile keeps an even and reliable shipping rhythm."
+    },
+    {
+      "id": "explorer_burst",
+      "name": "Burst Explorer",
+      "alias_name": "The Storm Pathfinder",
+      "archetype": "Explorer",
+      "modifier": "Burst",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Experiments, prototypes, and maps new technical territory. This profile compounds output through concentrated surges."
+    },
+    {
+      "id": "explorer_marathon",
+      "name": "Marathon Explorer",
+      "alias_name": "The Endurance Pathfinder",
+      "archetype": "Explorer",
+      "modifier": "Marathon",
+      "rarity_tier": "Rare",
+      "flavor_text": "Experiments, prototypes, and maps new technical territory. This profile maintains velocity over long build arcs."
+    },
+    {
+      "id": "explorer_minimal",
+      "name": "Minimal Explorer",
+      "alias_name": "The Needle Pathfinder",
+      "archetype": "Explorer",
+      "modifier": "Minimal",
+      "rarity_tier": "Common",
+      "flavor_text": "Experiments, prototypes, and maps new technical territory. This profile prefers precise and minimal intervention."
+    },
+    {
+      "id": "explorer_maximal",
+      "name": "Maximal Explorer",
+      "alias_name": "The Overdrive Pathfinder",
+      "archetype": "Explorer",
+      "modifier": "Maximal",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Experiments, prototypes, and maps new technical territory. This profile operates across broad and ambitious surfaces."
+    },
+    {
+      "id": "explorer_experimental",
+      "name": "Experimental Explorer",
+      "alias_name": "The Frontier Pathfinder",
+      "archetype": "Explorer",
+      "modifier": "Experimental",
+      "rarity_tier": "Rare",
+      "flavor_text": "Experiments, prototypes, and maps new technical territory. This profile tests boundaries and iterates on new patterns."
+    },
+    {
+      "id": "explorer_disciplined",
+      "name": "Disciplined Explorer",
+      "alias_name": "The Iron Pathfinder",
+      "archetype": "Explorer",
+      "modifier": "Disciplined",
+      "rarity_tier": "Rare",
+      "flavor_text": "Experiments, prototypes, and maps new technical territory. This profile executes with structure and repeatable rigor."
+    },
+    {
+      "id": "integrator_night",
+      "name": "Night Integrator",
+      "alias_name": "The Midnight Bridgesmith",
+      "archetype": "Integrator",
+      "modifier": "Night",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Connects systems, tools, and collaborators into cohesive workflows. This profile thrives in late-hour focus windows."
+    },
+    {
+      "id": "integrator_dawn",
+      "name": "Dawn Integrator",
+      "alias_name": "The Sunrise Bridgesmith",
+      "archetype": "Integrator",
+      "modifier": "Dawn",
+      "rarity_tier": "Rare",
+      "flavor_text": "Connects systems, tools, and collaborators into cohesive workflows. This profile wins mornings with deliberate execution."
+    },
+    {
+      "id": "integrator_weekend",
+      "name": "Weekend Integrator",
+      "alias_name": "The Weekend Bridgesmith",
+      "archetype": "Integrator",
+      "modifier": "Weekend",
+      "rarity_tier": "Rare",
+      "flavor_text": "Connects systems, tools, and collaborators into cohesive workflows. This profile uses off-cycle time to build leverage."
+    },
+    {
+      "id": "integrator_steady",
+      "name": "Steady Integrator",
+      "alias_name": "The Pulse Bridgesmith",
+      "archetype": "Integrator",
+      "modifier": "Steady",
+      "rarity_tier": "Rare",
+      "flavor_text": "Connects systems, tools, and collaborators into cohesive workflows. This profile keeps an even and reliable shipping rhythm."
+    },
+    {
+      "id": "integrator_burst",
+      "name": "Burst Integrator",
+      "alias_name": "The Storm Bridgesmith",
+      "archetype": "Integrator",
+      "modifier": "Burst",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Connects systems, tools, and collaborators into cohesive workflows. This profile compounds output through concentrated surges."
+    },
+    {
+      "id": "integrator_marathon",
+      "name": "Marathon Integrator",
+      "alias_name": "The Endurance Bridgesmith",
+      "archetype": "Integrator",
+      "modifier": "Marathon",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Connects systems, tools, and collaborators into cohesive workflows. This profile maintains velocity over long build arcs."
+    },
+    {
+      "id": "integrator_minimal",
+      "name": "Minimal Integrator",
+      "alias_name": "The Needle Bridgesmith",
+      "archetype": "Integrator",
+      "modifier": "Minimal",
+      "rarity_tier": "Rare",
+      "flavor_text": "Connects systems, tools, and collaborators into cohesive workflows. This profile prefers precise and minimal intervention."
+    },
+    {
+      "id": "integrator_maximal",
+      "name": "Maximal Integrator",
+      "alias_name": "The Overdrive Bridgesmith",
+      "archetype": "Integrator",
+      "modifier": "Maximal",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Connects systems, tools, and collaborators into cohesive workflows. This profile operates across broad and ambitious surfaces."
+    },
+    {
+      "id": "integrator_experimental",
+      "name": "Experimental Integrator",
+      "alias_name": "The Frontier Bridgesmith",
+      "archetype": "Integrator",
+      "modifier": "Experimental",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Connects systems, tools, and collaborators into cohesive workflows. This profile tests boundaries and iterates on new patterns."
+    },
+    {
+      "id": "integrator_disciplined",
+      "name": "Disciplined Integrator",
+      "alias_name": "The Iron Bridgesmith",
+      "archetype": "Integrator",
+      "modifier": "Disciplined",
+      "rarity_tier": "Rare",
+      "flavor_text": "Connects systems, tools, and collaborators into cohesive workflows. This profile executes with structure and repeatable rigor."
+    },
+    {
+      "id": "toolsmith_night",
+      "name": "Night Toolsmith",
+      "alias_name": "The Midnight Forge Engineer",
+      "archetype": "Toolsmith",
+      "modifier": "Night",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Builds utilities that amplify team and ecosystem productivity. This profile thrives in late-hour focus windows."
+    },
+    {
+      "id": "toolsmith_dawn",
+      "name": "Dawn Toolsmith",
+      "alias_name": "The Sunrise Forge Engineer",
+      "archetype": "Toolsmith",
+      "modifier": "Dawn",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Builds utilities that amplify team and ecosystem productivity. This profile wins mornings with deliberate execution."
+    },
+    {
+      "id": "toolsmith_weekend",
+      "name": "Weekend Toolsmith",
+      "alias_name": "The Weekend Forge Engineer",
+      "archetype": "Toolsmith",
+      "modifier": "Weekend",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Builds utilities that amplify team and ecosystem productivity. This profile uses off-cycle time to build leverage."
+    },
+    {
+      "id": "toolsmith_steady",
+      "name": "Steady Toolsmith",
+      "alias_name": "The Pulse Forge Engineer",
+      "archetype": "Toolsmith",
+      "modifier": "Steady",
+      "rarity_tier": "Rare",
+      "flavor_text": "Builds utilities that amplify team and ecosystem productivity. This profile keeps an even and reliable shipping rhythm."
+    },
+    {
+      "id": "toolsmith_burst",
+      "name": "Burst Toolsmith",
+      "alias_name": "The Storm Forge Engineer",
+      "archetype": "Toolsmith",
+      "modifier": "Burst",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Builds utilities that amplify team and ecosystem productivity. This profile compounds output through concentrated surges."
+    },
+    {
+      "id": "toolsmith_marathon",
+      "name": "Marathon Toolsmith",
+      "alias_name": "The Endurance Forge Engineer",
+      "archetype": "Toolsmith",
+      "modifier": "Marathon",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Builds utilities that amplify team and ecosystem productivity. This profile maintains velocity over long build arcs."
+    },
+    {
+      "id": "toolsmith_minimal",
+      "name": "Minimal Toolsmith",
+      "alias_name": "The Needle Forge Engineer",
+      "archetype": "Toolsmith",
+      "modifier": "Minimal",
+      "rarity_tier": "Rare",
+      "flavor_text": "Builds utilities that amplify team and ecosystem productivity. This profile prefers precise and minimal intervention."
+    },
+    {
+      "id": "toolsmith_maximal",
+      "name": "Maximal Toolsmith",
+      "alias_name": "The Overdrive Forge Engineer",
+      "archetype": "Toolsmith",
+      "modifier": "Maximal",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Builds utilities that amplify team and ecosystem productivity. This profile operates across broad and ambitious surfaces."
+    },
+    {
+      "id": "toolsmith_experimental",
+      "name": "Experimental Toolsmith",
+      "alias_name": "The Frontier Forge Engineer",
+      "archetype": "Toolsmith",
+      "modifier": "Experimental",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Builds utilities that amplify team and ecosystem productivity. This profile tests boundaries and iterates on new patterns."
+    },
+    {
+      "id": "toolsmith_disciplined",
+      "name": "Disciplined Toolsmith",
+      "alias_name": "The Iron Forge Engineer",
+      "archetype": "Toolsmith",
+      "modifier": "Disciplined",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Builds utilities that amplify team and ecosystem productivity. This profile executes with structure and repeatable rigor."
+    },
+    {
+      "id": "finisher_night",
+      "name": "Night Finisher",
+      "alias_name": "The Midnight Release Closer",
+      "archetype": "Finisher",
+      "modifier": "Night",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Pushes work across the line and delivers complete outcomes. This profile thrives in late-hour focus windows."
+    },
+    {
+      "id": "finisher_dawn",
+      "name": "Dawn Finisher",
+      "alias_name": "The Sunrise Release Closer",
+      "archetype": "Finisher",
+      "modifier": "Dawn",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Pushes work across the line and delivers complete outcomes. This profile wins mornings with deliberate execution."
+    },
+    {
+      "id": "finisher_weekend",
+      "name": "Weekend Finisher",
+      "alias_name": "The Weekend Release Closer",
+      "archetype": "Finisher",
+      "modifier": "Weekend",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Pushes work across the line and delivers complete outcomes. This profile uses off-cycle time to build leverage."
+    },
+    {
+      "id": "finisher_steady",
+      "name": "Steady Finisher",
+      "alias_name": "The Pulse Release Closer",
+      "archetype": "Finisher",
+      "modifier": "Steady",
+      "rarity_tier": "Rare",
+      "flavor_text": "Pushes work across the line and delivers complete outcomes. This profile keeps an even and reliable shipping rhythm."
+    },
+    {
+      "id": "finisher_burst",
+      "name": "Burst Finisher",
+      "alias_name": "The Storm Release Closer",
+      "archetype": "Finisher",
+      "modifier": "Burst",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Pushes work across the line and delivers complete outcomes. This profile compounds output through concentrated surges."
+    },
+    {
+      "id": "finisher_marathon",
+      "name": "Marathon Finisher",
+      "alias_name": "The Endurance Release Closer",
+      "archetype": "Finisher",
+      "modifier": "Marathon",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Pushes work across the line and delivers complete outcomes. This profile maintains velocity over long build arcs."
+    },
+    {
+      "id": "finisher_minimal",
+      "name": "Minimal Finisher",
+      "alias_name": "The Needle Release Closer",
+      "archetype": "Finisher",
+      "modifier": "Minimal",
+      "rarity_tier": "Rare",
+      "flavor_text": "Pushes work across the line and delivers complete outcomes. This profile prefers precise and minimal intervention."
+    },
+    {
+      "id": "finisher_maximal",
+      "name": "Maximal Finisher",
+      "alias_name": "The Overdrive Release Closer",
+      "archetype": "Finisher",
+      "modifier": "Maximal",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Pushes work across the line and delivers complete outcomes. This profile operates across broad and ambitious surfaces."
+    },
+    {
+      "id": "finisher_experimental",
+      "name": "Experimental Finisher",
+      "alias_name": "The Frontier Release Closer",
+      "archetype": "Finisher",
+      "modifier": "Experimental",
+      "rarity_tier": "Mythic",
+      "flavor_text": "Pushes work across the line and delivers complete outcomes. This profile tests boundaries and iterates on new patterns."
+    },
+    {
+      "id": "finisher_disciplined",
+      "name": "Disciplined Finisher",
+      "alias_name": "The Iron Release Closer",
+      "archetype": "Finisher",
+      "modifier": "Disciplined",
+      "rarity_tier": "Legendary",
+      "flavor_text": "Pushes work across the line and delivers complete outcomes. This profile executes with structure and repeatable rigor."
+    }
+  ]
+}

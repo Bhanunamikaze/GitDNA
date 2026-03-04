@@ -1,0 +1,42 @@
+{
+  "username": "sindresorhus",
+  "type_id": "maintainer_steady",
+  "type_name": "Steady Maintainer",
+  "alias_name": "The Pulse Caretaker",
+  "flavor_text": "Keeps projects healthy through steady, frequent improvements. This profile keeps an even and reliable shipping rhythm.",
+  "rarity_tier": "Rare",
+  "confidence": 0.81,
+  "top3": [
+    "maintainer_steady",
+    "maintainer_disciplined",
+    "integrator_steady"
+  ],
+  "traits": [
+    "Cadence Alignment",
+    "Consistency Alignment",
+    "Collaboration Signal Alignment"
+  ],
+  "counter_traits": [
+    "Burstiness Gap",
+    "Night Activity Gap"
+  ],
+  "achievements": [
+    "Cadence Gold",
+    "Consistency Mythic",
+    "Collaboration Gold"
+  ],
+  "metrics": {
+    "cadence": 0.79,
+    "consistency": 0.92,
+    "burstiness": 0.21,
+    "night_ratio": 0.18,
+    "weekend_ratio": 0.34,
+    "impact_estimate": 0.62,
+    "language_entropy": 0.58,
+    "repo_focus": 0.52,
+    "collaboration_signal": 0.77,
+    "longevity_signal": 0.82
+  },
+  "partial_data": false,
+  "is_demo": true
+}

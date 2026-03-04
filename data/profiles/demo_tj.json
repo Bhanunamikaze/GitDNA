@@ -1,0 +1,42 @@
+{
+  "username": "tj",
+  "type_id": "toolsmith_night",
+  "type_name": "Night Toolsmith",
+  "alias_name": "The Midnight Forge Engineer",
+  "flavor_text": "Builds utilities that amplify team and ecosystem productivity. This profile thrives in late-hour focus windows.",
+  "rarity_tier": "Mythic",
+  "confidence": 0.84,
+  "top3": [
+    "toolsmith_night",
+    "toolsmith_burst",
+    "architect_night"
+  ],
+  "traits": [
+    "Night Activity Alignment",
+    "Impact Estimate Alignment",
+    "Language Diversity Alignment"
+  ],
+  "counter_traits": [
+    "Weekend Activity Gap",
+    "Consistency Gap"
+  ],
+  "achievements": [
+    "Impact Gold",
+    "Polyglot Silver",
+    "Night Shift Pro"
+  ],
+  "metrics": {
+    "cadence": 0.54,
+    "consistency": 0.47,
+    "burstiness": 0.66,
+    "night_ratio": 0.74,
+    "weekend_ratio": 0.28,
+    "impact_estimate": 0.79,
+    "language_entropy": 0.63,
+    "repo_focus": 0.69,
+    "collaboration_signal": 0.51,
+    "longevity_signal": 0.75
+  },
+  "partial_data": false,
+  "is_demo": true
+}

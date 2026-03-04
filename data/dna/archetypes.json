@@ -1,0 +1,75 @@
+{
+  "version": "0.1.0",
+  "archetypes": [
+    {
+      "id": "architect",
+      "name": "Architect",
+      "alias_noun": "System Mason",
+      "description": "Designs high-impact structures and long-lived foundations.",
+      "power": 5
+    },
+    {
+      "id": "maintainer",
+      "name": "Maintainer",
+      "alias_noun": "Caretaker",
+      "description": "Keeps projects healthy through steady, frequent improvements.",
+      "power": 4
+    },
+    {
+      "id": "sprinter",
+      "name": "Sprinter",
+      "alias_noun": "Burst Runner",
+      "description": "Ships in intense intervals with high momentum bursts.",
+      "power": 3
+    },
+    {
+      "id": "stabilizer",
+      "name": "Stabilizer",
+      "alias_noun": "Anchor Keeper",
+      "description": "Prioritizes reliability, consistency, and low-volatility delivery.",
+      "power": 4
+    },
+    {
+      "id": "polyglot",
+      "name": "Polyglot",
+      "alias_noun": "Language Alchemist",
+      "description": "Moves fluidly across ecosystems and language paradigms.",
+      "power": 3
+    },
+    {
+      "id": "refactorer",
+      "name": "Refactorer",
+      "alias_noun": "Code Sculptor",
+      "description": "Improves structure and clarity while preserving behavior.",
+      "power": 4
+    },
+    {
+      "id": "explorer",
+      "name": "Explorer",
+      "alias_noun": "Pathfinder",
+      "description": "Experiments, prototypes, and maps new technical territory.",
+      "power": 3
+    },
+    {
+      "id": "integrator",
+      "name": "Integrator",
+      "alias_noun": "Bridgesmith",
+      "description": "Connects systems, tools, and collaborators into cohesive workflows.",
+      "power": 4
+    },
+    {
+      "id": "toolsmith",
+      "name": "Toolsmith",
+      "alias_noun": "Forge Engineer",
+      "description": "Builds utilities that amplify team and ecosystem productivity.",
+      "power": 5
+    },
+    {
+      "id": "finisher",
+      "name": "Finisher",
+      "alias_noun": "Release Closer",
+      "description": "Pushes work across the line and delivers complete outcomes.",
+      "power": 5
+    }
+  ]
+}

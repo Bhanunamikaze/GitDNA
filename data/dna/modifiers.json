@@ -1,0 +1,75 @@
+{
+  "version": "0.1.0",
+  "modifiers": [
+    {
+      "id": "night",
+      "name": "Night",
+      "alias_prefix": "Midnight",
+      "style_line": "thrives in late-hour focus windows",
+      "intensity": 4
+    },
+    {
+      "id": "dawn",
+      "name": "Dawn",
+      "alias_prefix": "Sunrise",
+      "style_line": "wins mornings with deliberate execution",
+      "intensity": 3
+    },
+    {
+      "id": "weekend",
+      "name": "Weekend",
+      "alias_prefix": "Weekend",
+      "style_line": "uses off-cycle time to build leverage",
+      "intensity": 3
+    },
+    {
+      "id": "steady",
+      "name": "Steady",
+      "alias_prefix": "Pulse",
+      "style_line": "keeps an even and reliable shipping rhythm",
+      "intensity": 2
+    },
+    {
+      "id": "burst",
+      "name": "Burst",
+      "alias_prefix": "Storm",
+      "style_line": "compounds output through concentrated surges",
+      "intensity": 5
+    },
+    {
+      "id": "marathon",
+      "name": "Marathon",
+      "alias_prefix": "Endurance",
+      "style_line": "maintains velocity over long build arcs",
+      "intensity": 4
+    },
+    {
+      "id": "minimal",
+      "name": "Minimal",
+      "alias_prefix": "Needle",
+      "style_line": "prefers precise and minimal intervention",
+      "intensity": 2
+    },
+    {
+      "id": "maximal",
+      "name": "Maximal",
+      "alias_prefix": "Overdrive",
+      "style_line": "operates across broad and ambitious surfaces",
+      "intensity": 5
+    },
+    {
+      "id": "experimental",
+      "name": "Experimental",
+      "alias_prefix": "Frontier",
+      "style_line": "tests boundaries and iterates on new patterns",
+      "intensity": 4
+    },
+    {
+      "id": "disciplined",
+      "name": "Disciplined",
+      "alias_prefix": "Iron",
+      "style_line": "executes with structure and repeatable rigor",
+      "intensity": 3
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitDNA - Discover Your Developer DNA</title>
+    <meta
+      name="description"
+      content="Discover your GitHub Developer DNA from public activity with deterministic, explainable scoring."
+    />
+    <meta property="og:title" content="GitDNA - Discover Your Developer DNA" />
+    <meta
+      property="og:description"
+      content="Analyze public GitHub activity, unlock achievements, and share your Developer DNA card."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./assets/og-default.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GitDNA - Discover Your Developer DNA" />
+    <meta
+      name="twitter:description"
+      content="Deterministic GitHub personality scoring with 100 collectible DNA types."
+    />
+    <meta name="twitter:image" content="./assets/og-default.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="background-grid" aria-hidden="true"></div>
+
+    <header class="app-header">
+      <p class="eyebrow">Open source | 100% free | GitHub-native</p>
+      <h1>GitDNA</h1>
+      <p class="subhead">
+        Discover your developer archetype from public GitHub behavior.
+      </p>
+    </header>
+
+    <main class="layout">
+      <section class="panel controls">
+        <h2>Analyze Profile</h2>
+        <form id="analyze-form" novalidate>
+          <label for="username-input">GitHub Username</label>
+          <input
+            id="username-input"
+            name="username"
+            type="text"
+            placeholder="torvalds"
+            autocomplete="off"
+            required
+          />
+
+          <label for="pat-input">Optional GitHub Token (PAT)</label>
+          <input
+            id="pat-input"
+            name="pat"
+            type="password"
+            placeholder="github_pat_..."
+            autocomplete="off"
+          />
+          <p class="hint">
+            Faster and higher-limit analysis. Token stays in session memory and
+            is never stored.
+            <a
+              href="https://github.com/settings/tokens/new"
+              target="_blank"
+              rel="noreferrer noopener"
+              >Create token</a
+            >.
+          </p>
+
+          <div class="button-row">
+            <button type="submit" id="analyze-button">Analyze</button>
+            <button type="button" id="demo-button" class="button-secondary">
+              Try Demo Profile
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel status-panel">
+        <div id="status-banner" class="status hidden" role="status"></div>
+        <div id="loading-panel" class="loading hidden" aria-live="polite">
+          <p class="loading-title">Analyzing profile...</p>
+          <p id="loading-stage">Preparing analysis engine</p>
+          <div class="skeleton-row"></div>
+          <div class="skeleton-row"></div>
+          <div class="skeleton-row short"></div>
+        </div>
+      </section>
+
+      <section id="error-panel" class="panel error hidden" role="alert">
+        <h2 id="error-title">Unable to analyze profile</h2>
+        <p id="error-message"></p>
+      </section>
+
+      <section id="result-panel" class="panel result hidden">
+        <div class="result-header">
+          <p id="result-mode" class="pill">Live Analysis</p>
+          <a
+            class="star-link"
+            href="https://github.com"
+            target="_blank"
+            rel="noreferrer noopener"
+            >Star on GitHub</a
+          >
+        </div>
+
+        <h2 id="result-username">@username</h2>
+        <p class="type-name" id="result-type-name">Type Name</p>
+        <p class="type-alias" id="result-alias-name">Alias Name</p>
+        <p id="result-flavor" class="flavor"></p>
+
+        <div class="confidence-row">
+          <label for="confidence-meter">Confidence</label>
+          <progress id="confidence-meter" max="100" value="0"></progress>
+          <span id="confidence-label">0%</span>
+        </div>
+
+        <div class="columns">
+          <article>
+            <h3>Top Traits</h3>
+            <ul id="traits-list"></ul>
+          </article>
+          <article>
+            <h3>Counter Traits</h3>
+            <ul id="counter-traits-list"></ul>
+          </article>
+          <article>
+            <h3>Top Alternatives</h3>
+            <ul id="alternatives-list"></ul>
+          </article>
+        </div>
+
+        <article class="metrics">
+          <h3>Metric Breakdown</h3>
+          <p class="hint">
+            Visual chart layers will be added next. Table fallback is included
+            for accessibility and transparency.
+          </p>
+          <table id="metrics-table">
+            <thead>
+              <tr>
+                <th scope="col">Metric</th>
+                <th scope="col">Value</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </article>
+
+        <article>
+          <h3>Achievements</h3>
+          <ul id="achievement-list"></ul>
+        </article>
+      </section>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

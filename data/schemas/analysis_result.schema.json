@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gitdna.local/schemas/analysis_result.schema.json",
+  "title": "AnalysisResult",
+  "type": "object",
+  "required": [
+    "username",
+    "type_id",
+    "type_name",
+    "alias_name",
+    "confidence",
+    "top3",
+    "traits",
+    "counter_traits",
+    "achievements",
+    "metrics"
+  ],
+  "properties": {
+    "username": {
+      "type": "string",
+      "minLength": 1
+    },
+    "type_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "type_name": {
+      "type": "string",
+      "minLength": 3
+    },
+    "alias_name": {
+      "type": "string",
+      "minLength": 3
+    },
+    "flavor_text": {
+      "type": "string"
+    },
+    "rarity_tier": {
+      "type": "string",
+      "enum": ["Common", "Rare", "Legendary", "Mythic"]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "top3": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "traits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "counter_traits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "achievements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "cadence",
+        "consistency",
+        "burstiness",
+        "night_ratio",
+        "weekend_ratio",
+        "impact_estimate",
+        "language_entropy",
+        "repo_focus",
+        "collaboration_signal",
+        "longevity_signal"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "cadence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "consistency": { "type": "number", "minimum": 0, "maximum": 1 },
+        "burstiness": { "type": "number", "minimum": 0, "maximum": 1 },
+        "night_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "weekend_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "impact_estimate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "language_entropy": { "type": "number", "minimum": 0, "maximum": 1 },
+        "repo_focus": { "type": "number", "minimum": 0, "maximum": 1 },
+        "collaboration_signal": { "type": "number", "minimum": 0, "maximum": 1 },
+        "longevity_signal": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "partial_data": {
+      "type": "boolean"
+    },
+    "is_demo": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

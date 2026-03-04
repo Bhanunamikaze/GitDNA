@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gitdna.local/schemas/demo_profile.schema.json",
+  "title": "DemoProfileSnapshot",
+  "allOf": [
+    {
+      "$ref": "./analysis_result.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "is_demo": { "const": true }
+      },
+      "required": ["is_demo"]
+    }
+  ]
+}

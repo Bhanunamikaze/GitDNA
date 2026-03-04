@@ -16,6 +16,7 @@ This folder is the implementation plan for building a 100% free, GitHub-native p
 10. [ROADMAP.md](./ROADMAP.md)
 11. [OPERATIONS_FREE_TIER.md](./OPERATIONS_FREE_TIER.md)
 12. [LAUNCH_STAR_STRATEGY.md](./LAUNCH_STAR_STRATEGY.md)
+13. [TASKS.md](./TASKS.md)
 
 ## Outcome
 If you execute these docs in order, you will have:
