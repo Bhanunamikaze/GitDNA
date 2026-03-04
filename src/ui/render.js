@@ -21,6 +21,83 @@ function renderList(element, items) {
   }
 }
 
+function normalizeTier(tier = "") {
+  return String(tier).trim().toLowerCase();
+}
+
+function renderAchievementBadges(container, badges = [], fallback = []) {
+  container.innerHTML = "";
+
+  const source = badges.length
+    ? badges
+    : fallback.map((label) => ({
+        label,
+        tier: "bronze",
+        points: 10,
+        type: "fallback",
+      }));
+
+  for (const badge of source) {
+    const article = document.createElement("article");
+    const tierClass =
+      badge.type === "combo" ? "badge-combo" : `badge-${normalizeTier(badge.tier) || "bronze"}`;
+    article.className = `achievement-badge ${tierClass}`;
+
+    const title = document.createElement("p");
+    title.className = "title";
+    title.textContent = badge.label || "Achievement";
+
+    const meta = document.createElement("p");
+    meta.className = "meta";
+    meta.textContent =
+      badge.type === "combo"
+        ? "Combo Badge"
+        : `${badge.track || "Track"} • ${badge.tier || "Tier"}`;
+
+    const points = document.createElement("p");
+    points.className = "points";
+    points.textContent = `Impact +${badge.points ?? 0}`;
+
+    article.append(title, meta, points);
+    container.appendChild(article);
+  }
+}
+
+function renderAchievementProgress(container, progress = []) {
+  container.innerHTML = "";
+  for (const item of progress) {
+    const row = document.createElement("article");
+    row.className = "progress-row";
+
+    const head = document.createElement("div");
+    head.className = "progress-head";
+
+    const label = document.createElement("span");
+    label.textContent = item.label || "Track";
+
+    const next = document.createElement("span");
+    if (item.nextTier === "Maxed") {
+      next.textContent = "Maxed";
+    } else {
+      const target = Math.round((item.nextThreshold || 1) * 100);
+      next.textContent = `${item.nextTier} at ${target}%`;
+    }
+
+    head.append(label, next);
+
+    const track = document.createElement("div");
+    track.className = "progress-track";
+
+    const fill = document.createElement("div");
+    fill.className = "progress-fill";
+    fill.style.width = `${Math.round((item.value || 0) * 100)}%`;
+    track.appendChild(fill);
+
+    row.append(head, track);
+    container.appendChild(row);
+  }
+}
+
 function renderMetricsTable(metricsTableBody, metrics) {
   metricsTableBody.innerHTML = "";
   for (const [key, value] of Object.entries(metrics)) {
@@ -54,8 +131,11 @@ export function createRenderer() {
     traits: document.querySelector("#traits-list"),
     counterTraits: document.querySelector("#counter-traits-list"),
     alternatives: document.querySelector("#alternatives-list"),
-    achievements: document.querySelector("#achievement-list"),
-    achievementProgress: document.querySelector("#achievement-progress-list"),
+    achievementBadgeGrid: document.querySelector("#achievement-badge-grid"),
+    achievementProgressGrid: document.querySelector("#achievement-progress-grid"),
+    impactScoreLabel: document.querySelector("#impact-score-label"),
+    impactScoreFill: document.querySelector("#impact-score-fill"),
+    badgeCountLabel: document.querySelector("#badge-count-label"),
     metricsTableBody: document.querySelector("#metrics-table tbody"),
     shareButton: document.querySelector("#share-card-button"),
     copyEmbedButton: document.querySelector("#copy-embed-button"),
@@ -121,21 +201,20 @@ export function createRenderer() {
       elements.alternatives,
       payload.top3?.map((entry) => entry.replace(/_/g, " ")) || []
     );
-    renderList(elements.achievements, payload.achievements || []);
-    renderList(
-      elements.achievementProgress,
-      (payload.achievement_progress || []).map((item) => {
-        if (item.nextTier === "Maxed") {
-          return `${item.label}: Maxed`;
-        }
-        const current = Math.round(item.value * 100);
-        const target = Math.round(item.nextThreshold * 100);
-        return `${item.label}: ${current}% -> ${item.nextTier} at ${target}%`;
-      })
+    renderAchievementBadges(
+      elements.achievementBadgeGrid,
+      payload.achievement_badges || [],
+      payload.achievements || []
     );
+    renderAchievementProgress(elements.achievementProgressGrid, payload.achievement_progress || []);
     renderMetricsTable(elements.metricsTableBody, payload.metrics || {});
     elements.embedSnippet.textContent = payload.embed_snippet || "";
     elements.a11ySummary.textContent = payload.accessibility_summary || "";
+    const impact = Number(payload.achievement_impact_score || 0);
+    const count = (payload.achievement_badges || []).length || (payload.achievements || []).length;
+    elements.impactScoreLabel.textContent = `${impact}`;
+    elements.badgeCountLabel.textContent = `${count} badges`;
+    elements.impactScoreFill.style.width = `${Math.min(100, Math.round((impact / 500) * 100))}%`;
 
     setHidden(elements.resultPanel, false);
     setHidden(elements.errorPanel, true);

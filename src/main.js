@@ -56,7 +56,9 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
     traits: scoring.drivers.map((key) => `${key} Alignment`),
     counter_traits: scoring.suppressors.map((key) => `${key} Gap`),
     achievements: achievementLabels,
+    achievement_badges: achievementData.badges,
     achievement_progress: achievementData.progress,
+    achievement_impact_score: achievementData.impactScore,
     metrics: metricsResult.metrics,
     partial_data: options.partialData || false,
     is_demo: options.isDemo || false,
@@ -95,6 +97,20 @@ function applyResultDecorations(result) {
 async function loadDemoProfile(profileId = "torvalds", note = "", kind = "warning") {
   const demo = await loadJson(`./data/profiles/demo_${profileId}.json`);
   demo.is_demo = true;
+  if (!Array.isArray(demo.achievement_badges) && Array.isArray(demo.achievements)) {
+    demo.achievement_badges = demo.achievements.map((label) => ({
+      label,
+      tier: "Bronze",
+      points: 10,
+      type: "fallback",
+    }));
+  }
+  if (typeof demo.achievement_impact_score !== "number") {
+    demo.achievement_impact_score = (demo.achievement_badges || []).reduce(
+      (sum, item) => sum + Number(item.points || 0),
+      0
+    );
+  }
   ui.showResult(demo);
   applyResultDecorations(demo);
   ui.setStatus(note || `Showing demo profile: ${demo.username}`, kind);

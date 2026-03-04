@@ -58,13 +58,19 @@ export function buildCharacterSvg(typeId, label = "") {
       <stop offset="0%" stop-color="${palette[0]}" />
       <stop offset="100%" stop-color="${palette[1]}" />
     </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="${palette[2]}" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="${palette[2]}" stop-opacity="0" />
+    </radialGradient>
   </defs>
-  <rect x="4" y="4" width="120" height="120" rx="20" fill="url(#bg)" />
-  <rect x="14" y="14" width="100" height="100" rx="14" fill="${palette[2]}" opacity="0.2" />
-  <g fill="${palette[2]}">
+  <circle cx="64" cy="64" r="58" fill="url(#bg)" />
+  <circle cx="64" cy="64" r="48" fill="url(#glow)" />
+  <circle cx="64" cy="64" r="58" fill="none" stroke="${palette[2]}" stroke-opacity="0.4" stroke-width="3" />
+  <g fill="${palette[2]}" stroke="${palette[0]}" stroke-width="2">
     <path d="${shape}" />
   </g>
-  <circle cx="100" cy="28" r="8" fill="${palette[1]}" />
+  <circle cx="100" cy="30" r="8" fill="${palette[1]}" />
+  <circle cx="100" cy="30" r="4" fill="${palette[2]}" />
 </svg>
 `.trim();
 }
