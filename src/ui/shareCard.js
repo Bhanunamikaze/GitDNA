@@ -438,7 +438,8 @@ export function buildNebulaProfileBadgeSvg({
       valueSize: 16.5,
     });
   }
-  const metricsStartY = show.description ? 186 : 168;
+  // Keep all dynamic rows (stats, languages, warning) inside the 312px inner card.
+  const metricsStartY = show.description ? 172 : 156;
   let contentCursorY = metricsStartY;
   const topCardsLayout = layoutCards({
     cards: topCards,
@@ -467,7 +468,7 @@ export function buildNebulaProfileBadgeSvg({
   }
 
   const languageLayout = layoutLanguageChips(contentCursorY);
-  const warningY = clamp(languageLayout.nextY + 14, 300, 336);
+  const warningY = clamp(languageLayout.nextY + 14, 286, 324);
 
   return `
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="340" viewBox="0 0 900 340" role="img" aria-label="GitDNA Nebula badge for ${safeUser}">
