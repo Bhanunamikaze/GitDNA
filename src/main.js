@@ -125,7 +125,7 @@ async function analyzeLive(username, token) {
     return;
   }
 
-  ui.setLoading(true, "Fetching repositories");
+  ui.setLoading(true, "Analyzing commit genome...");
   const liveResult = await fetchLiveProfile(username, {
     token,
     limits: resolveFetchLimits(token),
@@ -155,11 +155,11 @@ async function analyzeLive(username, token) {
     return;
   }
 
-  ui.setLoadingStage("Computing metrics");
+  ui.setLoadingStage("Extracting activity signals...");
   const metricsResult = computeMetrics(liveResult.data);
   const insufficientData = hasInsufficientData(liveResult.data);
 
-  ui.setLoadingStage("Resolving DNA type");
+  ui.setLoadingStage("Building personality model...");
   const scoring = resolveType(metricsResult.vector, state.centroids, state.types);
   const achievementData = evaluateAchievements(metricsResult.metrics, scoring);
   const normalized = normalizeResult(
@@ -204,7 +204,7 @@ function getSelectedDemoProfile() {
 }
 
 async function init() {
-  ui.setLoading(true, "Loading DNA model");
+  ui.setLoading(true, "Booting DNA scanner...");
 
   const [centroids, types, shapeData, paletteData] = await Promise.all([
     loadJson("./data/dna/centroids.json"),

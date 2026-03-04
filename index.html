@@ -68,7 +68,7 @@
 
     <main class="layout">
       <section class="panel controls">
-        <h2>Analyze Profile</h2>
+        <h2>Discover Your GitHub DNA</h2>
         <form id="analyze-form" novalidate>
           <label for="username-input">GitHub Username</label>
           <input
@@ -80,28 +80,8 @@
             required
           />
 
-          <label for="pat-input">Optional GitHub Token (PAT)</label>
-          <input
-            id="pat-input"
-            name="pat"
-            type="password"
-            placeholder="github_pat_..."
-            autocomplete="off"
-          />
-
-          <p class="hint">
-            Use a PAT for reliable analysis under GitHub rate limits. Stored only for this tab
-            session.
-            <a
-              href="https://github.com/settings/tokens/new"
-              target="_blank"
-              rel="noreferrer noopener"
-              >Create token</a
-            >.
-          </p>
-
           <div class="button-row">
-            <button type="submit" id="analyze-button">Analyze</button>
+            <button type="submit" id="analyze-button">Scan My GitHub</button>
             <button type="button" id="demo-button" class="button-secondary">
               Try Demo Profile
             </button>
@@ -109,10 +89,24 @@
           </div>
 
           <details class="token-help">
-            <summary>Rate limit help</summary>
+            <summary>Use token for instant results</summary>
+            <label for="pat-input">Optional GitHub Token (PAT)</label>
+            <input
+              id="pat-input"
+              name="pat"
+              type="password"
+              placeholder="github_pat_..."
+              autocomplete="off"
+            />
             <p>
-              GitHub unauthenticated API is limited. If you see fallback mode, paste a PAT and
-              retry. You only need read access to public profile data.
+              GitHub unauthenticated API is limited. Paste a PAT for reliable live analysis.
+              Stored only for this tab session.
+              <a
+                href="https://github.com/settings/tokens/new"
+                target="_blank"
+                rel="noreferrer noopener"
+                >Create token</a
+              >.
             </p>
           </details>
         </form>
@@ -121,7 +115,11 @@
       <section class="panel status-panel">
         <div id="status-banner" class="status hidden" role="status"></div>
         <div id="loading-panel" class="loading hidden" aria-live="polite">
-          <p class="loading-title">Analyzing profile...</p>
+          <p class="loading-title">Scanning profile...</p>
+          <div class="helix-wrap" aria-hidden="true">
+            <div class="helix helix-a"></div>
+            <div class="helix helix-b"></div>
+          </div>
           <p id="loading-stage">Preparing analysis engine</p>
           <div class="skeleton-row"></div>
           <div class="skeleton-row"></div>
@@ -164,6 +162,15 @@
           <progress id="confidence-meter" max="100" value="0"></progress>
           <span id="confidence-label">0%</span>
         </div>
+
+        <article class="constellation-panel">
+          <h3>GitHub Signal Constellation</h3>
+          <p class="hint">Click glowing nodes to inspect how each signal shaped your DNA.</p>
+          <div id="constellation-map" class="constellation-map"></div>
+          <p id="constellation-detail" class="constellation-detail hint">
+            Select any signal node to inspect details.
+          </p>
+        </article>
 
         <section class="result-highlight">
           <article class="highlight-card">

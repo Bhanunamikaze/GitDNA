@@ -98,6 +98,83 @@ function renderAchievementProgress(container, progress = []) {
   }
 }
 
+const SIGNAL_META = [
+  {
+    metric: "night_ratio",
+    label: "Night Commits",
+    x: "18%",
+    y: "28%",
+    delay: "0s",
+    description: "Late-night coding tendency.",
+  },
+  {
+    metric: "burstiness",
+    label: "Repo Bursts",
+    x: "82%",
+    y: "28%",
+    delay: "0.2s",
+    description: "Frequency of intense commit sessions.",
+  },
+  {
+    metric: "language_entropy",
+    label: "Language Bias",
+    x: "20%",
+    y: "72%",
+    delay: "0.4s",
+    description: "Diversity across programming languages.",
+  },
+  {
+    metric: "consistency",
+    label: "Streak Engine",
+    x: "80%",
+    y: "72%",
+    delay: "0.6s",
+    description: "Consistency over active days.",
+  },
+  {
+    metric: "impact_estimate",
+    label: "Commit Impact",
+    x: "50%",
+    y: "14%",
+    delay: "0.8s",
+    description: "Influence based on repo and contribution signal.",
+  },
+  {
+    metric: "cadence",
+    label: "Maintainer Mode",
+    x: "50%",
+    y: "86%",
+    delay: "1s",
+    description: "Overall contribution cadence.",
+  },
+];
+
+function renderConstellation(mapElement, detailElement, metrics = {}) {
+  mapElement.innerHTML = "";
+
+  const core = document.createElement("div");
+  core.className = "dna-core";
+  core.textContent = "DNA Core";
+  mapElement.appendChild(core);
+
+  for (const signal of SIGNAL_META) {
+    const value = Number(metrics[signal.metric] || 0);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "signal-node";
+    button.style.setProperty("--x", signal.x);
+    button.style.setProperty("--y", signal.y);
+    button.style.setProperty("--delay", signal.delay);
+    button.textContent = `${signal.label} ${Math.round(value * 100)}%`;
+    button.addEventListener("click", () => {
+      detailElement.textContent = `${signal.label}: ${Math.round(value * 100)}% — ${signal.description}`;
+    });
+    mapElement.appendChild(button);
+  }
+
+  detailElement.textContent = "Select any signal node to inspect details.";
+}
+
 function renderMetricsTable(metricsTableBody, metrics) {
   metricsTableBody.innerHTML = "";
   for (const [key, value] of Object.entries(metrics)) {
@@ -136,6 +213,8 @@ export function createRenderer() {
     impactScoreLabel: document.querySelector("#impact-score-label"),
     impactScoreFill: document.querySelector("#impact-score-fill"),
     badgeCountLabel: document.querySelector("#badge-count-label"),
+    constellationMap: document.querySelector("#constellation-map"),
+    constellationDetail: document.querySelector("#constellation-detail"),
     metricsTableBody: document.querySelector("#metrics-table tbody"),
     shareButton: document.querySelector("#share-card-button"),
     copyEmbedButton: document.querySelector("#copy-embed-button"),
@@ -207,6 +286,11 @@ export function createRenderer() {
       payload.achievements || []
     );
     renderAchievementProgress(elements.achievementProgressGrid, payload.achievement_progress || []);
+    renderConstellation(
+      elements.constellationMap,
+      elements.constellationDetail,
+      payload.metrics || {}
+    );
     renderMetricsTable(elements.metricsTableBody, payload.metrics || {});
     elements.embedSnippet.textContent = payload.embed_snippet || "";
     elements.a11ySummary.textContent = payload.accessibility_summary || "";
@@ -218,6 +302,10 @@ export function createRenderer() {
 
     setHidden(elements.resultPanel, false);
     setHidden(elements.errorPanel, true);
+    elements.resultPanel.classList.remove("result-reveal");
+    requestAnimationFrame(() => {
+      elements.resultPanel.classList.add("result-reveal");
+    });
   }
 
   return {
