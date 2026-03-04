@@ -350,12 +350,54 @@ function achievementSummary(achievementData) {
   };
 }
 
+function estimateLocFromLanguageBytes(languageBytes = {}) {
+  const totalBytes = Object.values(languageBytes || {}).reduce(
+    (sum, value) => sum + Number(value || 0),
+    0
+  );
+  if (!Number.isFinite(totalBytes) || totalBytes <= 0) {
+    return null;
+  }
+  // Heuristic only: GitHub language API returns bytes, not physical lines.
+  return Math.max(1, Math.round(totalBytes / 38));
+}
+
+function topLanguagesFromBytes(languageBytes = {}, limit = 5) {
+  return Object.entries(languageBytes || {})
+    .map(([name, bytes]) => ({
+      name,
+      bytes: Number(bytes || 0),
+    }))
+    .filter((item) => item.bytes > 0)
+    .sort((left, right) => right.bytes - left.bytes)
+    .slice(0, limit);
+}
+
+function buildProfileStats(profileData, metricsResult) {
+  const repos = profileData?.repos || [];
+  const totalStars = repos.reduce((sum, repo) => sum + Number(repo.stars || 0), 0);
+  const totalForks = repos.reduce((sum, repo) => sum + Number(repo.forks || 0), 0);
+  const followers = Number(profileData?.user?.followers || 0);
+
+  return {
+    commitCount: Number(metricsResult?.totalCommits || 0),
+    repoCount: Number(metricsResult?.totalRepos || 0),
+    languageCount: Number(metricsResult?.languageCount || 0),
+    estimatedLoc: estimateLocFromLanguageBytes(profileData?.languageBytes || {}),
+    totalStars,
+    totalForks,
+    followers,
+    topLanguages: topLanguagesFromBytes(profileData?.languageBytes || {}, 5),
+  };
+}
+
 function normalizeResult(profile, scoring, achievementData, metricsResult, options = {}) {
   const baseUrl = getBaseUrl();
   const summary = achievementSummary(achievementData);
   const confidence = options.lowConfidence
     ? Math.min(scoring.confidence, 0.35)
     : scoring.confidence;
+  const profileStats = profile.profileStats || null;
   const profileUrl = buildProfileUrl(baseUrl, profile.username);
   const badgeImageUrl = buildShieldsBadgeUrl({
     typeName: scoring.typeName,
@@ -377,6 +419,7 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
     rarityTier: scoring.rarityTier,
     confidence,
     impactScore: summary.impactScore,
+    profileStats,
   });
 
   return {
@@ -398,6 +441,7 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
     achievementLabels: summary.labels,
     isDemo: options.isDemo || false,
     partialData: options.partialData || false,
+    profileStats,
     sample: {
       totalCommits: metricsResult.totalCommits || 0,
       totalRepos: metricsResult.totalRepos || 0,
@@ -442,6 +486,7 @@ function scoreFromDemoPayload(demoPayload) {
     rarityTier: demoPayload.rarity_tier || "Common",
     confidence: demoPayload.confidence,
     impactScore,
+    profileStats: null,
   });
 
   return {
@@ -470,6 +515,7 @@ function scoreFromDemoPayload(demoPayload) {
     achievementLabels: demoPayload.achievements || [],
     isDemo: true,
     partialData: false,
+    profileStats: null,
     sample: null,
     profileUrl,
     badgeImageUrl,
@@ -1220,11 +1266,13 @@ function App() {
       dataRef.current.types
     );
     const achievements = evaluateAchievements(metricsResult.metrics, scoring);
+    const profileStats = buildProfileStats(live.data, metricsResult);
 
     const normalized = normalizeResult(
       {
         username: cleanName,
         avatarUrl: live.data.user.avatarUrl,
+        profileStats,
       },
       scoring,
       achievements,
@@ -1375,6 +1423,7 @@ function App() {
       rarityTier: result?.rarityTier || "Common",
       confidence: result?.confidence || 0,
       impactScore: result?.achievementImpactScore || 0,
+      profileStats: result?.profileStats || null,
     });
   const effectiveSvgEmbed =
     `<a href="${effectiveProfileUrl}" target="_blank" rel="noopener noreferrer">\n${effectiveNebulaSvg}\n</a>`;
