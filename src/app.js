@@ -2,13 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from "https://esm.sh/reac
 import { createRoot } from "https://esm.sh/react-dom@18.3.1/client";
 import { AnimatePresence, motion } from "https://esm.sh/framer-motion@11.11.17";
 import htm from "https://esm.sh/htm@3.1.1";
-import {
-  forceCenter,
-  forceCollide,
-  forceLink,
-  forceManyBody,
-  forceSimulation,
-} from "https://esm.sh/d3-force@3.0.0";
 
 import { evaluateAchievements } from "./analysis/achievements.js";
 import { computeMetrics } from "./analysis/metrics.js";
@@ -36,37 +29,55 @@ const SIGNAL_CONFIG = [
     key: "night_ratio",
     label: "Night Commits",
     description: "Measures late-hour contribution tendency.",
+    detail: "Higher values indicate strong late-night coding windows.",
     angle: -80,
+    orbit: 112,
+    speed: 0.33,
   },
   {
     key: "burstiness",
     label: "Repo Bursts",
     description: "Tracks clustered shipping spikes across repositories.",
+    detail: "Captures burst-style output waves instead of uniform pacing.",
     angle: -25,
+    orbit: 146,
+    speed: 0.27,
   },
   {
     key: "language_entropy",
     label: "Language Bias",
     description: "Represents language diversity across coding activity.",
+    detail: "Lower values suggest specialization, higher values imply polyglot behavior.",
     angle: 25,
+    orbit: 178,
+    speed: 0.21,
   },
   {
     key: "impact_estimate",
     label: "Commit Impact",
     description: "Derived from contribution influence and repository signal.",
+    detail: "Signals shipping weight across repositories, stars, and contribution breadth.",
     angle: 85,
+    orbit: 118,
+    speed: 0.31,
   },
   {
     key: "consistency",
     label: "Streak Engine",
     description: "Indicates contribution consistency over time.",
+    detail: "Shows how steady your contribution rhythm remains week to week.",
     angle: 145,
+    orbit: 152,
+    speed: 0.24,
   },
   {
     key: "cadence",
     label: "Maintainer Mode",
     description: "Reflects sustained commit cadence and rhythm.",
+    detail: "Represents long-run maintainership cadence and release discipline.",
     angle: -145,
+    orbit: 186,
+    speed: 0.19,
   },
 ];
 
@@ -200,83 +211,98 @@ function scoreFromDemoPayload(demoPayload) {
 }
 
 function useConstellation(metrics) {
-  const [graph, setGraph] = useState({ nodes: [], links: [] });
+  const [graph, setGraph] = useState({
+    width: 900,
+    height: 420,
+    rings: [96, 132, 168, 204],
+    nodes: [],
+    links: [],
+  });
 
   useEffect(() => {
-    const width = 880;
-    const height = 360;
-    const radius = 125;
+    const width = 900;
+    const height = 420;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const rings = [96, 132, 168, 204];
 
-    const nodes = [
-      {
-        id: "core",
-        label: "DNA Core",
-        core: true,
-        x: width / 2,
-        y: height / 2,
-        fx: width / 2,
-        fy: height / 2,
-      },
-      ...SIGNAL_CONFIG.map((signal) => {
-        const rad = (signal.angle * Math.PI) / 180;
-        return {
-          id: signal.key,
-          label: signal.label,
-          metric: signal.key,
-          value: clamp(Number(metrics?.[signal.key] || 0), 0, 1),
-          description: signal.description,
-          x: width / 2 + Math.cos(rad) * radius,
-          y: height / 2 + Math.sin(rad) * radius,
-        };
-      }),
-    ];
-
-    const links = SIGNAL_CONFIG.map((signal) => ({
-      source: "core",
-      target: signal.key,
+    const seededSignals = SIGNAL_CONFIG.map((signal, index) => ({
+      ...signal,
+      index,
+      phase: index * 0.95,
+      baseAngle: (signal.angle * Math.PI) / 180,
     }));
 
-    const simulation = forceSimulation(nodes)
-      .force("charge", forceManyBody().strength(-120))
-      .force("center", forceCenter(width / 2, height / 2))
-      .force(
-        "link",
-        forceLink(links)
-          .id((node) => node.id)
-          .distance((link) =>
-            link.target?.id === "core" || link.source?.id === "core" ? 120 : 140
-          )
-          .strength(0.78)
-      )
-      .force(
-        "collision",
-        forceCollide().radius((node) => (node.core ? 56 : 40))
-      )
-      .alpha(1)
-      .alphaDecay(0.03);
+    const links = [
+      ...seededSignals.map((signal) => ({
+        source: "core",
+        target: signal.key,
+        type: "core",
+      })),
+      ...seededSignals.map((signal, index) => ({
+        source: signal.key,
+        target: seededSignals[(index + 1) % seededSignals.length].key,
+        type: "mesh",
+      })),
+    ];
 
     let raf = 0;
-    const update = () => {
+    let lastFrameAt = 0;
+
+    const frame = (timestamp) => {
+      if (timestamp - lastFrameAt < 33) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
+      lastFrameAt = timestamp;
+
+      const seconds = timestamp / 1000;
+      const nodes = [
+        {
+          id: "core",
+          label: "DNA Core",
+          core: true,
+          x: centerX,
+          y: centerY,
+          value: 1,
+          description: "Identity anchor built from your GitHub activity graph.",
+        },
+        ...seededSignals.map((signal) => {
+          const value = clamp(Number(metrics?.[signal.key] || 0), 0, 1);
+          const orbit = signal.orbit + Math.sin(seconds * 0.7 + signal.phase) * 6;
+          const angle =
+            signal.baseAngle +
+            seconds * signal.speed +
+            Math.sin(seconds * 0.45 + signal.phase) * 0.12;
+          const driftX = Math.cos(seconds * 1.1 + signal.phase) * 5;
+          const driftY = Math.sin(seconds * 1.25 + signal.phase) * 4;
+          return {
+            id: signal.key,
+            label: signal.label,
+            metric: signal.key,
+            value,
+            description: signal.description,
+            detail: signal.detail,
+            x: centerX + Math.cos(angle) * orbit + driftX,
+            y: centerY + Math.sin(angle) * orbit + driftY,
+            index: signal.index,
+          };
+        }),
+      ];
+
       setGraph({
-        nodes: nodes.map((node) => ({ ...node })),
-        links: links.map((link) => ({
-          source: typeof link.source === "object" ? link.source.id : link.source,
-          target: typeof link.target === "object" ? link.target.id : link.target,
-        })),
+        width,
+        height,
+        rings,
+        nodes,
+        links,
       });
+
+      raf = requestAnimationFrame(frame);
     };
 
-    simulation.on("tick", () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(update);
-    });
-
-    update();
-
-    return () => {
-      cancelAnimationFrame(raf);
-      simulation.stop();
-    };
+    raf = requestAnimationFrame(frame);
+    return () => cancelAnimationFrame(raf);
   }, [metrics]);
 
   return graph;
@@ -284,7 +310,8 @@ function useConstellation(metrics) {
 
 function ConstellationGraph({ metrics }) {
   const graph = useConstellation(metrics);
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(SIGNAL_CONFIG[0]?.key || null);
+  const [hovered, setHovered] = useState(null);
 
   const nodeById = useMemo(() => {
     const map = new Map();
@@ -294,32 +321,77 @@ function ConstellationGraph({ metrics }) {
     return map;
   }, [graph.nodes]);
 
-  const selectedNode = selected ? nodeById.get(selected) : null;
+  const signalNodes = useMemo(
+    () => graph.nodes.filter((node) => !node.core),
+    [graph.nodes]
+  );
+
+  const activeId = hovered || selected || signalNodes[0]?.id || null;
+  const activeNode = activeId ? nodeById.get(activeId) : null;
+
+  const rankedSignals = useMemo(
+    () => [...signalNodes].sort((left, right) => (right.value || 0) - (left.value || 0)),
+    [signalNodes]
+  );
 
   return html`
     <div className="space-y-4">
-      <div className="relative overflow-hidden rounded-2xl border border-slate-700/70 constellation-bg constellation-stars">
-        <svg viewBox="0 0 880 360" className="w-full h-[340px] md:h-[360px]">
+      <div className="relative overflow-hidden rounded-2xl border border-slate-700/70 constellation-bg constellation-stars constellation-nebula">
+        <div className="constellation-overlay"></div>
+        <div className="absolute top-3 left-3 z-10 rounded-lg border border-cyan-400/35 bg-slate-950/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.11em] text-cyan-100">
+          Signal Orbit View
+        </div>
+
+        <svg
+          viewBox=${`0 0 ${graph.width} ${graph.height}`}
+          className="relative z-[1] w-full h-[360px] md:h-[420px]"
+        >
+          <defs>
+            <radialGradient id="coreGlow" cx="50%" cy="45%" r="58%">
+              <stop offset="0%" stop-color="#67e8f9" />
+              <stop offset="55%" stop-color="#14b8a6" />
+              <stop offset="100%" stop-color="#0f766e" />
+            </radialGradient>
+            <radialGradient id="nodeAura" cx="50%" cy="45%" r="60%">
+              <stop offset="0%" stop-color="rgba(125,211,252,0.5)" />
+              <stop offset="100%" stop-color="rgba(56,189,248,0.02)" />
+            </radialGradient>
+          </defs>
+
+          ${(graph.rings || []).map(
+            (ring, index) => html`<circle
+              key=${`ring-${index}`}
+              cx=${graph.width / 2}
+              cy=${graph.height / 2}
+              r=${ring}
+              className="orbit-track"
+            />`
+          )}
+
           ${graph.links.map((link) => {
             const source = nodeById.get(link.source);
             const target = nodeById.get(link.target);
             if (!source || !target) {
               return null;
             }
+            const active = activeId && (link.source === activeId || link.target === activeId);
+            const className = link.type === "mesh" ? "link-mesh" : "link-glow";
             return html`<line
               key=${`${link.source}-${link.target}`}
-              className="link-glow"
+              className=${className}
               x1=${source.x}
               y1=${source.y}
               x2=${target.x}
               y2=${target.y}
+              style=${{ opacity: active ? 0.92 : link.type === "mesh" ? 0.28 : 0.62 }}
             />`;
           })}
 
           ${graph.nodes.map((node) => {
             if (node.core) {
               return html`<g key="core">
-                <circle cx=${node.x} cy=${node.y} r="48" fill="rgba(20,184,166,0.35)" />
+                <circle cx=${node.x} cy=${node.y} r="58" className="core-aura" />
+                <circle cx=${node.x} cy=${node.y} r="46" className="core-aura core-aura-2" />
                 <circle cx=${node.x} cy=${node.y} r="40" fill="url(#coreGlow)" />
                 <text
                   x=${node.x}
@@ -336,61 +408,133 @@ function ConstellationGraph({ metrics }) {
             }
 
             const pct = Math.round((node.value || 0) * 100);
+            const isActive = activeId === node.id;
+            const radius = 15 + Math.round((node.value || 0) * 8);
             return html`<g
               key=${node.id}
               style=${{ cursor: "pointer" }}
               onClick=${() => setSelected(node.id)}
+              onMouseEnter=${() => setHovered(node.id)}
+              onMouseLeave=${() => setHovered(null)}
             >
               <circle
                 cx=${node.x}
                 cy=${node.y}
-                r="24"
-                fill="rgba(15,23,42,0.78)"
-                stroke="rgba(34,211,238,0.78)"
-                stroke-width="1.5"
+                r=${radius + (isActive ? 9 : 7)}
+                className="signal-pulse"
+                style=${{
+                  "--pulse-delay": `${(node.index || 0) * 0.16}s`,
+                }}
               />
-              <circle cx=${node.x} cy=${node.y} r="4" fill="#22d3ee" />
+              <circle
+                cx=${node.x}
+                cy=${node.y}
+                r=${radius + 4}
+                fill="url(#nodeAura)"
+                opacity=${isActive ? 0.95 : 0.6}
+              />
+              <circle
+                cx=${node.x}
+                cy=${node.y}
+                r=${radius}
+                fill=${isActive ? "rgba(15,23,42,0.95)" : "rgba(15,23,42,0.84)"}
+                stroke=${isActive ? "rgba(253,224,71,0.9)" : "rgba(34,211,238,0.72)"}
+                strokeWidth=${isActive ? 2.1 : 1.5}
+              />
+              <circle cx=${node.x} cy=${node.y} r="3.2" fill=${isActive ? "#fde68a" : "#22d3ee"} />
               <text
                 x=${node.x}
-                y=${node.y - 30}
+                y=${node.y + 4}
                 text-anchor="middle"
-                fill="#dbeafe"
+                fill=${isActive ? "#fef3c7" : "#a5f3fc"}
                 font-size="11"
-                font-family="IBM Plex Sans"
-                font-weight="600"
-              >
-                ${node.label}
-              </text>
-              <text
-                x=${node.x}
-                y=${node.y + 42}
-                text-anchor="middle"
-                fill="#fde68a"
-                font-size="12"
                 font-family="JetBrains Mono"
                 font-weight="700"
               >
-                ${pct}%
+                ${pct}
               </text>
+              ${isActive
+                ? html`<text
+                    x=${node.x}
+                    y=${node.y - radius - 14}
+                    text-anchor="middle"
+                    fill="#dbeafe"
+                    font-size="11"
+                    font-family="IBM Plex Sans"
+                    font-weight="600"
+                  >
+                    ${node.label}
+                  </text>`
+                : null}
             </g>`;
           })}
-
-          <defs>
-            <radialGradient id="coreGlow" cx="50%" cy="45%" r="58%">
-              <stop offset="0%" stop-color="#22d3ee" />
-              <stop offset="100%" stop-color="#0f766e" />
-            </radialGradient>
-          </defs>
         </svg>
       </div>
 
-      <div className="rounded-xl border border-slate-700/70 bg-slate-900/70 p-4">
-        ${selectedNode
-          ? html`
-              <p className="text-lg font-semibold text-cyan-300">${selectedNode.label}</p>
-              <p className="text-slate-300 mt-1">${selectedNode.description}</p>
-            `
-          : html`<p className="text-slate-300">Select any signal node to inspect its metric meaning.</p>`}
+      <div className="flex flex-wrap gap-2">
+        ${signalNodes.map((node) => {
+          const pct = Math.round((node.value || 0) * 100);
+          const active = node.id === activeId;
+          return html`
+            <button
+              key=${node.id}
+              onClick=${() => setSelected(node.id)}
+              className=${`signal-pill ${active ? "is-active" : ""}`}
+            >
+              <span>${node.label}</span>
+              <span className="font-mono text-xs">${pct}%</span>
+            </button>
+          `;
+        })}
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="rounded-xl border border-slate-700/70 bg-slate-900/70 p-4">
+          ${activeNode
+            ? html`
+                <p className="text-lg font-semibold text-cyan-300">${activeNode.label}</p>
+                <p className="text-slate-300 mt-1">${activeNode.description}</p>
+                <p className="text-slate-400 text-sm mt-2">${activeNode.detail || ""}</p>
+                <div className="mt-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-300">Signal Strength</span>
+                    <span className="font-mono text-cyan-200"
+                      >${Math.round((activeNode.value || 0) * 100)}%</span
+                    >
+                  </div>
+                  <div className="mt-2 h-2 rounded-full bg-slate-700/70 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-teal-400 to-violet-400"
+                      style=${{ width: `${Math.round((activeNode.value || 0) * 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+              `
+            : html`<p className="text-slate-300">Select any signal node to inspect its metric meaning.</p>`}
+        </div>
+
+        <div className="rounded-xl border border-slate-700/70 bg-slate-900/70 p-4">
+          <p className="text-sm uppercase tracking-[0.1em] text-slate-300">Top Signal Strength</p>
+          <div className="mt-3 space-y-3">
+            ${rankedSignals.slice(0, 3).map((node) => {
+              const pct = Math.round((node.value || 0) * 100);
+              return html`
+                <div key=${node.id} className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-200">${node.label}</span>
+                    <span className="font-mono text-cyan-200">${pct}%</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-slate-700/80 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-400"
+                      style=${{ width: `${pct}%` }}
+                    ></div>
+                  </div>
+                </div>
+              `;
+            })}
+          </div>
+        </div>
       </div>
     </div>
   `;

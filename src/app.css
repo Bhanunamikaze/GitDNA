@@ -111,12 +111,87 @@ body {
   background-size: 24px 24px;
 }
 
+.constellation-nebula::before {
+  content: "";
+  position: absolute;
+  inset: -25% -10%;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.18), transparent 32%),
+    radial-gradient(circle at 82% 28%, rgba(139, 92, 246, 0.2), transparent 35%),
+    radial-gradient(circle at 42% 78%, rgba(45, 212, 191, 0.16), transparent 38%);
+  filter: blur(22px);
+  pointer-events: none;
+}
+
+.constellation-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5, 11, 22, 0.2), rgba(5, 11, 22, 0.5));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orbit-track {
+  fill: none;
+  stroke: rgba(125, 211, 252, 0.2);
+  stroke-width: 1;
+  stroke-dasharray: 2 8;
+}
+
 .link-glow {
   stroke: rgba(56, 189, 248, 0.6);
   stroke-width: 1.2;
   fill: none;
-  stroke-dasharray: 4 6;
-  animation: dash 3s linear infinite;
+  stroke-dasharray: 5 7;
+  animation: dash 3.2s linear infinite;
+}
+
+.link-mesh {
+  stroke: rgba(186, 230, 253, 0.36);
+  stroke-width: 0.9;
+  fill: none;
+  stroke-dasharray: 2 8;
+  animation: dash 4.2s linear infinite reverse;
+}
+
+.core-aura {
+  fill: rgba(34, 211, 238, 0.16);
+  animation: pulse 2.8s ease-in-out infinite;
+}
+
+.core-aura-2 {
+  fill: rgba(20, 184, 166, 0.2);
+  animation-duration: 3.6s;
+}
+
+.signal-pulse {
+  fill: rgba(34, 211, 238, 0.09);
+  animation: pulse 2.4s ease-in-out infinite;
+  animation-delay: var(--pulse-delay);
+}
+
+.signal-pill {
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.82), rgba(30, 41, 59, 0.72));
+  color: #dbeafe;
+  border-radius: 999px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.81rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  transition: border-color 160ms ease, transform 160ms ease, box-shadow 180ms ease;
+}
+
+.signal-pill:hover {
+  transform: translateY(-1px);
+  border-color: rgba(45, 212, 191, 0.62);
+}
+
+.signal-pill.is-active {
+  border-color: rgba(253, 224, 71, 0.62);
+  box-shadow: 0 0 0 1px rgba(253, 224, 71, 0.22), 0 0 18px rgba(253, 224, 71, 0.18);
 }
 
 .signal-chip {
@@ -191,5 +266,15 @@ body {
 @keyframes dash {
   to {
     stroke-dashoffset: -20;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
   }
 }
