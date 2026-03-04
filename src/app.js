@@ -1382,7 +1382,7 @@ function App() {
                           <img
                             src=${result.avatarUrl}
                             alt=${`${result.username} avatar`}
-                            className="absolute -bottom-3 -right-3 h-14 w-14 rounded-full border-2 border-cyan-300/60 shadow-[0_0_18px_rgba(34,211,238,0.35)]"
+                            className="dna-user-avatar-badge absolute top-2 right-2 h-12 w-12 rounded-full border-2 border-cyan-300/70 shadow-[0_0_16px_rgba(34,211,238,0.35)]"
                           />
                         </div>
 
