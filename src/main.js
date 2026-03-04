@@ -35,7 +35,10 @@ async function loadJson(path) {
 }
 
 function normalizeResult(profile, scoring, achievementData, metricsResult, options = {}) {
-  const baseUrl = window.location.origin + window.location.pathname.replace(/\/index\.html$/, "");
+  const basePath = window.location.pathname
+    .replace(/\/index\.html$/, "")
+    .replace(/\/$/, "");
+  const baseUrl = `${window.location.origin}${basePath}`;
   const achievementLabels = [
     ...achievementData.unlocked.map((item) => item.label),
     ...achievementData.combos.map((item) => item.label),
