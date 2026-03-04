@@ -233,6 +233,10 @@ export function buildNebulaProfileBadgeSvg({
   };
   const wantsDetailedStats =
     show.commits || show.loc || show.repos || show.social || show.languages;
+  const contentLeft = 34;
+  const contentRight = 614;
+  const contentGap = 10;
+  const contentWidth = contentRight - contentLeft;
 
   const rand = seededRandom(hashSeed(`${safeUser}:${safeType}:${safeImpact}`));
   const stars = Array.from({ length: 30 }, (_, index) => {
@@ -243,25 +247,85 @@ export function buildNebulaProfileBadgeSvg({
     return `<circle cx="${x}" cy="${y}" r="${r}" fill="#bfdbfe" opacity="${opacity}" />`;
   }).join("");
 
-  const languageChips =
-    show.languages && topLanguages.length
-      ? topLanguages
-          .map((language, index) => {
-            const chipX = 34 + index * 106;
-            const safeName = escapeText(languageShortLabel(language.name));
-            const accent = languageAccentColor(language.name);
-            return `
-              <g class="lang-chip">
-                <rect x="${chipX}" y="309" width="98" height="22" rx="11" fill="#0b1e35" stroke="#2a4364"/>
-                <circle cx="${chipX + 12}" cy="320" r="4.5" fill="${accent}" />
-                <text x="${chipX + 22}" y="324" fill="#dbeafe" font-size="11" font-weight="600">${safeName}</text>
-              </g>
-            `.trim();
-          })
-          .join("")
-      : show.languages
-        ? `<text x="34" y="324" fill="#64748b" font-size="11" letter-spacing="1.2">LANGUAGES: --</text>`
+  const layoutCards = ({
+    cards,
+    startY,
+    cardHeight,
+    labelOffsetY,
+    valueOffsetY,
+    labelSize,
+    labelTracking,
+  }) => {
+    if (!cards.length) {
+      return { svg: "", nextY: startY };
+    }
+
+    let cursorX = contentLeft;
+    let cursorY = startY;
+    const parts = [];
+    for (const card of cards) {
+      const width = clamp(card.width || 120, 96, contentWidth);
+      if (cursorX + width > contentRight) {
+        cursorX = contentLeft;
+        cursorY += cardHeight + 8;
+      }
+      const valueText = escapeText(card.value);
+      const fitValue = String(card.value || "").length >= 13;
+      const valueFitAttrs = fitValue
+        ? `textLength="${Math.max(44, width - 22)}" lengthAdjust="spacingAndGlyphs"`
         : "";
+
+      parts.push(`
+        <rect x="${cursorX}" y="${cursorY}" width="${width}" height="${cardHeight}" rx="10" fill="#0b1e35" stroke="#233a59"/>
+        <text x="${cursorX + 12}" y="${cursorY + labelOffsetY}" fill="#94a3b8" font-size="${labelSize}" letter-spacing="${labelTracking}">${card.label}</text>
+        <text x="${cursorX + 12}" y="${cursorY + valueOffsetY}" fill="${card.valueColor}" font-size="${card.valueSize}" font-weight="700" ${valueFitAttrs}>${valueText}</text>
+      `.trim());
+      cursorX += width + contentGap;
+    }
+
+    return {
+      svg: parts.join(""),
+      nextY: cursorY + cardHeight,
+    };
+  };
+
+  const layoutLanguageChips = (startY) => {
+    if (!show.languages) {
+      return { svg: "", nextY: startY };
+    }
+    if (!topLanguages.length) {
+      return {
+        svg: `<text x="${contentLeft}" y="${startY + 15}" fill="#64748b" font-size="11" letter-spacing="1.2">LANGUAGES: --</text>`,
+        nextY: startY + 15,
+      };
+    }
+
+    let cursorX = contentLeft;
+    let cursorY = startY;
+    const chipParts = [];
+    for (const language of topLanguages) {
+      const safeName = escapeText(languageShortLabel(language.name));
+      const accent = languageAccentColor(language.name);
+      const chipWidth = clamp(44 + safeName.length * 9, 76, 124);
+      if (cursorX + chipWidth > contentRight) {
+        cursorX = contentLeft;
+        cursorY += 28;
+      }
+      chipParts.push(`
+        <g class="lang-chip">
+          <rect x="${cursorX}" y="${cursorY}" width="${chipWidth}" height="22" rx="11" fill="#0b1e35" stroke="#2a4364"/>
+          <circle cx="${cursorX + 12}" cy="${cursorY + 11}" r="4.5" fill="${accent}" />
+          <text x="${cursorX + 22}" y="${cursorY + 15}" fill="#dbeafe" font-size="11" font-weight="600">${safeName}</text>
+        </g>
+      `.trim());
+      cursorX += chipWidth + 8;
+    }
+
+    return {
+      svg: chipParts.join(""),
+      nextY: cursorY + 22,
+    };
+  };
 
   const topCards = [];
   if (show.rank) {
@@ -277,7 +341,7 @@ export function buildNebulaProfileBadgeSvg({
     topCards.push({
       label: "SIGNAL CLARITY",
       value: `${safeClarity} · ${confidencePct}%`,
-      width: 170,
+      width: 184,
       valueColor: "#99f6e4",
       valueSize: 18,
     });
@@ -291,17 +355,6 @@ export function buildNebulaProfileBadgeSvg({
       valueSize: 22,
     });
   }
-  const topCardsSvg = topCards
-    .map((card, index) => {
-      const x = 34 + topCards.slice(0, index).reduce((sum, item) => sum + item.width + 10, 0);
-      return `
-        <rect x="${x}" y="186" width="${card.width}" height="58" rx="10" fill="#0b1e35" stroke="#233a59"/>
-        <text x="${x + 12}" y="206" fill="#94a3b8" font-size="11" letter-spacing="1.2">${card.label}</text>
-        <text x="${x + 12}" y="229" fill="${card.valueColor}" font-size="${card.valueSize}" font-weight="700">${escapeText(card.value)}</text>
-      `.trim();
-    })
-    .join("");
-
   const lowerCards = [];
   if (show.commits) {
     lowerCards.push({ label: "COMMITS", value: safeCommits, width: 126, valueColor: "#bae6fd", valueSize: 20 });
@@ -313,24 +366,45 @@ export function buildNebulaProfileBadgeSvg({
     lowerCards.push({ label: "REPOS", value: safeRepos, width: 126, valueColor: "#99f6e4", valueSize: 20 });
   }
   if (show.social) {
+    const socialValue = `${safeStars} · ${safeForks} · ${safeFollowers}`;
     lowerCards.push({
       label: "STARS · FORKS · FOLLOWERS",
-      value: `${safeStars} · ${safeForks} · ${safeFollowers}`,
-      width: 172,
+      value: socialValue,
+      width: clamp(148 + socialValue.length * 5.8, 172, 264),
       valueColor: "#fde68a",
       valueSize: 16.5,
     });
   }
-  const lowerCardsSvg = lowerCards
-    .map((card, index) => {
-      const x = 34 + lowerCards.slice(0, index).reduce((sum, item) => sum + item.width + 10, 0);
-      return `
-        <rect x="${x}" y="246" width="${card.width}" height="54" rx="10" fill="#0b1e35" stroke="#233a59"/>
-        <text x="${x + 12}" y="264" fill="#94a3b8" font-size="10.5" letter-spacing="1.1">${card.label}</text>
-        <text x="${x + 12}" y="286" fill="${card.valueColor}" font-size="${card.valueSize}" font-weight="700">${escapeText(card.value)}</text>
-      `.trim();
-    })
-    .join("");
+  const metricsStartY = show.description ? 186 : 168;
+  let contentCursorY = metricsStartY;
+  const topCardsLayout = layoutCards({
+    cards: topCards,
+    startY: contentCursorY,
+    cardHeight: 58,
+    labelOffsetY: 20,
+    valueOffsetY: 43,
+    labelSize: 11,
+    labelTracking: 1.2,
+  });
+  if (topCards.length) {
+    contentCursorY = topCardsLayout.nextY + 8;
+  }
+
+  const lowerCardsLayout = layoutCards({
+    cards: lowerCards,
+    startY: contentCursorY,
+    cardHeight: 54,
+    labelOffsetY: 18,
+    valueOffsetY: 40,
+    labelSize: 10.5,
+    labelTracking: 1.1,
+  });
+  if (lowerCards.length) {
+    contentCursorY = lowerCardsLayout.nextY + 8;
+  }
+
+  const languageLayout = layoutLanguageChips(contentCursorY);
+  const warningY = clamp(languageLayout.nextY + 14, 300, 336);
 
   return `
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="340" viewBox="0 0 900 340" role="img" aria-label="GitDNA Nebula badge for ${safeUser}">
@@ -373,13 +447,13 @@ export function buildNebulaProfileBadgeSvg({
     <text x="34" y="108" fill="#f8fafc" font-size="34" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">${safeType}</text>
     <text x="34" y="134" fill="#a5f3fc" font-size="18" font-weight="600">${safeAlias}</text>
     ${show.description ? `<text x="34" y="163" fill="#cbd5e1" font-size="14">${safeDesc}</text>` : ""}
-    ${topCardsSvg}
-    ${lowerCardsSvg}
-    ${languageChips}
+    ${topCardsLayout.svg}
+    ${lowerCardsLayout.svg}
+    ${languageLayout.svg}
     ${
       hasDetailedStats || !wantsDetailedStats
         ? ""
-        : `<text x="34" y="337" fill="#7dd3fc" fill-opacity="0.88" font-size="10.5" letter-spacing="1.2">LIVE API DATA REQUIRED FOR DETAILED STATS (ADD GITHUB TOKEN)</text>`
+        : `<text x="34" y="${warningY}" fill="#7dd3fc" fill-opacity="0.88" font-size="10.5" letter-spacing="1.2">LIVE API DATA REQUIRED FOR DETAILED STATS (ADD GITHUB TOKEN)</text>`
     }
 
     <g class="helix" opacity="0.82">

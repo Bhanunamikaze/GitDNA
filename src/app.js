@@ -360,10 +360,9 @@ function NebulaDnaBackground() {
         const laneMin = entry.laneLeft + 4;
         const laneMax = entry.laneRight - 4;
         const laneWidth = Math.max(14, laneMax - laneMin);
-        const minPairGap = Math.min(10, Math.max(5, laneWidth * 0.28));
-        const laneHalf = Math.max(5, laneWidth / 2 - minPairGap / 2);
-        const leftBackbone = [];
-        const rightBackbone = [];
+        const helixRadius = Math.max(6, Math.min(group.span * 0.74, laneWidth * 0.46));
+        const strandA = [];
+        const strandB = [];
 
         for (const seed of group.seeds) {
           const progress = ((time * seed.speed + seed.offset) % group.travelLength) - 150;
@@ -376,52 +375,62 @@ function NebulaDnaBackground() {
             Math.sin(time * 0.7 + seed.phase2) * (2.5 + seed.jitter * 0.28) +
             laneDrift;
           const centerY = yBase + axisY * 0.02 + Math.cos(time * 0.86 + seed.phase2) * 1.7;
-          const ribbon = Math.min(group.span * (0.56 + Math.sin(wave) * 0.33), laneHalf);
+          const twist = Math.sin(wave);
+          const depth = Math.cos(wave);
+          const offsetX = twist * helixRadius;
+          const offsetY = depth * (seed.jitter * 1.2);
 
-          let leftX = centerX - ribbon;
-          let rightX = centerX + ribbon;
-          let leftY = centerY + Math.cos(wave * 1.14) * seed.jitter;
-          let rightY = centerY - Math.cos(wave * 1.14) * seed.jitter;
+          let strandAX = centerX + offsetX;
+          let strandBX = centerX - offsetX;
+          let strandAY = centerY + offsetY;
+          let strandBY = centerY - offsetY;
 
-          const displacedLeft = repel(leftX, leftY, 175, 55);
-          const displacedRight = repel(rightX, rightY, 175, 55);
-          leftX = clamp(displacedLeft.x, laneMin, laneMax - minPairGap);
-          leftY = displacedLeft.y;
-          rightX = clamp(displacedRight.x, laneMin + minPairGap, laneMax);
-          rightY = displacedRight.y;
-          if (rightX - leftX < minPairGap) {
-            const midX = (leftX + rightX) / 2;
-            leftX = clamp(midX - minPairGap / 2, laneMin, laneMax - minPairGap);
-            rightX = clamp(midX + minPairGap / 2, laneMin + minPairGap, laneMax);
+          const displacedA = repel(strandAX, strandAY, 175, 55);
+          const displacedB = repel(strandBX, strandBY, 175, 55);
+          strandAX = clamp(displacedA.x, laneMin, laneMax);
+          strandAY = displacedA.y;
+          strandBX = clamp(displacedB.x, laneMin, laneMax);
+          strandBY = displacedB.y;
+
+          if (Math.abs(strandAX - strandBX) < 1.8) {
+            const nudgeDirection = strandAX >= strandBX ? 1 : -1;
+            strandAX = clamp(strandAX + nudgeDirection * 0.9, laneMin, laneMax);
+            strandBX = clamp(strandBX - nudgeDirection * 0.9, laneMin, laneMax);
           }
 
-          leftBackbone.push({ x: leftX, y: leftY });
-          rightBackbone.push({ x: rightX, y: rightY });
+          strandA.push({ x: strandAX, y: strandAY });
+          strandB.push({ x: strandBX, y: strandBY });
 
-          const rungAlpha = 0.06 + (Math.sin(wave + 0.8) + 1) * 0.1;
+          const rungAlpha = 0.05 + ((depth + 1) / 2) * 0.16;
           context.strokeStyle = `rgba(125,211,252,${rungAlpha})`;
           context.lineWidth = 1.15;
           context.beginPath();
-          context.moveTo(leftX, leftY);
-          context.lineTo(rightX, rightY);
+          context.moveTo(strandAX, strandAY);
+          context.lineTo(strandBX, strandBY);
           context.stroke();
 
           const dotRadius = 1.4 + (Math.sin(wave * 1.3) + 1) * 0.72;
-          context.fillStyle = "rgba(103,232,249,0.86)";
-          context.beginPath();
-          context.arc(leftX, leftY, dotRadius, 0, Math.PI * 2);
-          context.fill();
+          const drawNode = (x, y, radius, hue, alpha) => {
+            context.fillStyle = `rgba(${hue},${alpha})`;
+            context.beginPath();
+            context.arc(x, y, radius, 0, Math.PI * 2);
+            context.fill();
+          };
 
-          context.fillStyle = "rgba(196,181,253,0.78)";
-          context.beginPath();
-          context.arc(rightX, rightY, dotRadius * 0.9, 0, Math.PI * 2);
-          context.fill();
+          const strandAFront = depth >= 0;
+          if (strandAFront) {
+            drawNode(strandBX, strandBY, dotRadius * 0.88, "196,181,253", 0.54);
+            drawNode(strandAX, strandAY, dotRadius, "103,232,249", 0.9);
+          } else {
+            drawNode(strandAX, strandAY, dotRadius, "103,232,249", 0.58);
+            drawNode(strandBX, strandBY, dotRadius * 0.94, "196,181,253", 0.84);
+          }
         }
 
-        leftBackbone.sort((a, b) => a.y - b.y);
-        rightBackbone.sort((a, b) => a.y - b.y);
-        drawBackbone(leftBackbone, "rgba(103,232,249,0.46)", 1.7);
-        drawBackbone(rightBackbone, "rgba(196,181,253,0.44)", 1.65);
+        strandA.sort((a, b) => a.y - b.y);
+        strandB.sort((a, b) => a.y - b.y);
+        drawBackbone(strandA, "rgba(103,232,249,0.5)", 1.78);
+        drawBackbone(strandB, "rgba(196,181,253,0.48)", 1.72);
       }
       context.globalCompositeOperation = "source-over";
 
