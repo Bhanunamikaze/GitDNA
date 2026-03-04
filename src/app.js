@@ -510,10 +510,11 @@ function buildProfileStats(profileData, metricsResult) {
   const totalStars = repos.reduce((sum, repo) => sum + Number(repo.stars || 0), 0);
   const totalForks = repos.reduce((sum, repo) => sum + Number(repo.forks || 0), 0);
   const followers = Number(profileData?.user?.followers || 0);
+  const publicRepos = Number(profileData?.user?.publicRepos || 0);
 
   return {
     commitCount: Number(metricsResult?.totalCommits || 0),
-    repoCount: Number(metricsResult?.totalRepos || 0),
+    repoCount: publicRepos > 0 ? publicRepos : Number(metricsResult?.totalRepos || 0),
     languageCount: Number(metricsResult?.languageCount || 0),
     estimatedLoc: estimateLocFromLanguageBytes(profileData?.languageBytes || {}),
     totalStars,
@@ -1305,9 +1306,9 @@ function sampleSummary(sample) {
     return null;
   }
   if (languages > 0) {
-    return `Analyzed ${commits} commits across ${repos} repos and ${languages} languages.`;
+    return `Analyzed ${commits} commits. Public repos: ${repos}. Languages observed: ${languages}.`;
   }
-  return `Analyzed ${commits} commits across ${repos} repos.`;
+  return `Analyzed ${commits} commits. Public repos: ${repos}.`;
 }
 
 function App() {

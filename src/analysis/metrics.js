@@ -145,6 +145,8 @@ export function computeMetrics(profile) {
   const commits = profile.commits || [];
   const dates = commits.map(getCommitDate).filter(Boolean);
   const totalCommits = dates.length;
+  const analyzedRepos = (profile.repos || []).length;
+  const publicRepos = Number(profile?.user?.publicRepos || 0);
 
   const languageValues = Object.values(profile.languageBytes || {}).map(Number);
 
@@ -167,7 +169,8 @@ export function computeMetrics(profile) {
     metrics,
     vector,
     totalCommits,
-    totalRepos: (profile.repos || []).length,
+    totalRepos: publicRepos > 0 ? publicRepos : analyzedRepos,
+    analyzedRepos,
     languageCount: languageValues.length,
   };
 }
