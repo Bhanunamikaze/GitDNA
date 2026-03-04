@@ -1,0 +1,58 @@
+name: Build and Deploy Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate deterministic data packs
+        run: |
+          node scripts/generate_types_json.js
+          node scripts/generate_readme_cards.js
+          node scripts/generate_profile_pages.js
+
+      - name: Validate JS syntax
+        run: find src scripts -name '*.js' -print0 | xargs -0 -n1 node --check
+
+      - name: Validate JSON files
+        run: find data -name '*.json' -print0 | xargs -0 -n1 jq empty
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

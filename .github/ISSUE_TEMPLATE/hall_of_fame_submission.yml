@@ -1,0 +1,59 @@
+name: Hall of Fame Submission
+description: Submit your GitDNA profile card for Hall of Fame inclusion.
+title: "[Hall of Fame]: <github-username>"
+labels: ["hall-of-fame-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Submit one profile per issue. Approved submissions are added to `data/hall_of_fame.json`.
+  - type: input
+    id: github_username
+    attributes:
+      label: GitHub Username
+      description: Public GitHub username used for analysis.
+      placeholder: octocat
+    validations:
+      required: true
+  - type: input
+    id: type_name
+    attributes:
+      label: DNA Type Name
+      description: Your GitDNA type name.
+      placeholder: Disciplined Architect
+    validations:
+      required: true
+  - type: input
+    id: alias_name
+    attributes:
+      label: DNA Alias Name
+      description: Your fun alias name.
+      placeholder: The Iron System Mason
+    validations:
+      required: true
+  - type: dropdown
+    id: rarity
+    attributes:
+      label: Rarity Tier
+      options:
+        - Common
+        - Rare
+        - Legendary
+        - Mythic
+    validations:
+      required: true
+  - type: input
+    id: share_card_url
+    attributes:
+      label: Share Card URL (optional)
+      description: If available, include a direct card URL.
+      placeholder: https://<user>.github.io/GitDNA/data/cards/<user>.svg
+    validations:
+      required: false
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes (optional)
+      description: Any short note for Hall of Fame listing.
+    validations:
+      required: false

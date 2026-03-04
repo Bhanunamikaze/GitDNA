@@ -10,7 +10,7 @@ Status legend:
 - [x] Add critical planning docs (`API_EDGE_CASES`, `CENTROID_CALIBRATION`, `DESIGN_SYSTEM`, `SEO_SOCIAL`).
 - [x] Add initial centroid vectors (`data/dna/centroids.json`).
 - [x] Define JSON schema files for runtime analysis payloads.
-- [ ] Add contributor docs (`CONTRIBUTING.md`, issue labels strategy).
+- [x] Add contributor docs (`CONTRIBUTING.md`, issue labels strategy).
 
 ## Phase 1: Core Product (Build Now)
 - [x] Create static app scaffold (`index.html`, `styles.css`, `src/` modules).
@@ -48,11 +48,11 @@ Status legend:
 - [x] Add one-click "Star on GitHub" CTA in UI.
 
 ## Phase 5: Automation and GitHub-Native Ops
-- [ ] Add GitHub Actions: `build-pages.yml`.
-- [ ] Add GitHub Actions: `generate-data-packs.yml`.
-- [ ] Add GitHub Actions: `generate-readme-cards.yml`.
-- [ ] Add GitHub Actions: `update-hall-of-fame.yml`.
-- [ ] Add Hall of Fame Issue Form and JSON compiler.
+- [x] Add GitHub Actions: `build-pages.yml`.
+- [x] Add GitHub Actions: `generate-data-packs.yml`.
+- [x] Add GitHub Actions: `generate-readme-cards.yml`.
+- [x] Add GitHub Actions: `update-hall-of-fame.yml`.
+- [x] Add Hall of Fame Issue Form and JSON compiler.
 
 ## Phase 6: Quality and Launch
 - [ ] Add accessibility fallbacks (chart summaries + table views).

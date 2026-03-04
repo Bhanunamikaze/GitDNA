@@ -1,0 +1,40 @@
+name: Update Hall of Fame
+
+on:
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  update:
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'approved-submission'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Update Hall of Fame JSON
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: node scripts/update_hall_of_fame.js
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/hall_of_fame.json
+          if git diff --cached --quiet; then
+            echo "No Hall of Fame changes."
+            exit 0
+          fi
+          git commit -m "chore(hall-of-fame): update entries"
+          git push
