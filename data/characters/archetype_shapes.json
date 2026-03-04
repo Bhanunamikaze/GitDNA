@@ -1,0 +1,24 @@
+{
+  "version": "0.1.0",
+  "archetypes": [
+    { "id": "architect", "shape": "M20 92 L64 20 L108 92 Z" },
+    { "id": "maintainer", "shape": "M20 28 H108 V92 H20 Z" },
+    { "id": "sprinter", "shape": "M20 76 L52 20 L84 76 Z M84 76 L108 92 H52 Z" },
+    { "id": "stabilizer", "shape": "M64 16 L112 52 L64 108 L16 52 Z" },
+    {
+      "id": "polyglot",
+      "shape": "M24 24 H52 V52 H24 Z M76 24 H104 V52 H76 Z M24 76 H52 V104 H24 Z M76 76 H104 V104 H76 Z"
+    },
+    {
+      "id": "refactorer",
+      "shape": "M20 20 H108 V44 H20 Z M20 52 H108 V76 H20 Z M20 84 H108 V108 H20 Z"
+    },
+    { "id": "explorer", "shape": "M64 16 L104 56 L64 96 L24 56 Z" },
+    {
+      "id": "integrator",
+      "shape": "M20 20 H44 V44 H20 Z M84 20 H108 V44 H84 Z M52 52 H76 V76 H52 Z M20 84 H44 V108 H20 Z M84 84 H108 V108 H84 Z"
+    },
+    { "id": "toolsmith", "shape": "M20 64 H108 V88 H20 Z M40 16 H64 V64 H40 Z M68 24 H88 V48 H68 Z" },
+    { "id": "finisher", "shape": "M20 88 L52 16 H76 L108 88 Z" }
+  ]
+}

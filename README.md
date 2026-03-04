@@ -18,7 +18,8 @@ Deploy via GitHub Pages from this repository root.
    npm run dev
    ```
 3. Open `http://localhost:4173`.
-2. Analyze a username, or click `Try Demo Profile`.
+4. Analyze a username, or click `Try Demo Profile`.
+5. Explore full catalog at `http://localhost:4173/codex.html`.
 
 Optional local generation:
 ```bash
@@ -40,6 +41,13 @@ Example demo cards in this repo:
 - `data/cards/torvalds.svg`
 - `data/cards/tj.svg`
 - `data/cards/sindresorhus.svg`
+
+## Data Files (Names, Types, Characters)
+- Type metadata (technical + alias + flavor + rarity): `data/dna/types_100.json`
+- Archetype source data: `data/dna/archetypes.json`
+- Modifier source data: `data/dna/modifiers.json`
+- Character archetype shape config: `data/characters/archetype_shapes.json`
+- Character modifier palette config: `data/characters/modifier_palettes.json`
 
 ## Screenshots
 Landing and onboarding:

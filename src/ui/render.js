@@ -57,12 +57,9 @@ export function createRenderer() {
     achievements: document.querySelector("#achievement-list"),
     achievementProgress: document.querySelector("#achievement-progress-list"),
     metricsTableBody: document.querySelector("#metrics-table tbody"),
-    codexSearch: document.querySelector("#codex-search"),
-    codexRarity: document.querySelector("#codex-rarity"),
-    codexCount: document.querySelector("#codex-count"),
-    codexGrid: document.querySelector("#codex-grid"),
     shareButton: document.querySelector("#share-card-button"),
     copyEmbedButton: document.querySelector("#copy-embed-button"),
+    codexLinkButton: document.querySelector("#codex-link-button"),
     embedSnippet: document.querySelector("#embed-snippet"),
     a11ySummary: document.querySelector("#a11y-summary-text"),
   };

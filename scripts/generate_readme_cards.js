@@ -51,7 +51,6 @@ function main() {
   const profileFiles = readProfileFiles();
   const manifest = {
     version: "0.1.0",
-    generated_at: new Date().toISOString(),
     cards: [],
   };
 
@@ -64,7 +63,6 @@ function main() {
     manifest.cards.push({
       username: profile.username,
       svg_path: `/data/cards/${profile.username}.svg`,
-      updated_at: new Date().toISOString(),
     });
   }
 

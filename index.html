@@ -24,16 +24,46 @@
     <meta name="twitter:image" content="./assets/og-default.svg" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
+  <body class="page-home">
     <a class="skip-link" href="#analyze-form">Skip to analysis form</a>
     <div class="background-grid" aria-hidden="true"></div>
 
-    <header class="app-header">
-      <p class="eyebrow">Open source | 100% free | GitHub-native</p>
-      <h1>GitDNA</h1>
-      <p class="subhead">
-        Discover your developer archetype from public GitHub behavior.
-      </p>
+    <header class="hero-shell">
+      <nav class="top-nav">
+        <a class="brand" href="./index.html">GitDNA</a>
+        <div class="nav-actions">
+          <a class="button-link button-ghost" href="./codex.html">Explore DNA Codex</a>
+          <a
+            class="button-link"
+            href="https://github.com"
+            target="_blank"
+            rel="noreferrer noopener"
+            >Star Repo</a
+          >
+        </div>
+      </nav>
+
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">Open source | 100% free | GitHub-native</p>
+          <h1>Your commit history has a personality. Reveal it.</h1>
+          <p class="subhead">
+            GitDNA turns public GitHub activity into an explainable identity profile with
+            100 collectible DNA types, achievements, and share cards.
+          </p>
+          <div class="hero-chips" aria-hidden="true">
+            <span>100 DNA Types</span>
+            <span>Deterministic Scoring</span>
+            <span>Shareable Cards</span>
+          </div>
+        </div>
+
+        <div class="hero-orb" aria-hidden="true">
+          <div class="orb-ring ring-a"></div>
+          <div class="orb-ring ring-b"></div>
+          <div class="orb-core">DNA</div>
+        </div>
+      </div>
     </header>
 
     <main class="layout">
@@ -58,9 +88,10 @@
             placeholder="github_pat_..."
             autocomplete="off"
           />
+
           <p class="hint">
-            Faster and higher-limit analysis. Token stays in session memory and
-            is never stored.
+            Use a PAT for reliable analysis under GitHub rate limits. Stored only for this tab
+            session.
             <a
               href="https://github.com/settings/tokens/new"
               target="_blank"
@@ -74,7 +105,16 @@
             <button type="button" id="demo-button" class="button-secondary">
               Try Demo Profile
             </button>
+            <a class="button-link button-ghost" href="./codex.html">Open DNA Codex</a>
           </div>
+
+          <details class="token-help">
+            <summary>Rate limit help</summary>
+            <p>
+              GitHub unauthenticated API is limited. If you see fallback mode, paste a PAT and
+              retry. You only need read access to public profile data.
+            </p>
+          </details>
         </form>
       </section>
 
@@ -140,8 +180,8 @@
         <article class="metrics">
           <h3>Metric Breakdown</h3>
           <p class="hint">
-            Visual chart layers will be added next. Table fallback is included
-            for accessibility and transparency.
+            Visual chart layers will be added next. Table fallback is included for accessibility
+            and transparency.
           </p>
           <table id="metrics-table">
             <thead>
@@ -164,39 +204,18 @@
           <ul id="achievement-list"></ul>
           <h3>Progress To Next</h3>
           <ul id="achievement-progress-list"></ul>
+
           <div class="button-row share-row">
             <button id="share-card-button" type="button">Download Share Card</button>
             <button id="copy-embed-button" type="button" class="button-secondary">
               Copy README Embed
             </button>
+            <a id="codex-link-button" class="button-link button-ghost" href="./codex.html"
+              >See This Type in Codex</a
+            >
           </div>
           <p id="embed-snippet" class="hint code-hint"></p>
         </article>
-      </section>
-
-      <section id="codex-panel" class="panel codex">
-        <h2>DNA Codex (100 Types)</h2>
-        <p class="hint">
-          Search and explore all generated types. This powers collectible-style
-          progression.
-        </p>
-        <div class="codex-controls">
-          <input
-            id="codex-search"
-            type="search"
-            placeholder="Search by type, alias, archetype, or modifier"
-            autocomplete="off"
-          />
-          <select id="codex-rarity">
-            <option value="all">All Rarities</option>
-            <option value="Common">Common</option>
-            <option value="Rare">Rare</option>
-            <option value="Legendary">Legendary</option>
-            <option value="Mythic">Mythic</option>
-          </select>
-        </div>
-        <p id="codex-count" class="hint"></p>
-        <div id="codex-grid" class="codex-grid"></div>
       </section>
     </main>
 

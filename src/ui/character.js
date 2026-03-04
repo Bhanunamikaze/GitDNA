@@ -1,4 +1,4 @@
-const ARCHETYPE_SHAPES = {
+const DEFAULT_ARCHETYPE_SHAPES = {
   architect: "M20 92 L64 20 L108 92 Z",
   maintainer: "M20 28 H108 V92 H20 Z",
   sprinter: "M20 76 L52 20 L84 76 Z M84 76 L108 92 H52 Z",
@@ -11,7 +11,7 @@ const ARCHETYPE_SHAPES = {
   finisher: "M20 88 L52 16 H76 L108 88 Z",
 };
 
-const MODIFIER_COLORS = {
+const DEFAULT_MODIFIER_COLORS = {
   night: ["#0f172a", "#1d4ed8", "#93c5fd"],
   dawn: ["#b45309", "#f59e0b", "#fde68a"],
   weekend: ["#065f46", "#10b981", "#6ee7b7"],
@@ -22,6 +22,11 @@ const MODIFIER_COLORS = {
   maximal: ["#7c2d12", "#ea580c", "#fdba74"],
   experimental: ["#1e1b4b", "#4338ca", "#a5b4fc"],
   disciplined: ["#1f2937", "#475569", "#94a3b8"],
+};
+
+const characterConfig = {
+  shapes: { ...DEFAULT_ARCHETYPE_SHAPES },
+  palettes: { ...DEFAULT_MODIFIER_COLORS },
 };
 
 function parseType(typeId = "") {
@@ -40,8 +45,10 @@ function escapeText(text = "") {
 
 export function buildCharacterSvg(typeId, label = "") {
   const { archetype, modifier } = parseType(typeId);
-  const shape = ARCHETYPE_SHAPES[archetype] || ARCHETYPE_SHAPES.architect;
-  const palette = MODIFIER_COLORS[modifier] || MODIFIER_COLORS.steady;
+  const shape =
+    characterConfig.shapes[archetype] || characterConfig.shapes.architect;
+  const palette =
+    characterConfig.palettes[modifier] || characterConfig.palettes.steady;
   const safeLabel = escapeText(label);
 
   return `
@@ -64,4 +71,24 @@ export function buildCharacterSvg(typeId, label = "") {
 
 export function renderCharacter(container, typeId, label) {
   container.innerHTML = buildCharacterSvg(typeId, label);
+}
+
+export function setCharacterConfig({ archetypes = [], modifiers = [] } = {}) {
+  if (Array.isArray(archetypes) && archetypes.length > 0) {
+    characterConfig.shapes = { ...DEFAULT_ARCHETYPE_SHAPES };
+    for (const item of archetypes) {
+      if (item?.id && item?.shape) {
+        characterConfig.shapes[item.id] = item.shape;
+      }
+    }
+  }
+
+  if (Array.isArray(modifiers) && modifiers.length > 0) {
+    characterConfig.palettes = { ...DEFAULT_MODIFIER_COLORS };
+    for (const item of modifiers) {
+      if (item?.id && Array.isArray(item?.palette) && item.palette.length >= 3) {
+        characterConfig.palettes[item.id] = item.palette.slice(0, 3);
+      }
+    }
+  }
 }

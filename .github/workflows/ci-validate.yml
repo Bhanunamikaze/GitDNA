@@ -1,0 +1,34 @@
+name: Validate (PR)
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate JavaScript syntax
+        run: find src scripts -name '*.js' -print0 | xargs -0 -n1 node --check
+
+      - name: Validate JSON files
+        run: find data -name '*.json' -print0 | xargs -0 -n1 jq empty
+
+      - name: Verify generated data is up to date
+        run: |
+          node scripts/generate_types_json.js
+          node scripts/generate_readme_cards.js
+          node scripts/generate_profile_pages.js
+          git diff --exit-code -- data/dna/types_100.json data/cards u

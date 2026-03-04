@@ -62,7 +62,6 @@ function main() {
 
   const out = {
     version: "0.1.0",
-    generated_at: new Date().toISOString(),
     count: types.length,
     types,
   };

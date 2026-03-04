@@ -1,21 +1,17 @@
 {
   "version": "0.1.0",
-  "generated_at": "2026-03-04T15:36:45.241Z",
   "cards": [
     {
       "username": "sindresorhus",
-      "svg_path": "/data/cards/sindresorhus.svg",
-      "updated_at": "2026-03-04T15:36:45.245Z"
+      "svg_path": "/data/cards/sindresorhus.svg"
     },
     {
       "username": "tj",
-      "svg_path": "/data/cards/tj.svg",
-      "updated_at": "2026-03-04T15:36:45.245Z"
+      "svg_path": "/data/cards/tj.svg"
     },
     {
       "username": "torvalds",
-      "svg_path": "/data/cards/torvalds.svg",
-      "updated_at": "2026-03-04T15:36:45.245Z"
+      "svg_path": "/data/cards/torvalds.svg"
     }
   ]
 }

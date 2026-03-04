@@ -6,6 +6,11 @@ export const FETCH_LIMITS = {
   commitsPerRepo: 30,
 };
 
+export const UNAUTH_FETCH_LIMITS = {
+  repoLimit: 3,
+  commitsPerRepo: 20,
+};
+
 export const MIN_DATA_THRESHOLDS = {
   minRepos: 3,
   minCommits: 10,

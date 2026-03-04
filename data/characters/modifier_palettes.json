@@ -1,0 +1,15 @@
+{
+  "version": "0.1.0",
+  "modifiers": [
+    { "id": "night", "palette": ["#0f172a", "#1d4ed8", "#93c5fd"] },
+    { "id": "dawn", "palette": ["#b45309", "#f59e0b", "#fde68a"] },
+    { "id": "weekend", "palette": ["#065f46", "#10b981", "#6ee7b7"] },
+    { "id": "steady", "palette": ["#0f766e", "#14b8a6", "#99f6e4"] },
+    { "id": "burst", "palette": ["#9f1239", "#e11d48", "#fda4af"] },
+    { "id": "marathon", "palette": ["#4c1d95", "#7c3aed", "#c4b5fd"] },
+    { "id": "minimal", "palette": ["#374151", "#6b7280", "#d1d5db"] },
+    { "id": "maximal", "palette": ["#7c2d12", "#ea580c", "#fdba74"] },
+    { "id": "experimental", "palette": ["#1e1b4b", "#4338ca", "#a5b4fc"] },
+    { "id": "disciplined", "palette": ["#1f2937", "#475569", "#94a3b8"] }
+  ]
+}

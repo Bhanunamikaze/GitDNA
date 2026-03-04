@@ -1,0 +1,224 @@
+:root {
+  --ink: #0f172a;
+  --muted: #556476;
+  --surface: rgba(255, 255, 255, 0.88);
+  --border: #d4e3ef;
+  --primary: #0f766e;
+  --shadow: 0 16px 40px rgba(15, 23, 42, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font: 16px/1.5 "IBM Plex Sans", "Segoe UI", sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(145deg, #eefcf8 0%, #f8fafc 50%, #fff7ed 100%);
+}
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.24), transparent 32%),
+    radial-gradient(circle at 86% 18%, rgba(245, 158, 11, 0.24), transparent 32%),
+    radial-gradient(circle at 40% 86%, rgba(59, 130, 246, 0.2), transparent 40%);
+}
+
+.codex-header {
+  width: min(1180px, 100% - 2rem);
+  margin: 1rem auto;
+}
+
+.brand {
+  text-decoration: none;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0.4rem 0 0;
+  font: 700 clamp(2rem, 5vw, 3.3rem) / 1.1 "Space Grotesk", "Segoe UI", sans-serif;
+}
+
+.codex-header p {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+}
+
+.codex-layout {
+  width: min(1180px, 100% - 2rem);
+  margin: 0 auto 2rem;
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  gap: 0.9rem;
+}
+
+.panel {
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 0.9rem;
+}
+
+.controls h2,
+.detail-panel h2 {
+  margin-top: 0;
+}
+
+label {
+  display: block;
+  margin: 0.7rem 0 0.3rem;
+  font-weight: 650;
+}
+
+input,
+select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  background: #fff;
+}
+
+input:focus-visible,
+select:focus-visible,
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid rgba(15, 118, 110, 0.28);
+  outline-offset: 1px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.codex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(208px, 1fr));
+  gap: 0.7rem;
+}
+
+.codex-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.66rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.codex-card .head {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.codex-card .mini-char {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #e2e8f0;
+}
+
+.codex-card h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.codex-card .alias {
+  margin: 0;
+  color: #1d4ed8;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.codex-card .meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.codex-card .view-btn {
+  margin-top: 0.25rem;
+  border: none;
+  background: #0f766e;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.4rem 0.55rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.character {
+  width: 130px;
+  height: 130px;
+  border-radius: 14px;
+  background: #e2e8f0;
+  display: grid;
+  place-items: center;
+  margin: 0.4rem 0;
+}
+
+.character svg {
+  width: 124px;
+  height: 124px;
+}
+
+.alias {
+  margin: 0.15rem 0 0;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.meta,
+.flavor {
+  color: var(--muted);
+}
+
+.rarity-pill {
+  display: inline-flex;
+  margin: 0;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.rarity-common {
+  background: #e2e8f0;
+}
+
+.rarity-rare {
+  background: #dbeafe;
+}
+
+.rarity-legendary {
+  background: #fef3c7;
+}
+
+.rarity-mythic {
+  background: #fee2e2;
+}
+
+@media (max-width: 1020px) {
+  .codex-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-panel {
+    order: 2;
+  }
+}

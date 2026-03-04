@@ -2,10 +2,14 @@ import { evaluateAchievements } from "./analysis/achievements.js";
 import { computeMetrics } from "./analysis/metrics.js";
 import { resolveType } from "./analysis/scoring.js";
 import { fetchLiveProfile, hasInsufficientData } from "./api/github.js";
-import { ANALYSIS_VERSION, DEMO_PROFILES } from "./config.js";
+import {
+  ANALYSIS_VERSION,
+  DEMO_PROFILES,
+  FETCH_LIMITS,
+  UNAUTH_FETCH_LIMITS,
+} from "./config.js";
 import { getCachedAnalysis, setCachedAnalysis } from "./state/cache.js";
-import { renderCharacter } from "./ui/character.js";
-import { createCodexController } from "./ui/codex.js";
+import { renderCharacter, setCharacterConfig } from "./ui/character.js";
 import { createRenderer } from "./ui/render.js";
 import {
   buildReadmeEmbedSnippet,
@@ -16,11 +20,11 @@ import {
 const state = {
   centroids: null,
   types: null,
-  codex: null,
   latestResult: null,
 };
 
 const ui = createRenderer();
+const SESSION_PAT_KEY = "gitdna:session_pat";
 
 async function loadJson(path) {
   const response = await fetch(path);
@@ -65,7 +69,7 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
 
 function statusForError(errorType) {
   if (errorType === "rate_limited") {
-    return "Rate limit reached. Falling back to demo profile.";
+    return "Rate limit reached for this IP. Paste a PAT above and retry, then you will get live analysis instead of fallback.";
   }
   if (errorType === "network_error") {
     return "Network issue detected. Showing a demo profile.";
@@ -73,30 +77,58 @@ function statusForError(errorType) {
   return "";
 }
 
-async function loadDemoProfile(profileId = "torvalds", note = "") {
+function resolveFetchLimits(token) {
+  return token && token.trim() ? FETCH_LIMITS : UNAUTH_FETCH_LIMITS;
+}
+
+function applyResultDecorations(result) {
+  renderCharacter(ui.elements.characterPreview, result.type_id, result.type_name);
+  if (ui.elements.codexLinkButton) {
+    ui.elements.codexLinkButton.href = `./codex.html?type=${encodeURIComponent(result.type_id)}`;
+  }
+  state.latestResult = result;
+}
+
+async function loadDemoProfile(profileId = "torvalds", note = "", kind = "warning") {
   const demo = await loadJson(`./data/profiles/demo_${profileId}.json`);
   demo.is_demo = true;
   ui.showResult(demo);
-  renderCharacter(ui.elements.characterPreview, demo.type_id, demo.type_name);
-  state.latestResult = demo;
-  ui.setStatus(note || `Showing demo profile: ${demo.username}`, "warning");
+  applyResultDecorations(demo);
+  ui.setStatus(note || `Showing demo profile: ${demo.username}`, kind);
 }
 
 async function analyzeLive(username, token) {
   const cached = getCachedAnalysis(username, ANALYSIS_VERSION);
   if (cached) {
     ui.showResult(cached);
-    renderCharacter(ui.elements.characterPreview, cached.type_id, cached.type_name);
-    state.latestResult = cached;
+    applyResultDecorations(cached);
     ui.setStatus(`Loaded cached analysis for @${username}`, "success");
     return;
   }
 
   ui.setLoading(true, "Fetching repositories");
-  const liveResult = await fetchLiveProfile(username, { token });
+  const liveResult = await fetchLiveProfile(username, {
+    token,
+    limits: resolveFetchLimits(token),
+  });
   if (!liveResult.ok) {
     ui.setLoading(false);
-    ui.showError(liveResult.errorType);
+
+    if (liveResult.errorType === "rate_limited") {
+      await loadDemoProfile(
+        "torvalds",
+        statusForError(liveResult.errorType),
+        "warning"
+      );
+      return;
+    }
+
+    ui.showError(
+      liveResult.errorType,
+      liveResult.errorType === "network_error"
+        ? "Check network access or use demo mode."
+        : "Try a demo profile or adjust input."
+    );
     const note = statusForError(liveResult.errorType);
     if (note) {
       await loadDemoProfile("torvalds", note);
@@ -124,12 +156,7 @@ async function analyzeLive(username, token) {
 
   ui.setLoading(false);
   ui.showResult(normalized);
-  renderCharacter(
-    ui.elements.characterPreview,
-    normalized.type_id,
-    normalized.type_name
-  );
-  state.latestResult = normalized;
+  applyResultDecorations(normalized);
   setCachedAnalysis(username, ANALYSIS_VERSION, normalized);
 
   if (insufficientData) {
@@ -160,24 +187,32 @@ function getSelectedDemoProfile() {
 async function init() {
   ui.setLoading(true, "Loading DNA model");
 
-  const [centroids, types] = await Promise.all([
+  const [centroids, types, shapeData, paletteData] = await Promise.all([
     loadJson("./data/dna/centroids.json"),
     loadJson("./data/dna/types_100.json"),
+    loadJson("./data/characters/archetype_shapes.json"),
+    loadJson("./data/characters/modifier_palettes.json"),
   ]);
 
   state.centroids = centroids;
   state.types = types;
-  state.codex = createCodexController(ui.elements, types);
-  state.codex.render();
+  setCharacterConfig({
+    archetypes: shapeData.archetypes,
+    modifiers: paletteData.modifiers,
+  });
 
   const form = document.querySelector("#analyze-form");
   const usernameInput = document.querySelector("#username-input");
   const patInput = document.querySelector("#pat-input");
   const demoButton = document.querySelector("#demo-button");
-  const codexSearch = ui.elements.codexSearch;
-  const codexRarity = ui.elements.codexRarity;
   const shareButton = ui.elements.shareButton;
   const copyEmbedButton = ui.elements.copyEmbedButton;
+
+  const sessionPat = sessionStorage.getItem(SESSION_PAT_KEY) || "";
+  if (sessionPat) {
+    patInput.value = sessionPat;
+    ui.setStatus("Session PAT loaded for higher API limits.", "info");
+  }
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -190,20 +225,16 @@ async function init() {
       return;
     }
 
+    if (token) {
+      sessionStorage.setItem(SESSION_PAT_KEY, token);
+    }
+
     await analyzeLive(username, token);
   });
 
   demoButton.addEventListener("click", async () => {
     ui.hideError();
-    await loadDemoProfile(getSelectedDemoProfile());
-  });
-
-  codexSearch.addEventListener("input", () => {
-    state.codex.render(codexSearch.value.trim(), codexRarity.value);
-  });
-
-  codexRarity.addEventListener("change", () => {
-    state.codex.render(codexSearch.value.trim(), codexRarity.value);
+    await loadDemoProfile(getSelectedDemoProfile(), "", "info");
   });
 
   shareButton.addEventListener("click", () => {
@@ -232,10 +263,6 @@ async function init() {
   });
 
   window.addEventListener("keydown", (event) => {
-    if (event.key === "/" && document.activeElement !== codexSearch) {
-      event.preventDefault();
-      codexSearch.focus();
-    }
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
       event.preventDefault();
       usernameInput.focus();
@@ -247,11 +274,15 @@ async function init() {
   const queryUsername = new URLSearchParams(window.location.search).get("user");
   if (queryUsername) {
     usernameInput.value = queryUsername;
-    await analyzeLive(queryUsername, "");
+    await analyzeLive(queryUsername, sessionPat);
     return;
   }
 
-  await loadDemoProfile("torvalds", "Instant demo loaded. Run your own analysis above.");
+  await loadDemoProfile(
+    "torvalds",
+    "Instant demo loaded. Run your own analysis above.",
+    "info"
+  );
 }
 
 init().catch((error) => {
