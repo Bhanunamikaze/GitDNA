@@ -387,6 +387,11 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
     achievementLabels: summary.labels,
     isDemo: options.isDemo || false,
     partialData: options.partialData || false,
+    sample: {
+      totalCommits: metricsResult.totalCommits || 0,
+      totalRepos: metricsResult.totalRepos || 0,
+      languageCount: metricsResult.languageCount || 0,
+    },
     profileUrl,
     badgeImageUrl,
     badgeCompactUrl,
@@ -443,6 +448,7 @@ function scoreFromDemoPayload(demoPayload) {
     achievementLabels: demoPayload.achievements || [],
     isDemo: true,
     partialData: false,
+    sample: null,
     profileUrl,
     badgeImageUrl,
     badgeCompactUrl,
@@ -1017,18 +1023,28 @@ function topSignals(metrics, limit = 3) {
 function confidenceMeta(confidence) {
   if (confidence >= 0.84) {
     return {
-      label: "High Certainty",
+      label: "High Clarity",
+      uiPercent: 88,
       hint: "Signal alignment is very strong across multiple behavioral traits.",
     };
   }
   if (confidence >= 0.66) {
     return {
-      label: "Stable Match",
+      label: "Stable Clarity",
+      uiPercent: 72,
       hint: "Most core signals align with this DNA profile and archetype style.",
     };
   }
+  if (confidence >= 0.45) {
+    return {
+      label: "Developing",
+      uiPercent: 58,
+      hint: "Your signal pattern is forming with moderate consistency across activities.",
+    };
+  }
   return {
-    label: "Emerging Match",
+    label: "Emerging",
+    uiPercent: 44,
     hint: "Your public signal set is still forming. More activity will sharpen this profile.",
   };
 }
@@ -1049,6 +1065,22 @@ function buildRevealNarrative(profileResult, strongestSignals) {
     secondary:
       "This profile card summarizes your coding rhythm, signal intensity, and likely long-run collaboration style.",
   };
+}
+
+function sampleSummary(sample) {
+  if (!sample?.totalCommits || !sample?.totalRepos) {
+    return null;
+  }
+  const commits = Number(sample.totalCommits);
+  const repos = Number(sample.totalRepos);
+  const languages = Number(sample.languageCount || 0);
+  if (!Number.isFinite(commits) || !Number.isFinite(repos)) {
+    return null;
+  }
+  if (languages > 0) {
+    return `Analyzed ${commits} commits across ${repos} repos and ${languages} languages.`;
+  }
+  return `Analyzed ${commits} commits across ${repos} repos.`;
 }
 
 function App() {
@@ -1261,13 +1293,14 @@ function App() {
     () => (result ? topSignals(result.metrics, 3) : []),
     [result]
   );
-  const confidencePct = Math.round((result?.confidence || 0) * 100);
   const confidenceInfo = confidenceMeta(result?.confidence || 0);
+  const confidenceUiPct = confidenceInfo.uiPercent || 50;
   const revealNarrative = buildRevealNarrative(result, revealSignals);
   const dnaSignature = String(result?.typeId || "unknown_type")
     .replace(/_/g, "-")
     .toUpperCase();
   const achievementPreview = (result?.achievementBadges || []).slice(0, 3);
+  const analysisSample = sampleSummary(result?.sample);
   const effectiveProfileUrl = result?.profileUrl || buildProfileUrl(getBaseUrl(), result?.username || "");
   const effectiveBadgeUrl =
     result?.badgeImageUrl ||
@@ -1486,9 +1519,10 @@ function App() {
                         <div className="grid grid-cols-2 gap-2">
                           <div className="dna-mini-stat rounded-lg p-2">
                             <p className="text-[11px] uppercase tracking-[0.09em] text-slate-400">
-                              Confidence
+                              Signal Clarity
                             </p>
-                            <p className="font-mono text-lg text-cyan-200">${confidencePct}%</p>
+                            <p className="text-sm font-semibold text-cyan-200">${confidenceInfo.label}</p>
+                            <p className="text-[11px] text-slate-400 mt-0.5">Model certainty</p>
                           </div>
                           <div className="dna-mini-stat rounded-lg p-2">
                             <p className="text-[11px] uppercase tracking-[0.09em] text-slate-400">
@@ -1509,17 +1543,20 @@ function App() {
                           <p className="text-slate-200 mt-2 leading-relaxed">${revealNarrative.primary}</p>
                           <p className="text-slate-300 mt-2 leading-relaxed">${result.flavorText}</p>
                           <p className="text-slate-400 mt-2 leading-relaxed">${revealNarrative.secondary}</p>
+                          ${analysisSample
+                            ? html`<p className="text-xs text-cyan-100/80 mt-2">${analysisSample}</p>`
+                            : null}
                         </div>
 
                         <div className="rounded-xl border border-slate-700/70 bg-slate-900/72 p-4">
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-300">Match Confidence</span>
+                            <span className="text-slate-300">Signal Clarity</span>
                             <span className="font-mono text-cyan-200">${confidenceInfo.label}</span>
                           </div>
                           <div className="mt-2 h-3 rounded-full bg-slate-700/70 overflow-hidden">
                             <${motion.div}
                               initial=${{ width: 0 }}
-                              animate=${{ width: `${confidencePct}%` }}
+                              animate=${{ width: `${confidenceUiPct}%` }}
                               transition=${{ duration: 1.2, ease: "easeOut" }}
                               className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-teal-400 to-amber-300"
                             />
