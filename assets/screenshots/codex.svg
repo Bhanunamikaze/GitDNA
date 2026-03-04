@@ -1,76 +1,67 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="GitDNA codex screenshot">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#ecfeff" />
-      <stop offset="50%" stop-color="#f8fafc" />
-      <stop offset="100%" stop-color="#fff7ed" />
+      <stop offset="0%" stop-color="#050b16" />
+      <stop offset="55%" stop-color="#0b1626" />
+      <stop offset="100%" stop-color="#1a1f4b" />
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1626" stop-opacity="0.94" />
+      <stop offset="100%" stop-color="#12243b" stop-opacity="0.82" />
     </linearGradient>
   </defs>
-  <rect width="1280" height="720" fill="url(#bg)" />
-  <rect x="70" y="50" width="1140" height="620" rx="20" fill="#fff" stroke="#dbe3ec" />
+  <rect width="1280" height="720" fill="url(#bg)"/>
 
-  <text x="110" y="110" fill="#0f172a" font-size="42" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">DNA Codex (100 Types)</text>
-  <rect x="110" y="136" width="690" height="48" rx="10" fill="#f8fafc" stroke="#dbe3ec" />
-  <text x="134" y="167" fill="#64748b" font-size="20" font-family="IBM Plex Sans, Arial, sans-serif">Search by type, alias, archetype, or modifier</text>
-  <rect x="820" y="136" width="210" height="48" rx="10" fill="#f8fafc" stroke="#dbe3ec" />
-  <text x="853" y="167" fill="#64748b" font-size="20" font-family="IBM Plex Sans, Arial, sans-serif">All Rarities</text>
-  <text x="1055" y="168" fill="#334155" font-size="18" font-family="IBM Plex Sans, Arial, sans-serif">100 of 100 types</text>
+  <rect x="56" y="46" width="1168" height="122" rx="20" fill="url(#panel)" stroke="#334155"/>
+  <text x="92" y="94" fill="#67e8f9" font-size="16" letter-spacing="2" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="700">GITDNA CODEX</text>
+  <text x="92" y="134" fill="#f8fafc" font-size="48" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Explore 100 DNA Types</text>
 
-  <g transform="translate(110,210)">
-    <rect width="240" height="140" rx="12" fill="#fff" stroke="#dbe3ec" />
-    <text x="14" y="32" fill="#0f172a" font-size="20" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Night Architect</text>
-    <text x="14" y="58" fill="#1d4ed8" font-size="16" font-family="IBM Plex Sans, Arial, sans-serif">The Midnight System Mason</text>
-    <text x="14" y="82" fill="#64748b" font-size="14" font-family="IBM Plex Sans, Arial, sans-serif">Architect | Night</text>
-    <rect x="14" y="102" width="78" height="24" rx="12" fill="#fee2e2" />
-    <text x="30" y="118" fill="#7f1d1d" font-size="12" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="700">MYTHIC</text>
-  </g>
-  <g transform="translate(370,210)">
-    <rect width="240" height="140" rx="12" fill="#fff" stroke="#dbe3ec" />
-    <text x="14" y="32" fill="#0f172a" font-size="20" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Steady Maintainer</text>
-    <text x="14" y="58" fill="#1d4ed8" font-size="16" font-family="IBM Plex Sans, Arial, sans-serif">The Pulse Caretaker</text>
-    <text x="14" y="82" fill="#64748b" font-size="14" font-family="IBM Plex Sans, Arial, sans-serif">Maintainer | Steady</text>
-    <rect x="14" y="102" width="62" height="24" rx="12" fill="#dbeafe" />
-    <text x="30" y="118" fill="#1e3a8a" font-size="12" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="700">RARE</text>
-  </g>
-  <g transform="translate(630,210)">
-    <rect width="240" height="140" rx="12" fill="#fff" stroke="#dbe3ec" />
-    <text x="14" y="32" fill="#0f172a" font-size="20" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Burst Toolsmith</text>
-    <text x="14" y="58" fill="#1d4ed8" font-size="16" font-family="IBM Plex Sans, Arial, sans-serif">The Storm Forge Engineer</text>
-    <text x="14" y="82" fill="#64748b" font-size="14" font-family="IBM Plex Sans, Arial, sans-serif">Toolsmith | Burst</text>
-    <rect x="14" y="102" width="92" height="24" rx="12" fill="#fef3c7" />
-    <text x="26" y="118" fill="#92400e" font-size="12" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="700">LEGENDARY</text>
-  </g>
-  <g transform="translate(890,210)">
-    <rect width="240" height="140" rx="12" fill="#fff" stroke="#dbe3ec" />
-    <text x="14" y="32" fill="#0f172a" font-size="20" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Minimal Explorer</text>
-    <text x="14" y="58" fill="#1d4ed8" font-size="16" font-family="IBM Plex Sans, Arial, sans-serif">The Needle Pathfinder</text>
-    <text x="14" y="82" fill="#64748b" font-size="14" font-family="IBM Plex Sans, Arial, sans-serif">Explorer | Minimal</text>
-    <rect x="14" y="102" width="86" height="24" rx="12" fill="#e2e8f0" />
-    <text x="26" y="118" fill="#334155" font-size="12" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="700">COMMON</text>
+  <rect x="56" y="188" width="1168" height="488" rx="20" fill="url(#panel)" stroke="#334155"/>
+
+  <rect x="84" y="216" width="248" height="430" rx="16" fill="#0b1f35" stroke="#1e3a5f"/>
+  <text x="106" y="252" fill="#f8fafc" font-size="24" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Find a Type</text>
+  <rect x="106" y="274" width="204" height="48" rx="10" fill="#020617" stroke="#475569"/>
+  <text x="124" y="304" fill="#64748b" font-size="18" font-family="IBM Plex Sans, Arial, sans-serif">Search...</text>
+  <rect x="106" y="346" width="204" height="48" rx="10" fill="#020617" stroke="#475569"/>
+  <text x="124" y="376" fill="#64748b" font-size="18" font-family="IBM Plex Sans, Arial, sans-serif">All rarities</text>
+  <text x="106" y="426" fill="#93c5fd" font-size="16" font-family="JetBrains Mono, monospace">100 of 100 types</text>
+
+  <rect x="352" y="216" width="562" height="430" rx="16" fill="#0b1f35" stroke="#1e3a5f"/>
+
+  <g transform="translate(376,242)">
+    <rect width="250" height="118" rx="12" fill="#0f172a" stroke="#334155"/>
+    <text x="16" y="36" fill="#f8fafc" font-size="24" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Night Architect</text>
+    <text x="16" y="62" fill="#67e8f9" font-size="16" font-family="IBM Plex Sans, Arial, sans-serif">The Midnight System Mason</text>
+    <text x="16" y="88" fill="#94a3b8" font-size="14" font-family="JetBrains Mono, monospace">ARCHITECT | NIGHT | MYTHIC</text>
   </g>
 
-  <g transform="translate(110,370)">
-    <rect width="240" height="140" rx="12" fill="#fff" stroke="#dbe3ec" />
-    <rect x="14" y="18" width="180" height="14" rx="7" fill="#f1f5f9" />
-    <rect x="14" y="42" width="210" height="14" rx="7" fill="#f1f5f9" />
-    <rect x="14" y="66" width="160" height="14" rx="7" fill="#f1f5f9" />
+  <g transform="translate(646,242)">
+    <rect width="250" height="118" rx="12" fill="#0f172a" stroke="#334155"/>
+    <text x="16" y="36" fill="#f8fafc" font-size="24" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Burst Sprinter</text>
+    <text x="16" y="62" fill="#67e8f9" font-size="16" font-family="IBM Plex Sans, Arial, sans-serif">The Storm Burst Runner</text>
+    <text x="16" y="88" fill="#94a3b8" font-size="14" font-family="JetBrains Mono, monospace">SPRINTER | BURST | LEGENDARY</text>
   </g>
-  <g transform="translate(370,370)">
-    <rect width="240" height="140" rx="12" fill="#fff" stroke="#dbe3ec" />
-    <rect x="14" y="18" width="200" height="14" rx="7" fill="#f1f5f9" />
-    <rect x="14" y="42" width="210" height="14" rx="7" fill="#f1f5f9" />
-    <rect x="14" y="66" width="150" height="14" rx="7" fill="#f1f5f9" />
+
+  <g transform="translate(376,382)">
+    <rect width="250" height="118" rx="12" fill="#0f172a" stroke="#334155"/>
+    <text x="16" y="36" fill="#f8fafc" font-size="24" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Minimal Explorer</text>
+    <text x="16" y="62" fill="#67e8f9" font-size="16" font-family="IBM Plex Sans, Arial, sans-serif">The Needle Pathfinder</text>
+    <text x="16" y="88" fill="#94a3b8" font-size="14" font-family="JetBrains Mono, monospace">EXPLORER | MINIMAL | COMMON</text>
   </g>
-  <g transform="translate(630,370)">
-    <rect width="240" height="140" rx="12" fill="#fff" stroke="#dbe3ec" />
-    <rect x="14" y="18" width="188" height="14" rx="7" fill="#f1f5f9" />
-    <rect x="14" y="42" width="220" height="14" rx="7" fill="#f1f5f9" />
-    <rect x="14" y="66" width="172" height="14" rx="7" fill="#f1f5f9" />
+
+  <g transform="translate(646,382)">
+    <rect width="250" height="118" rx="12" fill="#0f172a" stroke="#334155"/>
+    <text x="16" y="36" fill="#f8fafc" font-size="24" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Steady Maintainer</text>
+    <text x="16" y="62" fill="#67e8f9" font-size="16" font-family="IBM Plex Sans, Arial, sans-serif">The Pulse Caretaker</text>
+    <text x="16" y="88" fill="#94a3b8" font-size="14" font-family="JetBrains Mono, monospace">MAINTAINER | STEADY | RARE</text>
   </g>
-  <g transform="translate(890,370)">
-    <rect width="240" height="140" rx="12" fill="#fff" stroke="#dbe3ec" />
-    <rect x="14" y="18" width="190" height="14" rx="7" fill="#f1f5f9" />
-    <rect x="14" y="42" width="214" height="14" rx="7" fill="#f1f5f9" />
-    <rect x="14" y="66" width="166" height="14" rx="7" fill="#f1f5f9" />
-  </g>
+
+  <rect x="936" y="216" width="260" height="430" rx="16" fill="#0b1f35" stroke="#1e3a5f"/>
+  <text x="958" y="252" fill="#f8fafc" font-size="24" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Type Detail</text>
+  <rect x="958" y="274" width="108" height="108" rx="16" fill="#0f172a" stroke="#334155"/>
+  <polygon points="1012,294 1042,328 1012,362 982,328" fill="#cbd5e1" stroke="#334155" stroke-width="3"/>
+  <text x="958" y="414" fill="#67e8f9" font-size="22" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="700">The Needle Pathfinder</text>
+  <text x="958" y="448" fill="#94a3b8" font-size="16" font-family="IBM Plex Sans, Arial, sans-serif">Explorer archetype with minimal style.</text>
+  <rect x="958" y="474" width="102" height="30" rx="15" fill="#334155"/>
+  <text x="990" y="494" fill="#e2e8f0" font-size="13" font-family="JetBrains Mono, monospace" font-weight="700">COMMON</text>
 </svg>

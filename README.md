@@ -2,14 +2,14 @@
 
 Discover your Developer DNA from public GitHub activity.
 
+- Interactive scan flow: Landing -> Scan -> DNA Reveal -> Constellation -> Badge Studio
 - Deterministic 100-type system (`10 archetypes x 10 modifiers`)
-- Explainable scoring and confidence output
-- Demo profiles and fallback mode for rate limits
-- Achievements, codex, share cards, and README embeds
+- Explainable scoring with live GitHub signals and achievement impact
+- Customizable GitDNA badge (README-ready markdown + SVG embed code)
 - 100% free stack: GitHub Pages + GitHub Actions
 
 ## Live Product
-Deploy via GitHub Pages from this repository root.
+- https://bhanunamikaze.github.io/GitDNA/
 
 ## Quick Start
 1. Install Node.js 20+.
@@ -18,7 +18,7 @@ Deploy via GitHub Pages from this repository root.
    npm run dev
    ```
 3. Open `http://localhost:4173`.
-4. Analyze a username, or click `Try Demo Profile`.
+4. Analyze a username, or click `Try Demo`.
 5. Explore full catalog at `http://localhost:4173/codex.html`.
 
 Optional local generation:
@@ -50,15 +50,15 @@ Example demo cards in this repo:
 - Character modifier palette config: `data/characters/modifier_palettes.json`
 
 ## Screenshots
-Landing and onboarding:
+Landing scanner and DNA core:
 
 ![GitDNA landing](./assets/screenshots/landing.svg)
 
-Result view and share controls:
+DNA reveal, constellation, and badge studio:
 
 ![GitDNA result](./assets/screenshots/result.svg)
 
-DNA codex explorer:
+DNA codex explorer (100 types):
 
 ![GitDNA codex](./assets/screenshots/codex.svg)
 
