@@ -34,6 +34,7 @@ body {
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  min-height: 560px;
   background:
     linear-gradient(145deg, rgba(7, 19, 36, 0.95), rgba(10, 22, 42, 0.93)),
     radial-gradient(circle at 18% 12%, rgba(45, 212, 191, 0.2), transparent 42%),
@@ -148,8 +149,8 @@ body {
 
 @media (min-width: 900px) {
   .dna-reveal-grid {
-    grid-template-columns: 320px minmax(0, 1fr);
-    gap: 1.25rem;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 1.5rem;
     align-items: start;
   }
 }

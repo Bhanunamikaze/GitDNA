@@ -1290,8 +1290,7 @@ function buildRevealNarrative(profileResult, strongestSignals) {
   const modeText = profileResult.isDemo ? "demo simulation" : "live GitHub activity";
   return {
     primary: `${profileResult.aliasName} emerged from ${modeText}, led by ${first} and reinforced by ${second}.`,
-    secondary:
-      "This profile card summarizes your coding rhythm, signal intensity, and likely long-run collaboration style.",
+    secondary: "",
   };
 }
 
@@ -1751,7 +1750,7 @@ function App() {
                   exit=${{ opacity: 0, y: 12 }}
                   className="space-y-6"
                 >
-                  <article className="glass-panel dna-reveal-shell rounded-3xl p-6 md:p-8 space-y-6">
+                  <article className="glass-panel dna-reveal-shell rounded-3xl p-7 md:p-10 lg:p-11 space-y-7">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
                         <p className="text-xs uppercase tracking-[0.14em] text-cyan-300/85">
@@ -1781,7 +1780,7 @@ function App() {
                     </div>
 
                     <div className="dna-reveal-grid">
-                      <div className="dna-id-card rounded-2xl p-4 md:p-5 space-y-4">
+                      <div className="dna-id-card rounded-2xl p-5 md:p-6 space-y-5">
                         <div className="flex items-center justify-between gap-3">
                           <p className="text-[11px] uppercase tracking-[0.11em] text-slate-300">
                             Developer Identity Card
@@ -1837,7 +1836,11 @@ function App() {
                           </p>
                           <p className="text-slate-200 mt-2 leading-relaxed">${revealNarrative.primary}</p>
                           <p className="text-slate-300 mt-2 leading-relaxed">${result.flavorText}</p>
-                          <p className="text-slate-400 mt-2 leading-relaxed">${revealNarrative.secondary}</p>
+                          ${revealNarrative.secondary
+                            ? html`<p className="text-slate-400 mt-2 leading-relaxed">
+                                ${revealNarrative.secondary}
+                              </p>`
+                            : null}
                           ${analysisSample
                             ? html`<p className="text-xs text-cyan-100/80 mt-2">${analysisSample}</p>`
                             : null}

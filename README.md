@@ -52,15 +52,15 @@ Example demo cards in this repo:
 ## Screenshots
 Landing scanner and DNA core:
 
-![GitDNA landing](./assets/screenshots/landing.svg)
+![GitDNA landing](./assets/screenshots/landing.png)
 
 DNA reveal, constellation, and badge studio:
 
-![GitDNA result](./assets/screenshots/result.svg)
+![GitDNA result](./assets/screenshots/result.png)
 
 DNA codex explorer (100 types):
 
-![GitDNA codex](./assets/screenshots/codex.svg)
+![GitDNA codex](./assets/screenshots/codex.png)
 
 ## Hall of Fame
 Submit via issue template:
