@@ -85,6 +85,202 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
+function NebulaDnaBackground() {
+  const canvasRef = useRef(null);
+  const mouseRef = useRef({
+    x: 0,
+    y: 0,
+    active: false,
+  });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return undefined;
+    }
+    const context = canvas.getContext("2d");
+    if (!context) {
+      return undefined;
+    }
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let frameId = 0;
+    let dnaSeeds = [];
+    let starSeeds = [];
+
+    const createDnaSeeds = (count) =>
+      Array.from({ length: count }, (_, index) => ({
+        id: index,
+        offset: Math.random() * 700 + index * 18,
+        phase: Math.random() * Math.PI * 2,
+        speed: 34 + Math.random() * 42,
+        jitter: 4 + Math.random() * 6,
+      }));
+
+    const createStarSeeds = (count) =>
+      Array.from({ length: count }, (_, index) => ({
+        id: index,
+        xRatio: Math.random(),
+        yRatio: Math.random(),
+        twinkle: Math.random() * Math.PI * 2,
+        size: 0.55 + Math.random() * 1.6,
+        drift: 0.08 + Math.random() * 0.2,
+      }));
+
+    const resize = () => {
+      dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const dnaCount = Math.max(24, Math.floor(height / 18));
+      const starsCount = Math.max(80, Math.floor((width + height) / 13));
+      dnaSeeds = createDnaSeeds(dnaCount);
+      starSeeds = createStarSeeds(starsCount);
+    };
+
+    const repel = (x, y, radius, force) => {
+      const mouse = mouseRef.current;
+      if (!mouse.active) {
+        return { x, y };
+      }
+      const dx = x - mouse.x;
+      const dy = y - mouse.y;
+      const distance = Math.hypot(dx, dy) || 1;
+      if (distance >= radius) {
+        return { x, y };
+      }
+
+      const intensity = ((radius - distance) / radius) ** 1.65;
+      return {
+        x: x + (dx / distance) * force * intensity,
+        y: y + (dy / distance) * force * intensity,
+      };
+    };
+
+    const draw = (timestamp) => {
+      const time = timestamp * 0.001;
+      context.clearRect(0, 0, width, height);
+
+      const nebulaA = context.createRadialGradient(
+        width * 0.2 + Math.sin(time * 0.24) * 40,
+        height * 0.2 + Math.cos(time * 0.18) * 24,
+        24,
+        width * 0.2,
+        height * 0.2,
+        width * 0.58
+      );
+      nebulaA.addColorStop(0, "rgba(34,211,238,0.24)");
+      nebulaA.addColorStop(1, "rgba(34,211,238,0)");
+      context.fillStyle = nebulaA;
+      context.fillRect(0, 0, width, height);
+
+      const nebulaB = context.createRadialGradient(
+        width * 0.8 + Math.cos(time * 0.2) * 38,
+        height * 0.24 + Math.sin(time * 0.22) * 22,
+        28,
+        width * 0.8,
+        height * 0.24,
+        width * 0.52
+      );
+      nebulaB.addColorStop(0, "rgba(139,92,246,0.2)");
+      nebulaB.addColorStop(1, "rgba(139,92,246,0)");
+      context.fillStyle = nebulaB;
+      context.fillRect(0, 0, width, height);
+
+      context.globalCompositeOperation = "screen";
+      for (const star of starSeeds) {
+        const yShift = ((time * star.drift + star.yRatio) % 1) * height;
+        const x = star.xRatio * width + Math.sin(time * 0.6 + star.twinkle) * 10;
+        const y = yShift;
+        const glow = 0.35 + Math.sin(time * 1.6 + star.twinkle) * 0.3;
+        context.beginPath();
+        context.fillStyle = `rgba(148,163,184,${0.22 + glow * 0.16})`;
+        context.arc(x, y, star.size, 0, Math.PI * 2);
+        context.fill();
+      }
+
+      const centerX = width * 0.5;
+      const span = Math.min(width * 0.3, 190);
+      for (const seed of dnaSeeds) {
+        const progress = ((time * seed.speed + seed.offset) % (height + 260)) - 130;
+        const yBase = height - progress;
+        const wave = time * 1.8 + seed.phase + yBase * 0.012;
+        const ribbon = span * (0.58 + Math.sin(wave) * 0.3);
+
+        let leftX = centerX - ribbon;
+        let rightX = centerX + ribbon;
+        let leftY = yBase + Math.sin(wave * 1.2) * seed.jitter;
+        let rightY = yBase - Math.sin(wave * 1.2) * seed.jitter;
+
+        const displacedLeft = repel(leftX, leftY, 180, 55);
+        const displacedRight = repel(rightX, rightY, 180, 55);
+        leftX = displacedLeft.x;
+        leftY = displacedLeft.y;
+        rightX = displacedRight.x;
+        rightY = displacedRight.y;
+
+        const rungAlpha = 0.08 + (Math.sin(wave + 0.9) + 1) * 0.11;
+        context.strokeStyle = `rgba(125,211,252,${rungAlpha})`;
+        context.lineWidth = 1.25;
+        context.beginPath();
+        context.moveTo(leftX, leftY);
+        context.lineTo(rightX, rightY);
+        context.stroke();
+
+        const dotRadius = 1.6 + (Math.sin(wave * 1.4) + 1) * 0.8;
+        context.fillStyle = "rgba(103,232,249,0.9)";
+        context.beginPath();
+        context.arc(leftX, leftY, dotRadius, 0, Math.PI * 2);
+        context.fill();
+
+        context.fillStyle = "rgba(196,181,253,0.82)";
+        context.beginPath();
+        context.arc(rightX, rightY, dotRadius * 0.92, 0, Math.PI * 2);
+        context.fill();
+      }
+      context.globalCompositeOperation = "source-over";
+
+      frameId = requestAnimationFrame(draw);
+    };
+
+    const onPointerMove = (event) => {
+      mouseRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+        active: true,
+      };
+    };
+
+    const onPointerLeave = () => {
+      mouseRef.current.active = false;
+    };
+
+    resize();
+    frameId = requestAnimationFrame(draw);
+    window.addEventListener("resize", resize);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerleave", onPointerLeave);
+    window.addEventListener("blur", onPointerLeave);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerleave", onPointerLeave);
+      window.removeEventListener("blur", onPointerLeave);
+    };
+  }, []);
+
+  return html`<canvas ref=${canvasRef} className="primary-bg-canvas" aria-hidden="true"></canvas>`;
+}
+
 function getBaseUrl() {
   const basePath = window.location.pathname
     .replace(/\/index\.html$/, "")
@@ -951,8 +1147,9 @@ function App() {
           : "border-cyan-400/40 bg-cyan-500/10 text-cyan-100";
 
   return html`
-    <div className="relative">
-      <div className="mx-auto w-full max-w-6xl px-4 py-8 md:py-12 space-y-8">
+    <div className="relative min-h-screen overflow-x-clip">
+      <${NebulaDnaBackground} />
+      <div className="relative z-10 mx-auto w-full max-w-6xl px-4 py-8 md:py-12 space-y-8">
         <header className="glass-panel rounded-3xl p-6 md:p-8">
           <div className="grid gap-8 md:grid-cols-[1.1fr_0.9fr] items-center">
             <div className="space-y-4">
