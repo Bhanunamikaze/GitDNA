@@ -22,6 +22,21 @@ body {
   background: linear-gradient(140deg, #ecfeff 0%, #f8fafc 45%, #fff7ed 100%);
 }
 
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: #111827;
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  z-index: 1000;
+  border-radius: 0 0 8px 8px;
+}
+
+.skip-link:focus {
+  left: 12px;
+}
+
 .background-grid {
   position: fixed;
   inset: 0;
@@ -278,6 +293,10 @@ ul {
 .metrics table {
   border-collapse: collapse;
   width: 100%;
+}
+
+.a11y-summary {
+  border: 1px dashed var(--border);
 }
 
 th,

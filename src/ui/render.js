@@ -64,6 +64,7 @@ export function createRenderer() {
     shareButton: document.querySelector("#share-card-button"),
     copyEmbedButton: document.querySelector("#copy-embed-button"),
     embedSnippet: document.querySelector("#embed-snippet"),
+    a11ySummary: document.querySelector("#a11y-summary-text"),
   };
 
   function setStatus(text, kind = "info") {
@@ -137,6 +138,7 @@ export function createRenderer() {
     );
     renderMetricsTable(elements.metricsTableBody, payload.metrics || {});
     elements.embedSnippet.textContent = payload.embed_snippet || "";
+    elements.a11ySummary.textContent = payload.accessibility_summary || "";
 
     setHidden(elements.resultPanel, false);
     setHidden(elements.errorPanel, true);

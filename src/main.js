@@ -54,6 +54,12 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
     partial_data: options.partialData || false,
     is_demo: options.isDemo || false,
     embed_snippet: buildReadmeEmbedSnippet(baseUrl, profile.username),
+    accessibility_summary: [
+      `Primary type: ${scoring.typeName}.`,
+      `Top strengths: ${scoring.drivers.join(", ")}.`,
+      `Watch areas: ${scoring.suppressors.join(", ")}.`,
+      `Confidence: ${Math.round((options.lowConfidence ? Math.min(scoring.confidence, 0.35) : scoring.confidence) * 100)}%.`,
+    ].join(" "),
   };
 }
 
@@ -222,6 +228,18 @@ async function init() {
       ui.setStatus("README embed snippet copied.", "success");
     } catch {
       ui.setStatus("Clipboard access failed. Copy from the snippet text.", "warning");
+    }
+  });
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "/" && document.activeElement !== codexSearch) {
+      event.preventDefault();
+      codexSearch.focus();
+    }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      usernameInput.focus();
+      usernameInput.select();
     }
   });
 

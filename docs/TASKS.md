@@ -55,7 +55,7 @@ Status legend:
 - [x] Add Hall of Fame Issue Form and JSON compiler.
 
 ## Phase 6: Quality and Launch
-- [ ] Add accessibility fallbacks (chart summaries + table views).
-- [ ] Add mobile polish and keyboard navigation checks.
-- [ ] Add README launch assets and embed snippets.
-- [ ] Add launch checklist and week-1 shipping plan.
+- [x] Add accessibility fallbacks (chart summaries + table views).
+- [x] Add mobile polish and keyboard navigation checks.
+- [x] Add README launch assets and embed snippets.
+- [x] Add launch checklist and week-1 shipping plan.
