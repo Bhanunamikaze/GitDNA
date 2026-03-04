@@ -55,9 +55,10 @@ GitHub Actions -> generate curated JSON packs -> commit to repo -> served by Pag
 ## Rate-Limit First UX
 1. Optional PAT input is shown by default in the landing form.
 2. Copy: `Paste a GitHub token for faster, higher-limit analysis (never stored).`
-3. PAT value is session memory only, never written to localStorage.
-4. "Try Demo Profile" CTA is always visible for no-fail first run.
-5. If rate-limited, app switches to snapshot mode automatically and surfaces a retry path.
+3. Provide one-click token creation link: `https://github.com/settings/tokens/new`.
+4. PAT value is session memory only, never written to localStorage.
+5. "Try Demo Profile" CTA is always visible for no-fail first run.
+6. If rate-limited, app switches to snapshot mode automatically and surfaces a retry path.
 
 ## Request Budget (Per Analysis Target)
 1. Repo list: 1-2 requests.

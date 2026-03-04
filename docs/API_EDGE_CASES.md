@@ -46,6 +46,7 @@ If thresholds are not met:
 1. Message: `GitHub API limit reached for this session.`
 2. Actions:
    - optional PAT input
+   - one-click token creation link (`https://github.com/settings/tokens/new`)
    - retry in snapshot mode
    - try demo profile
 
