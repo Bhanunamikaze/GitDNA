@@ -465,6 +465,32 @@ function scoreFromDemoPayload(demoPayload) {
   const impactScore =
     demoPayload.achievement_impact_score ||
     (demoPayload.achievements || []).length * 10;
+  const demoStats =
+    Number(demoPayload.total_commits || 0) > 0 || Number(demoPayload.total_repos || 0) > 0
+      ? {
+          commitCount: Number(demoPayload.total_commits || 0),
+          repoCount: Number(demoPayload.total_repos || 0),
+          languageCount: Number(demoPayload.language_count || 0),
+          estimatedLoc: Number(demoPayload.estimated_loc || 0) || null,
+          totalStars: Number(demoPayload.total_stars || 0),
+          totalForks: Number(demoPayload.total_forks || 0),
+          followers: Number(demoPayload.followers || 0),
+          topLanguages: Array.isArray(demoPayload.top_languages)
+            ? demoPayload.top_languages
+                .map((entry) => {
+                  if (typeof entry === "string") {
+                    return { name: entry, bytes: 0 };
+                  }
+                  return {
+                    name: entry?.name || "",
+                    bytes: Number(entry?.bytes || 0),
+                  };
+                })
+                .filter((entry) => entry.name)
+                .slice(0, 5)
+            : [],
+        }
+      : null;
   const profileUrl = buildProfileUrl(baseUrl, demoPayload.username);
   const badgeImageUrl = buildShieldsBadgeUrl({
     typeName: demoPayload.type_name,
@@ -486,7 +512,7 @@ function scoreFromDemoPayload(demoPayload) {
     rarityTier: demoPayload.rarity_tier || "Common",
     confidence: demoPayload.confidence,
     impactScore,
-    profileStats: null,
+    profileStats: demoStats,
   });
 
   return {
@@ -1230,8 +1256,17 @@ function App() {
 
     const cached = getCachedResult(cleanName);
     if (cached) {
-      setStatus({ kind: "success", text: `Loaded cached DNA for @${cleanName}` });
-      return cached;
+      const hasDetailedStats =
+        cached?.profileStats &&
+        Number.isFinite(Number(cached.profileStats.commitCount)) &&
+        Number(cached.profileStats.commitCount) > 0 &&
+        Number.isFinite(Number(cached.profileStats.repoCount)) &&
+        Number(cached.profileStats.repoCount) > 0;
+      if (hasDetailedStats || cached?.isDemo) {
+        setStatus({ kind: "success", text: `Loaded cached DNA for @${cleanName}` });
+        return cached;
+      }
+      localStorage.removeItem(getCacheKey(cleanName));
     }
 
     const token = sessionStorage.getItem("gitdna:session_pat") || "";

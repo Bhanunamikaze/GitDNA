@@ -1,4 +1,4 @@
-export const ANALYSIS_VERSION = "0.1.0";
+export const ANALYSIS_VERSION = "0.1.1";
 export const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 export const FETCH_LIMITS = {

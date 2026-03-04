@@ -215,6 +215,8 @@ export function buildNebulaProfileBadgeSvg({
   const safeForks = formatCompactNumber(stats.totalForks);
   const safeFollowers = formatCompactNumber(stats.followers);
   const topLanguages = Array.isArray(stats.topLanguages) ? stats.topLanguages.slice(0, 5) : [];
+  const hasDetailedStats =
+    Number(stats.commitCount || 0) > 0 || Number(stats.repoCount || 0) > 0;
 
   const rand = seededRandom(hashSeed(`${safeUser}:${safeType}:${safeImpact}`));
   const stars = Array.from({ length: 30 }, (_, index) => {
@@ -313,6 +315,11 @@ export function buildNebulaProfileBadgeSvg({
     <text x="454" y="286" fill="#fde68a" font-size="16.5" font-weight="700">${safeStars} · ${safeForks} · ${safeFollowers}</text>
 
     ${languageChips}
+    ${
+      hasDetailedStats
+        ? ""
+        : `<text x="34" y="337" fill="#7dd3fc" fill-opacity="0.88" font-size="10.5" letter-spacing="1.2">LIVE API DATA REQUIRED FOR DETAILED STATS (ADD GITHUB TOKEN)</text>`
+    }
 
     <g class="helix" opacity="0.82">
       <path d="M646 78 C 688 108, 780 110, 824 78" fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-opacity="0.75"/>
