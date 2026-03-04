@@ -310,10 +310,25 @@ function useConstellation(metrics) {
 
 function ConstellationGraph({ metrics }) {
   const graph = useConstellation(metrics);
+  const svgRef = useRef(null);
+  const graphRef = useRef(graph);
+  const dragRef = useRef({
+    id: null,
+    pointerId: null,
+    offsetX: 0,
+    offsetY: 0,
+  });
+
   const [selected, setSelected] = useState(SIGNAL_CONFIG[0]?.key || null);
   const [hovered, setHovered] = useState(null);
+  const [draggingId, setDraggingId] = useState(null);
+  const [nodeOffsets, setNodeOffsets] = useState({});
 
-  const nodeById = useMemo(() => {
+  useEffect(() => {
+    graphRef.current = graph;
+  }, [graph]);
+
+  const baseNodeById = useMemo(() => {
     const map = new Map();
     for (const node of graph.nodes) {
       map.set(node.id, node);
@@ -321,18 +336,160 @@ function ConstellationGraph({ metrics }) {
     return map;
   }, [graph.nodes]);
 
+  const displayNodes = useMemo(
+    () =>
+      graph.nodes.map((node) => {
+        if (node.core) {
+          return node;
+        }
+        const offset = nodeOffsets[node.id];
+        if (!offset) {
+          return node;
+        }
+        return {
+          ...node,
+          x: node.x + offset.dx,
+          y: node.y + offset.dy,
+        };
+      }),
+    [graph.nodes, nodeOffsets]
+  );
+
+  const displayNodeById = useMemo(() => {
+    const map = new Map();
+    for (const node of displayNodes) {
+      map.set(node.id, node);
+    }
+    return map;
+  }, [displayNodes]);
+
   const signalNodes = useMemo(
-    () => graph.nodes.filter((node) => !node.core),
-    [graph.nodes]
+    () => displayNodes.filter((node) => !node.core),
+    [displayNodes]
   );
 
   const activeId = hovered || selected || signalNodes[0]?.id || null;
-  const activeNode = activeId ? nodeById.get(activeId) : null;
+  const activeNode = activeId ? displayNodeById.get(activeId) : null;
 
   const rankedSignals = useMemo(
     () => [...signalNodes].sort((left, right) => (right.value || 0) - (left.value || 0)),
     [signalNodes]
   );
+
+  const startDrag = (event, nodeId) => {
+    const svg = svgRef.current;
+    const graphNow = graphRef.current;
+    const node = displayNodeById.get(nodeId);
+    if (!svg || !graphNow || !node) {
+      return;
+    }
+    const rect = svg.getBoundingClientRect();
+    if (!rect.width || !rect.height) {
+      return;
+    }
+
+    const pointerX = ((event.clientX - rect.left) / rect.width) * graphNow.width;
+    const pointerY = ((event.clientY - rect.top) / rect.height) * graphNow.height;
+
+    dragRef.current = {
+      id: nodeId,
+      pointerId: event.pointerId,
+      offsetX: node.x - pointerX,
+      offsetY: node.y - pointerY,
+    };
+    setSelected(nodeId);
+    setHovered(nodeId);
+    setDraggingId(nodeId);
+  };
+
+  useEffect(() => {
+    if (!draggingId) {
+      return undefined;
+    }
+
+    const onMove = (event) => {
+      const drag = dragRef.current;
+      if (!drag.id) {
+        return;
+      }
+
+      const svg = svgRef.current;
+      const graphNow = graphRef.current;
+      if (!svg || !graphNow || !graphNow.width || !graphNow.height) {
+        return;
+      }
+
+      const rect = svg.getBoundingClientRect();
+      if (!rect.width || !rect.height) {
+        return;
+      }
+
+      const pointerX = ((event.clientX - rect.left) / rect.width) * graphNow.width;
+      const pointerY = ((event.clientY - rect.top) / rect.height) * graphNow.height;
+      const baseNode = (graphNow.nodes || []).find((node) => node.id === drag.id);
+      if (!baseNode || baseNode.core) {
+        return;
+      }
+
+      const radius = 24 + Math.round((baseNode.value || 0) * 10) + 14;
+      const targetX = pointerX + drag.offsetX;
+      const targetY = pointerY + drag.offsetY;
+      const clampedX = clamp(targetX, radius, graphNow.width - radius);
+      const clampedY = clamp(targetY, radius, graphNow.height - radius);
+      const dx = clampedX - baseNode.x;
+      const dy = clampedY - baseNode.y;
+
+      setNodeOffsets((prev) => {
+        const existing = prev[drag.id];
+        if (
+          existing &&
+          Math.abs(existing.dx - dx) < 0.25 &&
+          Math.abs(existing.dy - dy) < 0.25
+        ) {
+          return prev;
+        }
+        return {
+          ...prev,
+          [drag.id]: { dx, dy },
+        };
+      });
+    };
+
+    const stopDrag = () => {
+      dragRef.current = {
+        id: null,
+        pointerId: null,
+        offsetX: 0,
+        offsetY: 0,
+      };
+      setDraggingId(null);
+      setHovered(null);
+    };
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", stopDrag);
+    window.addEventListener("pointercancel", stopDrag);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", stopDrag);
+      window.removeEventListener("pointercancel", stopDrag);
+    };
+  }, [draggingId]);
+
+  const resetOffsets = () => {
+    setNodeOffsets({});
+  };
+
+  const releaseNodeOffset = (nodeId) => {
+    setNodeOffsets((prev) => {
+      if (!prev[nodeId]) {
+        return prev;
+      }
+      const next = { ...prev };
+      delete next[nodeId];
+      return next;
+    });
+  };
 
   return html`
     <div className="space-y-4">
@@ -341,10 +498,20 @@ function ConstellationGraph({ metrics }) {
         <div className="absolute top-3 left-3 z-10 rounded-lg border border-cyan-400/35 bg-slate-950/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.11em] text-cyan-100">
           Signal Orbit View
         </div>
+        <button
+          type="button"
+          onClick=${resetOffsets}
+          className="absolute top-3 right-3 z-10 rounded-lg border border-violet-300/35 bg-slate-950/72 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.11em] text-violet-100 hover:border-violet-200/50"
+        >
+          Reset Positions
+        </button>
 
         <svg
+          ref=${svgRef}
           viewBox=${`0 0 ${graph.width} ${graph.height}`}
-          className="relative z-[1] w-full h-[420px] md:h-[520px]"
+          className=${`constellation-drag-surface relative z-[1] w-full h-[420px] md:h-[520px] ${
+            draggingId ? "cursor-grabbing" : "cursor-default"
+          }`}
         >
           <defs>
             <radialGradient id="coreGlow" cx="50%" cy="45%" r="58%">
@@ -369,8 +536,8 @@ function ConstellationGraph({ metrics }) {
           )}
 
           ${graph.links.map((link) => {
-            const source = nodeById.get(link.source);
-            const target = nodeById.get(link.target);
+            const source = displayNodeById.get(link.source);
+            const target = displayNodeById.get(link.target);
             if (!source || !target) {
               return null;
             }
@@ -387,7 +554,7 @@ function ConstellationGraph({ metrics }) {
             />`;
           })}
 
-          ${graph.nodes.map((node) => {
+          ${displayNodes.map((node) => {
             if (node.core) {
               return html`<g key="core">
                 <circle cx=${node.x} cy=${node.y} r="74" className="core-aura" />
@@ -412,10 +579,12 @@ function ConstellationGraph({ metrics }) {
             const radius = 24 + Math.round((node.value || 0) * 10);
             return html`<g
               key=${node.id}
-              style=${{ cursor: "pointer" }}
+              style=${{ cursor: draggingId === node.id ? "grabbing" : "grab" }}
               onClick=${() => setSelected(node.id)}
+              onPointerDown=${(event) => startDrag(event, node.id)}
               onMouseEnter=${() => setHovered(node.id)}
               onMouseLeave=${() => setHovered(null)}
+              onDoubleClick=${() => releaseNodeOffset(node.id)}
             >
               <circle
                 cx=${node.x}
@@ -475,6 +644,10 @@ function ConstellationGraph({ metrics }) {
           })}
         </svg>
       </div>
+
+      <p className="text-xs text-slate-400">
+        Click to select, drag to reposition within the field, double-click a node to return it to orbit.
+      </p>
 
       <div className="flex flex-wrap gap-2">
         ${signalNodes.map((node) => {

@@ -131,6 +131,10 @@ body {
   z-index: 0;
 }
 
+.constellation-drag-surface {
+  touch-action: none;
+}
+
 .orbit-track {
   fill: none;
   stroke: rgba(125, 211, 252, 0.2);
