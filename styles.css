@@ -213,6 +213,27 @@ button:hover {
   color: var(--primary);
 }
 
+.identity-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 0.9rem;
+  align-items: center;
+}
+
+.character-preview {
+  width: 140px;
+  height: 140px;
+  border-radius: 16px;
+  background: #e2e8f0;
+  display: grid;
+  place-items: center;
+}
+
+.character-preview svg {
+  width: 128px;
+  height: 128px;
+}
+
 .type-name {
   margin: 0.2rem 0 0;
   font-size: 1.4rem;
@@ -272,6 +293,21 @@ th {
 
 .hidden {
   display: none;
+}
+
+.share-row {
+  margin-top: 0.8rem;
+}
+
+.code-hint {
+  margin-top: 0.5rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem;
+  overflow-x: auto;
 }
 
 .codex-controls {
@@ -347,6 +383,10 @@ th {
   }
 
   .codex-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .identity-row {
     grid-template-columns: 1fr;
   }
 }

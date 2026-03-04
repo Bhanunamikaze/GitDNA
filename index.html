@@ -105,10 +105,15 @@
           >
         </div>
 
-        <h2 id="result-username">@username</h2>
-        <p class="type-name" id="result-type-name">Type Name</p>
-        <p class="type-alias" id="result-alias-name">Alias Name</p>
-        <p id="result-flavor" class="flavor"></p>
+        <div class="identity-row">
+          <div id="character-preview" class="character-preview" aria-hidden="true"></div>
+          <div>
+            <h2 id="result-username">@username</h2>
+            <p class="type-name" id="result-type-name">Type Name</p>
+            <p class="type-alias" id="result-alias-name">Alias Name</p>
+            <p id="result-flavor" class="flavor"></p>
+          </div>
+        </div>
 
         <div class="confidence-row">
           <label for="confidence-meter">Confidence</label>
@@ -153,6 +158,13 @@
           <ul id="achievement-list"></ul>
           <h3>Progress To Next</h3>
           <ul id="achievement-progress-list"></ul>
+          <div class="button-row share-row">
+            <button id="share-card-button" type="button">Download Share Card</button>
+            <button id="copy-embed-button" type="button" class="button-secondary">
+              Copy README Embed
+            </button>
+          </div>
+          <p id="embed-snippet" class="hint code-hint"></p>
         </article>
       </section>
 

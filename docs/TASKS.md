@@ -36,15 +36,15 @@ Status legend:
 - [x] Implement achievements engine (24 base tiers + combo badges).
 - [x] Render achievements with progress-to-next thresholds.
 - [x] Add DNA Codex page for all 100 types (search/filter).
-- [ ] Add character placeholder system (type-based mapping).
-- [ ] Add share card export v1 (PNG or SVG-based).
+- [x] Add character placeholder system (type-based mapping).
+- [x] Add share card export v1 (PNG or SVG-based).
 
 ## Phase 4: Demo, Social, and Growth
 - [x] Add instant demo on landing (auto-play sample analysis).
 - [x] Add demo profile snapshots (`torvalds`, `tj`, `sindresorhus`).
 - [x] Add "Try Demo Profile" UX and no-API fallback path.
-- [ ] Add README embed card URL strategy (static SVG assets).
-- [ ] Add OG/Twitter metadata strategy for profile pages.
+- [x] Add README embed card URL strategy (static SVG assets).
+- [x] Add OG/Twitter metadata strategy for profile pages.
 - [x] Add one-click "Star on GitHub" CTA in UI.
 
 ## Phase 5: Automation and GitHub-Native Ops

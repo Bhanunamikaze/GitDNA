@@ -4,14 +4,20 @@ import { resolveType } from "./analysis/scoring.js";
 import { fetchLiveProfile, hasInsufficientData } from "./api/github.js";
 import { ANALYSIS_VERSION, DEMO_PROFILES } from "./config.js";
 import { getCachedAnalysis, setCachedAnalysis } from "./state/cache.js";
+import { renderCharacter } from "./ui/character.js";
 import { createCodexController } from "./ui/codex.js";
 import { createRenderer } from "./ui/render.js";
-import { prettifyKey } from "./utils/format.js";
+import {
+  buildReadmeEmbedSnippet,
+  buildShareCardSvg,
+  downloadSvg,
+} from "./ui/shareCard.js";
 
 const state = {
   centroids: null,
   types: null,
   codex: null,
+  latestResult: null,
 };
 
 const ui = createRenderer();
@@ -25,6 +31,7 @@ async function loadJson(path) {
 }
 
 function normalizeResult(profile, scoring, achievementData, metricsResult, options = {}) {
+  const baseUrl = window.location.origin + window.location.pathname.replace(/\/index\.html$/, "");
   const achievementLabels = [
     ...achievementData.unlocked.map((item) => item.label),
     ...achievementData.combos.map((item) => item.label),
@@ -46,6 +53,7 @@ function normalizeResult(profile, scoring, achievementData, metricsResult, optio
     metrics: metricsResult.metrics,
     partial_data: options.partialData || false,
     is_demo: options.isDemo || false,
+    embed_snippet: buildReadmeEmbedSnippet(baseUrl, profile.username),
   };
 }
 
@@ -63,6 +71,8 @@ async function loadDemoProfile(profileId = "torvalds", note = "") {
   const demo = await loadJson(`./data/profiles/demo_${profileId}.json`);
   demo.is_demo = true;
   ui.showResult(demo);
+  renderCharacter(ui.elements.characterPreview, demo.type_id, demo.type_name);
+  state.latestResult = demo;
   ui.setStatus(note || `Showing demo profile: ${demo.username}`, "warning");
 }
 
@@ -70,6 +80,8 @@ async function analyzeLive(username, token) {
   const cached = getCachedAnalysis(username, ANALYSIS_VERSION);
   if (cached) {
     ui.showResult(cached);
+    renderCharacter(ui.elements.characterPreview, cached.type_id, cached.type_name);
+    state.latestResult = cached;
     ui.setStatus(`Loaded cached analysis for @${username}`, "success");
     return;
   }
@@ -106,6 +118,12 @@ async function analyzeLive(username, token) {
 
   ui.setLoading(false);
   ui.showResult(normalized);
+  renderCharacter(
+    ui.elements.characterPreview,
+    normalized.type_id,
+    normalized.type_name
+  );
+  state.latestResult = normalized;
   setCachedAnalysis(username, ANALYSIS_VERSION, normalized);
 
   if (insufficientData) {
@@ -152,6 +170,8 @@ async function init() {
   const demoButton = document.querySelector("#demo-button");
   const codexSearch = ui.elements.codexSearch;
   const codexRarity = ui.elements.codexRarity;
+  const shareButton = ui.elements.shareButton;
+  const copyEmbedButton = ui.elements.copyEmbedButton;
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -180,7 +200,39 @@ async function init() {
     state.codex.render(codexSearch.value.trim(), codexRarity.value);
   });
 
+  shareButton.addEventListener("click", () => {
+    if (!state.latestResult) {
+      ui.setStatus("Run an analysis first to export a share card.", "warning");
+      return;
+    }
+    const svg = buildShareCardSvg(state.latestResult);
+    const filename = `gitdna-${state.latestResult.username}.svg`;
+    downloadSvg(filename, svg);
+    ui.setStatus("Share card downloaded.", "success");
+  });
+
+  copyEmbedButton.addEventListener("click", async () => {
+    if (!state.latestResult?.embed_snippet) {
+      ui.setStatus("Run an analysis first to copy embed code.", "warning");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(state.latestResult.embed_snippet);
+      ui.setStatus("README embed snippet copied.", "success");
+    } catch {
+      ui.setStatus("Clipboard access failed. Copy from the snippet text.", "warning");
+    }
+  });
+
   ui.setLoading(false);
+  const queryUsername = new URLSearchParams(window.location.search).get("user");
+  if (queryUsername) {
+    usernameInput.value = queryUsername;
+    await analyzeLive(queryUsername, "");
+    return;
+  }
+
   await loadDemoProfile("torvalds", "Instant demo loaded. Run your own analysis above.");
 }
 

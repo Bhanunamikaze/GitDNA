@@ -45,6 +45,7 @@ export function createRenderer() {
     resultPanel: document.querySelector("#result-panel"),
     resultMode: document.querySelector("#result-mode"),
     username: document.querySelector("#result-username"),
+    characterPreview: document.querySelector("#character-preview"),
     typeName: document.querySelector("#result-type-name"),
     aliasName: document.querySelector("#result-alias-name"),
     flavor: document.querySelector("#result-flavor"),
@@ -60,6 +61,9 @@ export function createRenderer() {
     codexRarity: document.querySelector("#codex-rarity"),
     codexCount: document.querySelector("#codex-count"),
     codexGrid: document.querySelector("#codex-grid"),
+    shareButton: document.querySelector("#share-card-button"),
+    copyEmbedButton: document.querySelector("#copy-embed-button"),
+    embedSnippet: document.querySelector("#embed-snippet"),
   };
 
   function setStatus(text, kind = "info") {
@@ -132,6 +136,7 @@ export function createRenderer() {
       })
     );
     renderMetricsTable(elements.metricsTableBody, payload.metrics || {});
+    elements.embedSnippet.textContent = payload.embed_snippet || "";
 
     setHidden(elements.resultPanel, false);
     setHidden(elements.errorPanel, true);
