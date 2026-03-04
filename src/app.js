@@ -112,17 +112,60 @@ function NebulaDnaBackground() {
     let height = 0;
     let dpr = 1;
     let frameId = 0;
-    let dnaSeeds = [];
+    let dnaGroups = [];
     let starSeeds = [];
 
-    const createDnaSeeds = (count) =>
+    const createDnaSeeds = (count, groupId) =>
       Array.from({ length: count }, (_, index) => ({
-        id: index,
-        offset: Math.random() * 700 + index * 18,
+        id: `${groupId}-${index}`,
+        offset: Math.random() * 900 + index * 23,
         phase: Math.random() * Math.PI * 2,
-        speed: 34 + Math.random() * 42,
+        speed: 28 + Math.random() * 36,
         jitter: 4 + Math.random() * 6,
+        lane: -0.5 + Math.random(),
+        phase2: Math.random() * Math.PI * 2,
       }));
+
+    const createDnaGroups = () => {
+      const baseSpan = Math.min(width * 0.16, 150);
+      const layout =
+        width < 720
+          ? [
+              { x: 0.22, y: 0.26, angle: 0.95 },
+              { x: 0.5, y: 0.56, angle: -0.75 },
+              { x: 0.78, y: 0.34, angle: 0.42 },
+            ]
+          : [
+              { x: 0.18, y: 0.24, angle: 0.86 },
+              { x: 0.5, y: 0.5, angle: -0.62 },
+              { x: 0.82, y: 0.74, angle: 0.58 },
+            ];
+
+      const seedsPerGroup = clamp(
+        Math.floor(Math.min(width, height) / (width < 700 ? 30 : 24)),
+        10,
+        26
+      );
+
+      return layout.map((item, index) => {
+        const directionX = Math.cos(item.angle);
+        const directionY = Math.sin(item.angle);
+        return {
+          id: index,
+          anchorXRatio: item.x,
+          anchorYRatio: item.y,
+          directionX,
+          directionY,
+          travelLength: Math.max(width, height) * (width < 700 ? 0.68 : 0.82),
+          span: baseSpan * (0.82 + index * 0.08),
+          orbitX: 24 + index * 10,
+          orbitY: 20 + index * 12,
+          orbitSpeedX: 0.2 + index * 0.07,
+          orbitSpeedY: 0.26 + index * 0.05,
+          seeds: createDnaSeeds(seedsPerGroup - (width < 900 && index !== 1 ? 2 : 0), index),
+        };
+      });
+    };
 
     const createStarSeeds = (count) =>
       Array.from({ length: count }, (_, index) => ({
@@ -131,7 +174,8 @@ function NebulaDnaBackground() {
         yRatio: Math.random(),
         twinkle: Math.random() * Math.PI * 2,
         size: 0.55 + Math.random() * 1.6,
-        drift: 0.08 + Math.random() * 0.2,
+        driftX: -0.018 + Math.random() * 0.036,
+        driftY: -0.022 + Math.random() * 0.044,
       }));
 
     const resize = () => {
@@ -144,9 +188,12 @@ function NebulaDnaBackground() {
       canvas.style.height = `${height}px`;
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const dnaCount = Math.max(24, Math.floor(height / 18));
-      const starsCount = Math.max(80, Math.floor((width + height) / 13));
-      dnaSeeds = createDnaSeeds(dnaCount);
+      const starsCount = clamp(
+        Math.floor((width * height) / (width < 720 ? 12000 : 8800)),
+        62,
+        160
+      );
+      dnaGroups = createDnaGroups();
       starSeeds = createStarSeeds(starsCount);
     };
 
@@ -201,9 +248,13 @@ function NebulaDnaBackground() {
 
       context.globalCompositeOperation = "screen";
       for (const star of starSeeds) {
-        const yShift = ((time * star.drift + star.yRatio) % 1) * height;
-        const x = star.xRatio * width + Math.sin(time * 0.6 + star.twinkle) * 10;
-        const y = yShift;
+        const xShift = ((star.xRatio + time * star.driftX) % 1 + 1) % 1;
+        const yShift = ((star.yRatio + time * star.driftY) % 1 + 1) % 1;
+        let x = xShift * width + Math.sin(time * 0.8 + star.twinkle) * 8;
+        let y = yShift * height + Math.cos(time * 0.75 + star.twinkle) * 7;
+        const displaced = repel(x, y, 170, 30);
+        x = displaced.x;
+        y = displaced.y;
         const glow = 0.35 + Math.sin(time * 1.6 + star.twinkle) * 0.3;
         context.beginPath();
         context.fillStyle = `rgba(148,163,184,${0.22 + glow * 0.16})`;
@@ -211,44 +262,63 @@ function NebulaDnaBackground() {
         context.fill();
       }
 
-      const centerX = width * 0.5;
-      const span = Math.min(width * 0.3, 190);
-      for (const seed of dnaSeeds) {
-        const progress = ((time * seed.speed + seed.offset) % (height + 260)) - 130;
-        const yBase = height - progress;
-        const wave = time * 1.8 + seed.phase + yBase * 0.012;
-        const ribbon = span * (0.58 + Math.sin(wave) * 0.3);
+      for (const group of dnaGroups) {
+        const anchorX =
+          width * group.anchorXRatio +
+          Math.sin(time * group.orbitSpeedX + group.id) * group.orbitX;
+        const anchorY =
+          height * group.anchorYRatio +
+          Math.cos(time * group.orbitSpeedY + group.id * 1.7) * group.orbitY;
+        const perpX = -group.directionY;
+        const perpY = group.directionX;
 
-        let leftX = centerX - ribbon;
-        let rightX = centerX + ribbon;
-        let leftY = yBase + Math.sin(wave * 1.2) * seed.jitter;
-        let rightY = yBase - Math.sin(wave * 1.2) * seed.jitter;
+        for (const seed of group.seeds) {
+          const flow =
+            ((time * seed.speed + seed.offset) % group.travelLength) - group.travelLength * 0.5;
+          const wave = time * 1.7 + seed.phase + flow * 0.014;
+          const centerX =
+            anchorX +
+            group.directionX * flow +
+            perpX * seed.lane * 36 +
+            Math.cos(time * 0.9 + seed.phase2) * seed.jitter;
+          const centerY =
+            anchorY +
+            group.directionY * flow +
+            perpY * seed.lane * 36 +
+            Math.sin(time * 0.82 + seed.phase2) * seed.jitter;
+          const ribbon = group.span * (0.52 + Math.sin(wave) * 0.31);
 
-        const displacedLeft = repel(leftX, leftY, 180, 55);
-        const displacedRight = repel(rightX, rightY, 180, 55);
-        leftX = displacedLeft.x;
-        leftY = displacedLeft.y;
-        rightX = displacedRight.x;
-        rightY = displacedRight.y;
+          let leftX = centerX - perpX * ribbon;
+          let leftY = centerY - perpY * ribbon;
+          let rightX = centerX + perpX * ribbon;
+          let rightY = centerY + perpY * ribbon;
 
-        const rungAlpha = 0.08 + (Math.sin(wave + 0.9) + 1) * 0.11;
-        context.strokeStyle = `rgba(125,211,252,${rungAlpha})`;
-        context.lineWidth = 1.25;
-        context.beginPath();
-        context.moveTo(leftX, leftY);
-        context.lineTo(rightX, rightY);
-        context.stroke();
+          const displacedLeft = repel(leftX, leftY, 175, 55);
+          const displacedRight = repel(rightX, rightY, 175, 55);
+          leftX = displacedLeft.x;
+          leftY = displacedLeft.y;
+          rightX = displacedRight.x;
+          rightY = displacedRight.y;
 
-        const dotRadius = 1.6 + (Math.sin(wave * 1.4) + 1) * 0.8;
-        context.fillStyle = "rgba(103,232,249,0.9)";
-        context.beginPath();
-        context.arc(leftX, leftY, dotRadius, 0, Math.PI * 2);
-        context.fill();
+          const rungAlpha = 0.06 + (Math.sin(wave + 0.8) + 1) * 0.1;
+          context.strokeStyle = `rgba(125,211,252,${rungAlpha})`;
+          context.lineWidth = 1.15;
+          context.beginPath();
+          context.moveTo(leftX, leftY);
+          context.lineTo(rightX, rightY);
+          context.stroke();
 
-        context.fillStyle = "rgba(196,181,253,0.82)";
-        context.beginPath();
-        context.arc(rightX, rightY, dotRadius * 0.92, 0, Math.PI * 2);
-        context.fill();
+          const dotRadius = 1.4 + (Math.sin(wave * 1.3) + 1) * 0.72;
+          context.fillStyle = "rgba(103,232,249,0.86)";
+          context.beginPath();
+          context.arc(leftX, leftY, dotRadius, 0, Math.PI * 2);
+          context.fill();
+
+          context.fillStyle = "rgba(196,181,253,0.78)";
+          context.beginPath();
+          context.arc(rightX, rightY, dotRadius * 0.9, 0, Math.PI * 2);
+          context.fill();
+        }
       }
       context.globalCompositeOperation = "source-over";
 
