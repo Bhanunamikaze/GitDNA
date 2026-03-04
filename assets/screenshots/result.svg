@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="GitDNA result screenshot">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ecfeff" />
+      <stop offset="60%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#fff7ed" />
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)" />
+  <rect x="70" y="60" width="1140" height="600" rx="20" fill="#fff" stroke="#dbe3ec" />
+  <text x="110" y="120" fill="#0f172a" font-size="46" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">@torvalds</text>
+  <text x="110" y="162" fill="#0f172a" font-size="34" font-family="Space Grotesk, Arial, sans-serif">Disciplined Architect</text>
+  <text x="110" y="196" fill="#1d4ed8" font-size="24" font-family="IBM Plex Sans, Arial, sans-serif">The Iron System Mason</text>
+
+  <rect x="110" y="230" width="220" height="220" rx="20" fill="#0f172a" />
+  <polygon points="220,265 275,395 165,395" fill="#93c5fd" />
+  <circle cx="285" cy="282" r="16" fill="#1d4ed8" />
+
+  <text x="360" y="260" fill="#0f172a" font-size="24" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Confidence</text>
+  <rect x="360" y="276" width="360" height="18" rx="9" fill="#e2e8f0" />
+  <rect x="360" y="276" width="302" height="18" rx="9" fill="#0f766e" />
+  <text x="730" y="292" fill="#0f172a" font-size="16" font-family="IBM Plex Sans, Arial, sans-serif">84%</text>
+
+  <text x="360" y="336" fill="#0f172a" font-size="24" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Top Traits</text>
+  <rect x="360" y="352" width="360" height="22" rx="8" fill="#f1f5f9" />
+  <rect x="360" y="382" width="300" height="22" rx="8" fill="#f1f5f9" />
+  <rect x="360" y="412" width="340" height="22" rx="8" fill="#f1f5f9" />
+
+  <text x="760" y="336" fill="#0f172a" font-size="24" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Achievements</text>
+  <rect x="760" y="352" width="360" height="22" rx="8" fill="#fff7ed" />
+  <rect x="760" y="382" width="320" height="22" rx="8" fill="#fff7ed" />
+  <rect x="760" y="412" width="300" height="22" rx="8" fill="#fff7ed" />
+
+  <text x="110" y="500" fill="#0f172a" font-size="24" font-family="Space Grotesk, Arial, sans-serif" font-weight="700">Metric Breakdown</text>
+  <rect x="110" y="520" width="1010" height="108" rx="12" fill="#f8fafc" stroke="#dbe3ec" />
+  <line x1="110" y1="556" x2="1120" y2="556" stroke="#dbe3ec" />
+  <line x1="110" y1="592" x2="1120" y2="592" stroke="#dbe3ec" />
+  <line x1="615" y1="520" x2="615" y2="628" stroke="#dbe3ec" />
+
+  <rect x="760" y="252" width="180" height="42" rx="9" fill="#0f766e" />
+  <text x="793" y="279" fill="#fff" font-size="18" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="700">Download Card</text>
+  <rect x="952" y="252" width="168" height="42" rx="9" fill="#334155" />
+  <text x="975" y="279" fill="#fff" font-size="18" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="700">Copy Embed</text>
+</svg>

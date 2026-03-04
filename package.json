@@ -1,0 +1,12 @@
+{
+  "name": "gitdna",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GitDNA static app and generation scripts",
+  "scripts": {
+    "dev": "node scripts/dev_server.js",
+    "generate:data": "node scripts/generate_types_json.js && node scripts/generate_readme_cards.js && node scripts/generate_profile_pages.js",
+    "check:js": "find src scripts -name '*.js' -print0 | xargs -0 -n1 node --check",
+    "check:json": "find data -name '*.json' -print0 | xargs -0 -n1 jq empty"
+  }
+}
